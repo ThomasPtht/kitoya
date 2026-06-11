@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import {
   ScrollView,
@@ -6,19 +7,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// 1. On importe le Colors nommé { Colors } pour accéder à notre thème Kitroom
-import { Colors } from "@/constants/Colors";
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      {/* ScrollView permet à ton contenu de défiler sous le Header si l'écran est petit */}
+      {/* */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        <Text style={styles.title}>HOME</Text>
         <TouchableOpacity style={styles.ctaCard} activeOpacity={0.8}>
-          {/* Partie Gauche : Les textes */}
+          {/* Left part : texts */}
           <View style={styles.ctaTextContainer}>
             <Text style={styles.ctaTitle}>GOT A NEW KIT?</Text>
             <Text style={styles.ctaSubtitle}>
@@ -26,9 +26,8 @@ export default function TabOneScreen() {
             </Text>
           </View>
 
-          {/* Partie Droite : L'icône de l'appareil photo + le petit bouton "+" */}
+          {/* right part : camera icon and + */}
           <View style={styles.ctaIconContainer}>
-            {/* On utilise notre couleur émeraude pour l'appareil photo */}
             <FontAwesome name="camera" size={20} color={Colors.theme.primary} />
             <View style={styles.plusBadge}>
               <FontAwesome
@@ -53,6 +52,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 25,
   },
+  title: {
+    color: Colors.theme.text,
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
   ctaCard: {
     flexDirection: "row",
     backgroundColor: Colors.theme.surface,
@@ -60,8 +65,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     justifyContent: "space-between",
-
-    // 1. La bordure fine émeraude pour dessiner le contour du néon
     borderWidth: 1,
     borderColor: Colors.theme.primary,
 
@@ -97,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.theme.primaryTint,
     justifyContent: "center",
     alignItems: "center",
-    position: "relative", // Neccerary to position the plus badge absolutely within this container
+    position: "relative", // Necessary to position the plus badge absolutely within this container
   },
   plusBadge: {
     position: "absolute",
