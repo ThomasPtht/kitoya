@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  username  String     @unique
+  email     String     @unique
+  password  String
+  isPublic  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  jerseys   Jersey[]
+  wishlist  Wishlist[]
+}
+
+model Jersey {
+  id         String   @id @default(cuid())
+  userId     String
+  sportId    String
+  clubId     String
+  imageUrl   String
+  playerName String?
+  number     Int?
+  season     String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sport      Sport    @relation(fields: [sportId], references: [id])
+  club       Club     @relation(fields: [clubId], references: [id])
+}
+
+model Sport {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  clubs   Club[]
+  jerseys Jersey[]
+}
+
+model Club {
+  id       String     @id @default(cuid())
+  sportId  String
+  name     String
+  sport    Sport      @relation(fields: [sportId], references: [id])
+  jerseys  Jersey[]
+  wishlist Wishlist[]
+
+  // Ensure that the combination of sportId and name is unique
+  @@unique([sportId, name])
+}
+
+model Wishlist {
+  id         String   @id @default(cuid())
+  userId     String
+  clubId     String
+  season     String?
+  playerName String?
+  number     Int?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club       Club     @relation(fields: [clubId], references: [id])
+}
