@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import {
   ScrollView,
   StyleSheet,
@@ -9,6 +10,8 @@ import {
 } from "react-native";
 
 export default function TabOneScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       {/* */}
@@ -17,7 +20,11 @@ export default function TabOneScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         <Text style={styles.title}>HOME</Text>
-        <TouchableOpacity style={styles.ctaCard} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.ctaCard}
+          activeOpacity={0.8}
+          onPress={() => router.push("/modal")}
+        >
           {/* Left part : texts */}
           <View style={styles.ctaTextContainer}>
             <Text style={styles.ctaTitle}>GOT A NEW KIT?</Text>
