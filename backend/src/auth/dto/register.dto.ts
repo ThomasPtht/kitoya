@@ -9,5 +9,6 @@ export class RegisterDto {
   password!: string;
 
   @IsString()
+  @MinLength(3)
   username!: string;
 }

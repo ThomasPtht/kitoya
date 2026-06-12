@@ -1,8 +1,14 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma/prisma.service';
+import { LoginDto } from './dto/login.dto';
+
 
 @Injectable()
 export class AuthService {
@@ -34,6 +40,30 @@ export class AuthService {
 
     // Generate JWT token
     const paylod = { sub: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(paylod),
+      user: { id: user.id, email: user.email, username: user.username },
+    };
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // The case of !password doesnt allow to login with OAuth email, because the password is null in database. A OAuth user has to login with his provider google..and not with email/password.
+    if (!user || !user.password) {
+      throw new UnauthorizedException('Invalid credentials');
+    } // code 401
+
+    const isMatch = await bcrypt.compare(dto.password, user.password);
+
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid credentials'); // code 401
+    }
+
+    const paylod = { sub: user.id, email: user.email };
+
     return {
       access_token: await this.jwtService.signAsync(paylod),
       user: { id: user.id, email: user.email, username: user.username },
