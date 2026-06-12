@@ -10,7 +10,6 @@ This is a React Native application built with Expo, to allow users to easily man
 - Home screen with quick access to add new jersey, story about a jersey, and more
 - Wish list to keep track of jerseys you want to add to your collection
 
-
 ### Technologies Used
 
 #### Mobile
@@ -26,9 +25,12 @@ This is a React Native application built with Expo, to allow users to easily man
 
 #### Authentication
 
-- Better Auth (JWT, Oauth2 google & apple)
+- NestJS Passport (Native Authentication Handler)
+- JWT (Access & Refresh Token rotation tailored for Mobile Secure Store)
+- Native OAuth2 (Google Sign-In & Sign-In with Apple via Expo Native SDKs, validated by NestJS backend)
 
-#### Data 
+#### Data
+
 - API-Football + TheSportsDB (initial feed data for teams)
 
 #### Storage & Media
