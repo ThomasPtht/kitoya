@@ -54,10 +54,13 @@ export default function CameraModal() {
           <FontAwesome name="times" size={20} color="#FFFFFF" />
         </TouchableOpacity>
 
-        {/* UI DU SCANNER */}
+        {/* UI of the picture frame with a hint text */}
         <View style={styles.overlayContainer}>
           <View style={styles.scannerTarget} />
-          <Text style={styles.hintText}>Cadre le maillot ou l'étiquette</Text>
+          <Text style={styles.hintText}>
+            {" "}
+            Align the kit within the frame to take a picture{" "}
+          </Text>
         </View>
       </CameraView>
 
@@ -118,8 +121,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   scannerTarget: {
-    width: 260,
-    height: 260,
+    width: 360,
+    height: 460,
     borderWidth: 2,
     borderColor: Colors.theme.primary,
     borderRadius: 24,

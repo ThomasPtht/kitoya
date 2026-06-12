@@ -6,7 +6,7 @@ import { Text, View } from "@/components/Themed";
 export default function TabAddScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ajouter</Text>
+      <Text style={styles.title}>Add</Text>
       <View
         style={styles.separator}
         lightColor="#eee"

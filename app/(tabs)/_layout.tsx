@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 
 import Header from "@/components/Header";
@@ -66,6 +66,12 @@ export default function TabLayout() {
         {/* tab 2 : Add */}
         <Tabs.Screen
           name="add"
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push("/modal");
+            },
+          }}
           options={{
             title: "Add",
             tabBarIcon: ({ color, focused }) => (
