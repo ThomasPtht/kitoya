@@ -48,3 +48,15 @@ This is a React Native application built with Expo, to allow users to easily man
 
 - Render (backend)
 - Expo (mobile app)
+
+## Technical Notes & Troubleshooting
+
+### Prisma Version Choice (v6 vs v7)
+
+During the initial setup of the backend, we encountered major compatibility issues with **Prisma 7** and **NestJS**'s architecture:
+
+1. **Module Format Conflicts:** Prisma 7 generates ES Modules (`.js` imports) by default, which throws `ReferenceError: exports is not defined` when executed within NestJS's native CommonJS environment.
+2. **Driver Adapters Complexity:** Prisma 7 deprecates the built-in native Rust engines in favor of JavaScript Driver Adapters (like `@prisma/adapter-pg`). In a traditional NestJS local development environment, this introduces unnecessary boilerplate, manual connection pool managing (`pg` Pool), and runtime argument errors (`ERR_INVALID_ARG_TYPE`).
+
+**Decision:** To keep the codebase stable, clean, and production-ready without fighting configuration overhead, **we intentionally downgraded to Prisma 6**.
+Prisma 6 uses the native engine out-of-the-box, requires zero driver adapter boilerplate in the `PrismaService`, and integrates seamlessly with NestJS dependency injection.
