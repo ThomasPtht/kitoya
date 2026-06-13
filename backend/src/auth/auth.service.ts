@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,14 +16,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  // findFirst is used instead of findUnique because we want to check both email and username for existing users
   async register(dto: RegisterDto) {
-    const existsingUser = await this.prisma.user.findUnique({
+    const existingUser = await this.prisma.user.findFirst({
       where: {
-        email: dto.email,
+        OR: [{ email: dto.email }, { username: dto.username }],
       },
     });
 
-    if (existsingUser) {
+    if (existingUser) {
       throw new ConflictException('User already exists');
     }
 
