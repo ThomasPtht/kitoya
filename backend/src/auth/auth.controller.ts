@@ -5,6 +5,14 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import type { Request } from 'express';
 
+interface JwtRequest extends Request {
+  user: {
+    userId: string;
+    email: string;
+    username: string;
+  };
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -22,7 +30,7 @@ export class AuthController {
   // useGuard to protect the route and require a valid JWT token to access it
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async getProfile(@Req() req: Request) {
-    return req.user;
+  getProfile(@Req() req: JwtRequest) {
+    return this.authService.getProfile(req.user.userId);
   }
 }
