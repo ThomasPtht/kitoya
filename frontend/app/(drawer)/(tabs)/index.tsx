@@ -15,6 +15,7 @@ export default function TabOneScreen() {
   return (
     <View style={styles.container}>
       {/* */}
+      // touchableopacity allow
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -45,6 +46,10 @@ export default function TabOneScreen() {
             </View>
           </View>
         </TouchableOpacity>
+
+        {/* <View style={styles.lastAddedContainer}>
+          <Text style={styles.ctaTitle}>Your last jersey added</Text>
+        </View> */}
       </ScrollView>
     </View>
   );

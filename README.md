@@ -60,3 +60,5 @@ During the initial setup of the backend, we encountered major compatibility issu
 
 **Decision:** To keep the codebase stable, clean, and production-ready without fighting configuration overhead, **we intentionally downgraded to Prisma 6**.
 Prisma 6 uses the native engine out-of-the-box, requires zero driver adapter boilerplate in the `PrismaService`, and integrates seamlessly with NestJS dependency injection.
+
+3. **Version Conflict:** Fixed an Expo SDK and `react-native-reanimated` version mismatch

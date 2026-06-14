@@ -1,9 +1,17 @@
 import Colors from "@/constants/Colors";
 import { Feather } from "@expo/vector-icons";
+import { DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Header() {
+  const navigation = useNavigation();
+
+  const handleOpenMenu = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -11,7 +19,9 @@ export default function Header() {
         <View style={styles.actions}>
           <Pressable
             style={styles.avatar}
-            onPress={() => {}}
+            onPress={() => {
+              handleOpenMenu();
+            }}
             accessibilityRole="button"
             accessibilityLabel="Account"
           >
