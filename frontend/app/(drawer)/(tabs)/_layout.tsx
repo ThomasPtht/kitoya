@@ -10,20 +10,26 @@ import { Platform, StyleSheet } from "react-native";
 const KITROOM_EMERALD = "#0DFFAA";
 const KITROOM_INACTIVE = "#6B7280";
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+function StyledTabBarIcon({
+  Component,
+  name,
+  color,
+  focused,
+}: {
+  Component: any;
+  name: string;
   color: string;
-  focused: boolean; // focused to know when to apply the neon glow effect
+  focused: boolean;
 }) {
   return (
-    <FontAwesome
-      size={26}
+    <Component
+      size={24}
+      name={name}
       style={[
         styles.iconBase,
-        props.focused ? styles.iconNeonGlow : null,
-        { color: props.color },
+        focused ? styles.iconNeonGlow : null,
+        { color: color },
       ]}
-      name={props.name}
     />
   );
 }
@@ -58,7 +64,12 @@ export default function TabLayout() {
           options={{
             title: "Home",
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name="home" color={color} focused={focused} />
+              <StyledTabBarIcon
+                Component={FontAwesome}
+                name="home"
+                color={color}
+                focused={focused}
+              />
             ),
           }}
         />
@@ -75,9 +86,9 @@ export default function TabLayout() {
           options={{
             title: "Add",
             tabBarIcon: ({ color, focused }) => (
-              <AntDesign
+              <StyledTabBarIcon
+                Component={AntDesign}
                 name="plus-circle"
-                size={24}
                 color={color}
                 focused={focused}
               />
@@ -91,9 +102,9 @@ export default function TabLayout() {
           options={{
             title: "My Locker",
             tabBarIcon: ({ color, focused }) => (
-              <Ionicons
+              <StyledTabBarIcon
+                Component={Ionicons}
                 name="shirt-outline"
-                size={24}
                 color={color}
                 focused={focused}
               />
