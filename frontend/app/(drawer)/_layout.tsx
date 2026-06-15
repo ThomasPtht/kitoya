@@ -17,21 +17,41 @@ export default function DrawerLayout() {
         drawerContent={(props) => (
           <DrawerContentScrollView
             {...props}
+            style={{ backgroundColor: "#121212" }}
             contentContainerStyle={styles.scrollContainer}
           >
-            {/* top zone, display the list of screens automatically */}
-            <View style={styles.mainContent}>
+            {/* Zone du haut : Onglets automatiques + Settings juste en dessous */}
+            <View style={{ flex: 1 }}>
               <DrawerItemList {...props} />
+
+              {/* 🛠️ TON BOUTON SETTINGS EST REPLACÉ ICI EN HAUT */}
+              <Pressable
+                style={[
+                  styles.logoutButton,
+                  { paddingHorizontal: 20, marginTop: 10 },
+                ]}
+                onPress={() => router.push("/settings")}
+              >
+                <Feather name="settings" size={18} color="#ffffff" />
+                <Text
+                  style={[
+                    styles.logoutText,
+                    { textTransform: "capitalize", fontSize: 18 },
+                  ]}
+                >
+                  Settings
+                </Text>
+              </Pressable>
             </View>
 
-            {/* bottom zone, display the logout button  */}
+            {/* Zone du bas : Uniquement le Logout */}
             <View style={styles.footer}>
+              {/* 🚪 TON BOUTON LOGOUT */}
               <Pressable
                 style={styles.logoutButton}
                 onPress={async () => {
                   try {
                     await authService.logout();
-
                     router.replace("/(auth)/login");
                   } catch (error) {
                     console.error("Logout failed:", error);
@@ -39,8 +59,15 @@ export default function DrawerLayout() {
                   }
                 }}
               >
-                <Feather name="log-out" size={20} color="#ffff" />
-                <Text style={styles.logoutText}> Logout</Text>
+                <Feather name="log-out" size={20} color="#ffffff" />
+                <Text
+                  style={[
+                    styles.logoutText,
+                    { textTransform: "uppercase", fontSize: 18 },
+                  ]}
+                >
+                  Logout
+                </Text>
               </Pressable>
             </View>
           </DrawerContentScrollView>
@@ -53,32 +80,18 @@ export default function DrawerLayout() {
           },
           drawerActiveTintColor: "#05C785",
           drawerInactiveTintColor: "#ffffff",
+
+          drawerLabelStyle: {
+            fontSize: 18,
+            textTransform: "capitalize",
+            fontWeight: "500",
+          },
         }}
       >
         <Drawer.Screen
           name="(tabs)"
           options={{ drawerItemStyle: { display: "none" } }}
         />
-
-        {/* Settings */}
-        <Drawer.Screen
-          name="settings-link"
-          listeners={{
-            drawerItemPress: (e) => {
-              e.preventDefault();
-              router.push("/settings");
-            },
-          }}
-          options={{
-            drawerLabel: "Settings",
-            title: "Settings",
-            drawerIcon: ({ color, size }) => (
-              <Feather name="settings" size={size} color={color} />
-            ),
-          }}
-        />
-
-        {/* Add other screens here if needed */}
       </Drawer>
     </GestureHandlerRootView>
   );
@@ -86,11 +99,8 @@ export default function DrawerLayout() {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flex: 1,
+    flexGrow: 1, // 💡 Changé flex: 1 en flexGrow: 1 pour que le scroll fonctionne parfaitement
     backgroundColor: "#121212",
-  },
-  mainContent: {
-    flex: 1,
   },
   footer: {
     padding: 20,
