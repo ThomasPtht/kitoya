@@ -20,11 +20,10 @@ export default function DrawerLayout() {
             style={{ backgroundColor: "#121212" }}
             contentContainerStyle={styles.scrollContainer}
           >
-            {/* Zone du haut : Onglets automatiques + Settings juste en dessous */}
             <View style={{ flex: 1 }}>
               <DrawerItemList {...props} />
 
-              {/* 🛠️ TON BOUTON SETTINGS EST REPLACÉ ICI EN HAUT */}
+              {/* settings button on top of the drawer items */}
               <Pressable
                 style={[
                   styles.logoutButton,
@@ -43,10 +42,8 @@ export default function DrawerLayout() {
                 </Text>
               </Pressable>
             </View>
-
-            {/* Zone du bas : Uniquement le Logout */}
+            {/* bottom zone of the drawer with the logout button */}
             <View style={styles.footer}>
-              {/* 🚪 TON BOUTON LOGOUT */}
               <Pressable
                 style={styles.logoutButton}
                 onPress={async () => {
@@ -99,7 +96,7 @@ export default function DrawerLayout() {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flexGrow: 1, // 💡 Changé flex: 1 en flexGrow: 1 pour que le scroll fonctionne parfaitement
+    flexGrow: 1,
     backgroundColor: "#121212",
   },
   footer: {
