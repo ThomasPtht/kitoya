@@ -43,7 +43,7 @@ export default function LoginScreen() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await authService.login(data.email, data.password);
-      router.replace("/(tabs)");
+      router.replace("/(drawer)/(tabs)");
     } catch (error) {
       Alert.alert("Authentification failed", "Invalid email or password");
     }

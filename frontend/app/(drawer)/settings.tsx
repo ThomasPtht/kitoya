@@ -7,15 +7,13 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 export default function SettingsScreen() {
   return (
     <View style={styles.container}>
-      {/* Ton Header personnalisé pour les Paramètres avec la flèche retour */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
-        <Text style={styles.headerTitle}>Paramètres</Text>
+        <Text style={styles.headerTitle}>Settings</Text>
       </View>
 
-      {/* Contenu de tes paramètres */}
       <View style={styles.content}>
         <Text style={styles.text}>Options de l'application Kitroom...</Text>
       </View>
