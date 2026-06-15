@@ -14,8 +14,6 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      {/* */}
-      // touchableopacity allow
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}

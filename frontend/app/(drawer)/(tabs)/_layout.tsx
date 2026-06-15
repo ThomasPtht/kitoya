@@ -39,12 +39,12 @@ export default function TabLayout() {
 
   return (
     <>
-      <Header />
       <Tabs
         screenOptions={{
+          header: () => <Header />,
           tabBarActiveTintColor: KITROOM_EMERALD,
           tabBarInactiveTintColor: KITROOM_INACTIVE,
-          headerShown: false,
+          headerShown: true,
           tabBarStyle: {
             backgroundColor: "#121212",
             borderTopColor: "#1A1A1A",

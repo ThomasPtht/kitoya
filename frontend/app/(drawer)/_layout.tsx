@@ -29,7 +29,10 @@ export default function DrawerLayout() {
                   styles.logoutButton,
                   { paddingHorizontal: 20, marginTop: 10 },
                 ]}
-                onPress={() => router.push("/settings")}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/settings");
+                }}
               >
                 <Feather name="settings" size={18} color="#ffffff" />
                 <Text
@@ -48,6 +51,7 @@ export default function DrawerLayout() {
                 style={styles.logoutButton}
                 onPress={async () => {
                   try {
+                    props.navigation.closeDrawer();
                     await authService.logout();
                     router.replace("/(auth)/login");
                   } catch (error) {
@@ -112,7 +116,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   logoutText: {
-    color: "#FFFF",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "500",
   },
