@@ -1,3 +1,4 @@
+import GoogleButton from "@/components/GoogleButton";
 import { Colors } from "@/constants/Colors";
 import { authService } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,13 +47,18 @@ export default function RegisterScreen() {
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       await authService.register(data.username, data.email, data.password);
-      router.push("/(tabs)"); // Navigate to the home screen after successful registration
+      router.push("/(drawer)/(tabs)"); // Navigate to the home screen after successful registration
     } catch (error) {
       console.error("Login error:", error);
     }
   };
 
   const passwordRef = useRef<TextInput>(null);
+
+  const handleGoogleRegister = () => {
+    console.log("Logique Google déclenchée !");
+    // Plus tard : authService.loginWithGoogle()
+  };
 
   return (
     <KeyboardAvoidingView
@@ -179,6 +185,7 @@ export default function RegisterScreen() {
                 <Text style={styles.buttonText}>Sign Up</Text>
               )}
             </TouchableOpacity>
+            <GoogleButton onPress={handleGoogleRegister} />
           </View>
 
           {/* Footer */}

@@ -1,3 +1,4 @@
+import GoogleButton from "@/components/GoogleButton";
 import { Colors } from "@/constants/Colors";
 import { authService } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,6 +51,11 @@ export default function LoginScreen() {
   };
 
   const passwordRef = useRef<TextInput>(null);
+
+  const handleGoogleLogin = () => {
+    console.log("Logique Google déclenchée !");
+    // Plus tard : authService.loginWithGoogle()
+  };
 
   return (
     <KeyboardAvoidingView
@@ -146,6 +152,12 @@ export default function LoginScreen() {
                 <Text style={styles.buttonText}>Login</Text>
               )}
             </TouchableOpacity>
+
+            {/* google button */}
+            <GoogleButton
+              onPress={handleGoogleLogin}
+              isLoading={isSubmitting}
+            />
           </View>
 
           {/* Footer inclus dans le flux principal */}
