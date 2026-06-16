@@ -14,9 +14,10 @@ import {
 
 export default function CameraModal() {
   const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = React.useRef<CameraView>(null); // create a ref to the CameraView component
 
   if (!permission) {
-    // White tempory screen while we check permissions
+    // White temporary screen while we check permissions
     return <View style={styles.container} />;
   }
 
@@ -33,8 +34,7 @@ export default function CameraModal() {
             onPress={requestPermission}
           >
             <Text style={styles.permissionButtonText}>
-              {" "}
-              Autorize Camera Access{" "}
+              Authorize Camera Access
             </Text>
           </TouchableOpacity>
         </View>
@@ -43,9 +43,24 @@ export default function CameraModal() {
     );
   }
 
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      try {
+        const options = { quality: 0.8, skipProcessing: false };
+        const photo = await cameraRef.current.takePictureAsync(options);
+        console.log("Picture taken:", photo?.uri);
+
+        router.back();
+      } catch (error) {
+        console.error("Error taking picture:", error);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing="back">
+      {/* On ajoute l'attribut ref={cameraRef} indispensable pour la capture */}
+      <CameraView ref={cameraRef} style={styles.camera} facing="back">
         {/* close button to dismiss the modal and go back to the previous screen */}
         <TouchableOpacity
           style={styles.closeButton}
@@ -58,9 +73,15 @@ export default function CameraModal() {
         <View style={styles.overlayContainer}>
           <View style={styles.scannerTarget} />
           <Text style={styles.hintText}>
-            {" "}
-            Align the kit within the frame to take a picture{" "}
+            Align the kit within the frame to take a picture
           </Text>
+        </View>
+
+        {/* button to take a picture and call the takePicture function */}
+        <View style={styles.actionContainer}>
+          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+            <View style={styles.captureButtonInner} />
+          </TouchableOpacity>
         </View>
       </CameraView>
 
@@ -101,10 +122,11 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    justifyContent: "space-between",
   },
   closeButton: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 60 : 40, // adaptation for status bar height on iOS and Android
+    top: Platform.OS === "ios" ? 60 : 40,
     right: 20,
     zIndex: 10,
     width: 40,
@@ -116,13 +138,14 @@ const styles = StyleSheet.create({
   },
   overlayContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.1)",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 40,
   },
   scannerTarget: {
-    width: 360,
-    height: 460,
+    width: 320,
+    height: 420,
     borderWidth: 2,
     borderColor: Colors.theme.primary,
     borderRadius: 24,
@@ -134,5 +157,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+  actionContainer: {
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: Platform.OS === "ios" ? 40 : 25,
+    paddingTop: 20,
+  },
+  captureButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 4,
+    borderColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  captureButtonInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#FFFFFF",
   },
 });

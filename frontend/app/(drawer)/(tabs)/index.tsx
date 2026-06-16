@@ -22,7 +22,7 @@ export default function TabOneScreen() {
         <TouchableOpacity
           style={styles.ctaCard}
           activeOpacity={0.8}
-          onPress={() => router.push("/modal")}
+          onPress={() => router.push("/add")}
         >
           {/* Left part : texts */}
           <View style={styles.ctaTextContainer}>

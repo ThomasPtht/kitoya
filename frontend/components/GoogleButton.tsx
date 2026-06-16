@@ -8,10 +8,9 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
-// On définit des "Props" pour pouvoir passer une fonction personnalisée au clic
 interface GoogleButtonProps {
   onPress: () => void;
-  isLoading?: boolean; // Optionnel : utile si tu veux afficher un spinner plus tard
+  isLoading?: boolean; // to display a spinner later if needed
 }
 
 export default function GoogleButton({

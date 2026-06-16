@@ -77,12 +77,6 @@ export default function TabLayout() {
         {/* tab 2 : Add */}
         <Tabs.Screen
           name="add"
-          listeners={{
-            tabPress: (e) => {
-              e.preventDefault();
-              router.push("/modal");
-            },
-          }}
           options={{
             title: "Add",
             tabBarIcon: ({ color, focused }) => (
