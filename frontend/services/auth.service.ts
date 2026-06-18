@@ -1,29 +1,17 @@
 // services/auth.service.ts
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import { apiClient } from "./api";
 
-// Use the IP address of my computer instead of localhost, because the mobile app runs in a simulator or on a physical device, which cannot access localhost of the computer. And add the port number of the NestJS backend (default is 3000).
-const API_URL = "http://192.168.1.15:3000";
-
-interface AuthResponse {
-  access_token: string;
-}
 
 export const authService = {
-  register: async (
-    username: string,
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> => {
+  register: async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post<AuthResponse>(
-        `${API_URL}/auth/register`,
-        {
-          username,
-          email,
-          password,
-        },
-      );
+      const response = await apiClient.post("/auth/register", {
+        username,
+        email,
+        password,
+      });
 
       const { access_token } = response.data;
 
@@ -44,12 +32,9 @@ export const authService = {
   /**
    * Send identifiants to the backend and store the JWT token in the Keychain/KeyStore of the phone if authentication is successful.
    */
-  login: async (
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> => {
+  login: async (email: string, password: string) => {
     try {
-      const response = await axios.post<AuthResponse>(`${API_URL}/auth/login`, {
+      const response = await apiClient.post("/auth/login", {
         email,
         password,
       });
