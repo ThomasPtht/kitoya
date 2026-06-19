@@ -15,6 +15,7 @@ import * as z from "zod";
 import { Colors } from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { searchTeams } from "@/services/footballService";
+import { useCreateJersey } from "@/hooks/useJerseyHook";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -24,6 +25,11 @@ const jerseySchema = z.object({
   type: z.string().min(1, { message: "Please select a kit type" }),
   playerName: z.string().optional(),
   number: z.string().optional(),
+  frontImageUri: z.string().min(1, { message: "Front image is required" }),
+  backImageUri: z.string().optional().nullable(),
+  description: z.string().optional(),
+  version: z.string().optional(),
+  condition: z.string().optional(),
 });
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
@@ -33,15 +39,16 @@ const TYPES = ["Home", "Away", "Third", "Special"];
 
 export default function TabAddScreen() {
   // TODO: Remplacer plus tard par la fonction expo-image-picker pour permettre à l'utilisateur de choisir une photo de son kit
-  const [image, setImage] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<any[]>([]); 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false); 
 
-  const [frontImage, setFrontImage] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  const [frontImage, setFrontImage] = useState<string>("");
   const [backImage, setBackImage] = useState<string | null>(null);
 
+  const [selectedClubId, setSelectedClubId] = useState<string>("");
+  const [selectedSportId, setSelectedSportId] = useState<string>("");
   // React Hook Form setup
   const {
     control,
@@ -57,7 +64,10 @@ export default function TabAddScreen() {
       size: "",
       type: "",
       playerName: "",
-      number: "",
+      number: undefined,
+      frontImageUri: "",
+      backImageUri: null,
+      description: "",
     },
   });
 
@@ -85,17 +95,33 @@ export default function TabAddScreen() {
     }, 500); // Wait for 500ms after the user stops typing before making the API call
   };
 
+  // hook initialization
+  const { mutate: createJersey, isPending } = useCreateJersey();
+
   // Form Submission handler
   const onSubmit = (data: JerseyFormValues) => {
-    console.log("Jersey to add backend-ready data:", {
-      ...data,
-      frontImageUri: frontImage,
-      backImageUri: backImage,
-    });
-    alert("Jersey data captured! Ready for backend link.");
-    reset();
-    setFrontImage(null);
-    setBackImage(null);
+    createJersey(
+      {
+        ...data,
+        number: data.number ? parseInt(data.number, 10) : undefined,
+        frontImageUri: frontImage,
+        backImageUri: backImage,
+        sportId: selectedSportId, // Assuming you have a way to get the selected sport ID
+        clubId: selectedClubId, // Assuming you have a way to get the selected club ID
+      },
+      {
+        onSuccess: () => {
+          alert("Jersey added successfully!");
+          reset();
+          setFrontImage("");
+          setBackImage(null);
+        },
+        onError: (error) => {
+          console.error("Error creating jersey:", error);
+          alert("Failed to add jersey. Please try again.");
+        },
+      },
+    );
   };
 
   return (
@@ -174,7 +200,9 @@ export default function TabAddScreen() {
                 style={styles.dropdownItem}
                 onPress={() => {
                   setValue("clubName", item.name);
-                  setIsDropdownVisible(false); e
+                  setSelectedClubId(item.id);
+                  setSelectedSportId(item.sportId);
+                  setIsDropdownVisible(false);
                 }}
               >
                 <Text style={styles.dropdownText}>{item.name}</Text>
@@ -291,6 +319,55 @@ export default function TabAddScreen() {
               placeholder="e.g., 10, 14"
               placeholderTextColor="#8E8E93"
               keyboardType="number-pad"
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+
+        {/* Condition */}
+        <Text style={styles.label}>Condition</Text>
+        <Controller
+          control={control}
+          name="condition"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., New with tags, Used, Good"
+              placeholderTextColor="#8E8E93"
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+
+        {/* Version */}
+        <Text style={styles.label}>Version</Text>
+        <Controller
+          control={control}
+          name="version"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., Replica, Authentic, Player Issue"
+              placeholderTextColor="#8E8E93"
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+
+        {/* Description */}
+        <Text style={styles.label}>Description</Text>
+        <Controller
+          control={control}
+          name="description"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={[styles.input, { height: 100, textAlignVertical: "top" }]}
+              placeholder="Any details about the jersey..."
+              placeholderTextColor="#8E8E93"
+              multiline
               onChangeText={onChange}
               value={value}
             />
@@ -446,7 +523,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderWidth: 1,
     borderColor: "#2C2C2E",
-    maxHeight: 200, 
+    maxHeight: 200,
   },
   dropdownItem: {
     paddingVertical: 10,

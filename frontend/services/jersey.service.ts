@@ -1,11 +1,8 @@
 import { apiClient } from "./api";
 
-
-
 export interface JerseyData {
   sportId: string;
   clubId: string;
-  imageUrl: string;
   playerName?: string;
   number?: number;
   season?: string;
@@ -14,24 +11,23 @@ export interface JerseyData {
   condition?: string;
   version?: string;
   description?: string;
+  frontImageUri: string;
+  backImageUri?: string | null;
 }
-
 
 export const jerseyService = {
+  getAll: async () => {
+    const { data } = await apiClient.get("/jerseys");
+    return data;
+  },
 
-    getAll: async() => {
-        const { data } = await apiClient.get("/jerseys");
-        return data;
-    },
+  getById: async (id: string) => {
+    const { data } = await apiClient.get(`/jerseys/${id}`);
+    return data;
+  },
 
-    getById: async (id: string) => {
-        const { data } = await apiClient.get(`/jerseys/${id}`);
-        return data;
-    },
-
-    create: async (jerseyData: JerseyData) => {
-        const { data } = await apiClient.post("/jerseys", jerseyData);
-        return data;
-    },
-
-}
+  create: async (jerseyData: JerseyData) => {
+    const { data } = await apiClient.post("/jerseys", jerseyData);
+    return data;
+  },
+};

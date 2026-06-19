@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jerseyService } from "@/services/jersey.service";
 
-
 // Get all jerseys query hook
 export const useJerseys = () => {
   return useQuery({
@@ -17,6 +16,9 @@ export const useCreateJersey = () => {
     mutationFn: jerseyService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
+    },
+    onError: (error) => {
+      console.error("Error creating jersey:", error);
     },
   });
 };
