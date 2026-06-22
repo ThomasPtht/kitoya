@@ -62,3 +62,10 @@ During the initial setup of the backend, we encountered major compatibility issu
 Prisma 6 uses the native engine out-of-the-box, requires zero driver adapter boilerplate in the `PrismaService`, and integrates seamlessly with NestJS dependency injection.
 
 3. **Version Conflict:** Fixed an Expo SDK and `react-native-reanimated` version mismatch
+
+
+
+
+Install : 
+multer : npm install @nestjs/platform-express multer
+npm install -D @types/multer

@@ -5,15 +5,22 @@ import {
   Param,
   Post,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JerseysService } from './jerseys.service';
+import { R2Service } from '../r2/r2.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateJerseyDto } from './dto/createJersey.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('jerseys')
 export class JerseysController {
-  constructor(private readonly jerseysService: JerseysService) {}
+  constructor(
+    private readonly jerseysService: JerseysService,
+    private readonly R2Service: R2Service,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -29,5 +36,12 @@ export class JerseysController {
   @Get()
   findAll() {
     return this.jerseysService.getJerseys();
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadJerseyImage(@UploadedFile() file: Express.Multer.File) {
+    const url = await this.R2Service.uploadFile(file);
+    return { url };
   }
 }

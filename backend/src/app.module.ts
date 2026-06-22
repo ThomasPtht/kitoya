@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { JerseysController } from './jerseys/jerseys.controller';
 import { JerseysService } from './jerseys/jerseys.service';
 import { JerseysModule } from './jerseys/jerseys.module';
+import { R2Module } from './r2/r2.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, JerseysModule],
+  imports: [PrismaModule, AuthModule, JerseysModule, R2Module],
   controllers: [AppController, JerseysController],
   providers: [AppService, JerseysService],
 })

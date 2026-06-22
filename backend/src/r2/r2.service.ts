@@ -1,0 +1,30 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class R2Service {
+  private s3 = new S3Client({
+    region: 'auto',
+    endpoint: process.env.R2_ENDPOINT ?? '',
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? '',
+    },
+  });
+
+  async uploadFile(file: Express.Multer.File) {
+    const fileName = `${uuidv4()}-${file.originalname}`;
+
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME ?? '',
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      }),
+    );
+
+    return `${process.env.R2_PUBLIC_URL}/${fileName}`;
+  }
+}
