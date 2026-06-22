@@ -16,6 +16,9 @@ import { Colors } from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { searchTeams } from "@/services/footballService";
 import { useCreateJersey } from "@/hooks/useJerseyHook";
+import * as ImagePicker from "expo-image-picker";
+import { authService } from "@/services/auth.service";
+import { uploadImageToR2 } from "@/lib/uploadImgetoR2";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -71,14 +74,30 @@ export default function TabAddScreen() {
     },
   });
 
-  const handlePickFrontImage = () => {
-    alert("Front photo picker will be implemented here later!");
-    setFrontImage("placeholder_front_uri");
+  const handlePickFrontImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setFrontImage(result.assets[0].uri);
+    }
   };
 
-  const handlePickBackImage = () => {
-    alert("Back photo picker will be implemented here later!");
-    setBackImage("placeholder_back_uri");
+  const handlePickBackImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setBackImage(result.assets[0].uri);
+    }
   };
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -99,29 +118,43 @@ export default function TabAddScreen() {
   const { mutate: createJersey, isPending } = useCreateJersey();
 
   // Form Submission handler
-  const onSubmit = (data: JerseyFormValues) => {
-    createJersey(
-      {
-        ...data,
-        number: data.number ? parseInt(data.number, 10) : undefined,
-        frontImageUri: frontImage,
-        backImageUri: backImage,
-        sportId: selectedSportId, // Assuming you have a way to get the selected sport ID
-        clubId: selectedClubId, // Assuming you have a way to get the selected club ID
-      },
-      {
-        onSuccess: () => {
-          alert("Jersey added successfully!");
-          reset();
-          setFrontImage("");
-          setBackImage(null);
+  const onSubmit = async (data: JerseyFormValues) => {
+    try {
+      const token = await authService.getToken();
+      if (!token) {
+        throw new Error("User is not authenticated");
+      }
+      const frontUrl = await uploadImageToR2(frontImage, token);
+      const backUrl = backImage
+        ? await uploadImageToR2(backImage, token)
+        : null;
+
+      createJersey(
+        {
+          ...data,
+          number: data.number ? parseInt(data.number, 10) : undefined,
+          frontImageUri: frontUrl,
+          backImageUri: backUrl,
+          sportId: selectedSportId,
+          clubId: selectedClubId,
         },
-        onError: (error) => {
-          console.error("Error creating jersey:", error);
-          alert("Failed to add jersey. Please try again.");
+        {
+          onSuccess: () => {
+            alert("Jersey added successfully!");
+            reset();
+            setFrontImage("");
+            setBackImage(null);
+          },
+          onError: (error) => {
+            console.error("Error creating jersey:", error);
+            alert("Failed to add jersey. Please try again.");
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image. Please try again.");
+    }
   };
 
   return (

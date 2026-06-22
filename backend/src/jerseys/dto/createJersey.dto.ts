@@ -19,7 +19,11 @@ export class CreateJerseyDto {
 
   @IsNotEmpty()
   @IsString()
-  imageUrl!: string; 
+  frontImageUrl!: string;
+
+  @IsOptional()
+  @IsString()
+  backImageUrl?: string;
 
   @IsOptional()
   @IsString()

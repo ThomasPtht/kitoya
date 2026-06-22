@@ -10,7 +10,7 @@ import { R2Module } from './r2/r2.module';
 
 @Module({
   imports: [PrismaModule, AuthModule, JerseysModule, R2Module],
-  controllers: [AppController, JerseysController],
-  providers: [AppService, JerseysService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

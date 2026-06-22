@@ -18,7 +18,7 @@ export class R2Service {
 
     await this.s3.send(
       new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME ?? '',
+        Bucket: process.env.R2_BUCKET_NAME,
         Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,

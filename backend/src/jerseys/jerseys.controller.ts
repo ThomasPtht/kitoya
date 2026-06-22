@@ -39,6 +39,7 @@ export class JerseysController {
   }
 
   @Post('upload')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: (_req, file, callback) => {

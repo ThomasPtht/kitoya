@@ -12,6 +12,8 @@ export class JerseysService {
     const jersey = await this.prisma.jersey.create({
       data: {
         ...jerseyData,
+        // frontImageUrl,
+        // backImageUrl: backImageUrl || null,
         user: { connect: { id: userId } },
         sport: { connect: { id: sportId } },
         club: { connect: { id: clubId } },
