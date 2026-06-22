@@ -39,7 +39,16 @@ export class JerseysController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: (_req, file, callback) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
   async uploadJerseyImage(@UploadedFile() file: Express.Multer.File) {
     const url = await this.R2Service.uploadFile(file);
     return { url };
