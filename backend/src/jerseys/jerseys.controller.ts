@@ -1,11 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   Param,
   Post,
   Request,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,7 +14,10 @@ import { JerseysService } from './jerseys.service';
 import { R2Service } from '../r2/r2.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateJerseyDto } from './dto/createJersey.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 
 @Controller('jerseys')
 export class JerseysController {
@@ -24,8 +28,39 @@ export class JerseysController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  createJersey(@Request() req, @Body() createJerseyDto: CreateJerseyDto) {
-    return this.jerseysService.createJersey(req.user.id, createJerseyDto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'frontImage', maxCount: 1 },
+      { name: 'backImage', maxCount: 1 },
+    ]),
+  )
+  async createJersey(
+    @Request() req,
+    @Body() createJerseyDto: CreateJerseyDto,
+    @UploadedFiles()
+    files: {
+      frontImage?: Express.Multer.File[];
+      backImage?: Express.Multer.File[];
+    },
+  ) {
+    if (!files.frontImage || files.frontImage.length === 0) {
+      throw new BadRequestException('Front image is required');
+    }
+
+    // upload front and back images to R2 if they exist
+    const frontUrl = files.frontImage
+      ? await this.R2Service.uploadFile(files.frontImage[0])
+      : null;
+    const backUrl = files.backImage
+      ? await this.R2Service.uploadFile(files.backImage[0])
+      : null;
+
+    // creation in database with the URLs of the uploaded images
+    return this.jerseysService.createJersey(req.user.id, {
+      ...createJerseyDto,
+      frontImageUrl: frontUrl || '',
+      backImageUrl: backUrl || undefined,
+    });
   }
 
   @Get(':id')
@@ -36,22 +71,5 @@ export class JerseysController {
   @Get()
   findAll() {
     return this.jerseysService.getJerseys();
-  }
-
-  @Post('upload')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter: (_req, file, callback) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
-          return callback(new Error('Only image files are allowed!'), false);
-        }
-        callback(null, true);
-      },
-    }),
-  )
-  async uploadJerseyImage(@UploadedFile() file: Express.Multer.File) {
-    const url = await this.R2Service.uploadFile(file);
-    return { url };
   }
 }
