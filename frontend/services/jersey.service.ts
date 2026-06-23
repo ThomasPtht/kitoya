@@ -26,8 +26,8 @@ export const jerseyService = {
     return data;
   },
 
-  create: async (jerseyData: JerseyData) => {
-    const { data } = await apiClient.post("/jerseys", jerseyData);
+  create: async (formData: FormData) => {
+    const { data } = await apiClient.post("/jerseys", formData);
     return data;
   },
 };

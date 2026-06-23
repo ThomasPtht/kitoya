@@ -119,42 +119,34 @@ export default function TabAddScreen() {
 
   // Form Submission handler
   const onSubmit = async (data: JerseyFormValues) => {
-    try {
-      const token = await authService.getToken();
-      if (!token) {
-        throw new Error("User is not authenticated");
-      }
-      const frontUrl = await uploadImageToR2(frontImage, token);
-      const backUrl = backImage
-        ? await uploadImageToR2(backImage, token)
-        : null;
+    const formData = new FormData();
 
-      createJersey(
-        {
-          ...data,
-          number: data.number ? parseInt(data.number, 10) : undefined,
-          frontImageUri: frontUrl,
-          backImageUri: backUrl,
-          sportId: selectedSportId,
-          clubId: selectedClubId,
-        },
-        {
-          onSuccess: () => {
-            alert("Jersey added successfully!");
-            reset();
-            setFrontImage("");
-            setBackImage(null);
-          },
-          onError: (error) => {
-            console.error("Error creating jersey:", error);
-            alert("Failed to add jersey. Please try again.");
-          },
-        },
-      );
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
+    // Ajoute tous les champs texte de ton DTO
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+
+    // Ajoute les images (correspondant aux noms de ton FileFieldsInterceptor)
+    if (frontImage) {
+      formData.append("frontImage", {
+        uri: frontImage,
+        name: "front.jpg",
+        type: "image/jpeg",
+      } as any);
     }
+
+    if (backImage) {
+      formData.append("backImage", {
+        uri: backImage,
+        name: "back.jpg",
+        type: "image/jpeg",
+      } as any);
+    }
+
+    // Envoi tout en un bloc
+    createJersey(formData);
   };
 
   return (

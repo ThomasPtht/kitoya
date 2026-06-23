@@ -12,17 +12,15 @@ export class JerseysService {
     const jersey = await this.prisma.jersey.create({
       data: {
         ...jerseyData,
-        // frontImageUrl,
-        // backImageUrl: backImageUrl || null,
         user: { connect: { id: userId } },
         sport: { connect: { id: sportId } },
         club: { connect: { id: clubId } },
       },
       include: { club: true, sport: true },
     });
+    return jersey;
   }
 
-  
   async getJerseys() {
     const jerseys = await this.prisma.jersey.findMany({
       include: { club: true },

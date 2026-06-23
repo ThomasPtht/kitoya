@@ -13,7 +13,7 @@ export const useJerseys = () => {
 export const useCreateJersey = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: jerseyService.create,
+    mutationFn: (data: FormData) => jerseyService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
     },
