@@ -1,5 +1,10 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -26,5 +31,27 @@ export class R2Service {
     );
 
     return `${process.env.R2_PUBLIC_URL}/${fileName}`;
+  }
+
+  async getSignedUrl(publicUrl?: string | null) {
+    if (!publicUrl) {
+      return null;
+    }
+
+    try {
+      const url = new URL(publicUrl);
+      const key = url.pathname.replace(/^\//, '');
+
+      return await getSignedUrl(
+        this.s3,
+        new GetObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME,
+          Key: key,
+        }),
+        { expiresIn: 60 * 60 },
+      );
+    } catch {
+      return publicUrl;
+    }
   }
 }

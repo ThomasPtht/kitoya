@@ -5,10 +5,29 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateJerseyDto } from './dto/createJersey.dto';
+import { R2Service } from '../r2/r2.service';
 
 @Injectable()
 export class JerseysService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly r2Service: R2Service,
+  ) {}
+
+  private async signJersey<
+    T extends { frontImageUrl: string; backImageUrl: string | null },
+  >(jersey: T) {
+    const [frontImageUrl, backImageUrl] = await Promise.all([
+      this.r2Service.getSignedUrl(jersey.frontImageUrl),
+      this.r2Service.getSignedUrl(jersey.backImageUrl),
+    ]);
+
+    return {
+      ...jersey,
+      frontImageUrl: frontImageUrl ?? jersey.frontImageUrl,
+      backImageUrl,
+    };
+  }
 
   // jerseys.service.ts
   async createJersey(
@@ -48,17 +67,20 @@ export class JerseysService {
     };
 
     // 3. Création
-    return await this.prisma.jersey.create({
+    const createdJersey = await this.prisma.jersey.create({
       data: jerseyData,
       include: { club: true, sport: true },
     });
+
+    return this.signJersey(createdJersey);
   }
 
   async getJerseys() {
     const jerseys = await this.prisma.jersey.findMany({
       include: { club: true },
     });
-    return jerseys;
+
+    return Promise.all(jerseys.map((jersey) => this.signJersey(jersey)));
   }
 
   async getJerseyById(id: string) {
@@ -70,6 +92,7 @@ export class JerseysService {
     if (!jersey) {
       throw new NotFoundException(`Jersey with ID ${id} not found`);
     }
-    return jersey;
+
+    return this.signJersey(jersey);
   }
 }
