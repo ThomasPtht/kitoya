@@ -15,10 +15,11 @@ import * as z from "zod";
 import { Colors } from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { searchTeams } from "@/services/footballService";
-import { useCreateJersey } from "@/hooks/useJerseyHook";
+import { useCreateJersey, useSports } from "@/hooks/useJerseyHook";
 import * as ImagePicker from "expo-image-picker";
 import { authService } from "@/services/auth.service";
 import { uploadImageToR2 } from "@/lib/uploadImgetoR2";
+import { useQuery } from "@tanstack/react-query";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -39,12 +40,13 @@ type JerseyFormValues = z.infer<typeof jerseySchema>;
 
 const SIZES = ["S", "M", "L", "XL", "XXL"];
 const TYPES = ["Home", "Away", "Third", "Special"];
+const SPORTS = ["Football", "Basketball", "Baseball", "Hockey", "Soccer"];
 
 export default function TabAddScreen() {
   // TODO: Remplacer plus tard par la fonction expo-image-picker pour permettre à l'utilisateur de choisir une photo de son kit
 
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const [frontImage, setFrontImage] = useState<string>("");
@@ -52,6 +54,9 @@ export default function TabAddScreen() {
 
   const [selectedClubId, setSelectedClubId] = useState<string>("");
   const [selectedSportId, setSelectedSportId] = useState<string>("");
+
+  const { data: sports, isLoading } = useSports();
+
   // React Hook Form setup
   const {
     control,
@@ -83,7 +88,9 @@ export default function TabAddScreen() {
     });
 
     if (!result.canceled) {
-      setFrontImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setFrontImage(uri);
+      setValue("frontImageUri", uri, { shouldValidate: true });
     }
   };
 
@@ -119,16 +126,34 @@ export default function TabAddScreen() {
 
   // Form Submission handler
   const onSubmit = async (data: JerseyFormValues) => {
+    console.log("--- DEBUG ENVOI ---");
+    console.log("selectedSportId actuel :", selectedSportId);
+    console.log("Données form :", data);
     const formData = new FormData();
 
-    // Ajoute tous les champs texte de ton DTO
+    // Ajoutez les IDs manuellement (une seule fois suffit)
+    if (selectedSportId) formData.append("sportId", selectedSportId);
+    if (selectedClubId) formData.append("clubId", selectedClubId);
+
+    // Liste des champs à ignorer dans la boucle car gérés manuellement
+    const fieldsToIgnore = [
+      "frontImageUri",
+      "backImageUri",
+      "sportId",
+      "clubId",
+    ];
+
     Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (
+        !fieldsToIgnore.includes(key) &&
+        value !== undefined &&
+        value !== null
+      ) {
         formData.append(key, String(value));
       }
     });
 
-    // Ajoute les images (correspondant aux noms de ton FileFieldsInterceptor)
+    // Ajout des fichiers
     if (frontImage) {
       formData.append("frontImage", {
         uri: frontImage,
@@ -145,9 +170,13 @@ export default function TabAddScreen() {
       } as any);
     }
 
-    // Envoi tout en un bloc
     createJersey(formData);
   };
+
+  // Trouvez l'ID du sport "Football" automatiquement
+  const footballSportId = sports?.find(
+    (s) => s.name.toLowerCase() === "football",
+  )?.id;
 
   return (
     <KeyboardAvoidingView
@@ -183,6 +212,34 @@ export default function TabAddScreen() {
             <Text style={styles.imagePickerText}>Back View</Text>
             <Text style={styles.imagePickerSubtext}>(Optional)</Text>
           </TouchableOpacity>
+        </View>
+
+        <Text style={styles.label}>Sport *</Text>
+        <View style={styles.chipRow}>
+          {sports?.map((sport: any) => {
+            // Optionnel : Si vous voulez pré-sélectionner le premier sport ou le Football
+            // const isDefault = !selectedSportId && sport.name === 'Football';
+
+            const isSelected = selectedSportId === sport.id;
+
+            return (
+              <TouchableOpacity
+                key={sport.id}
+                activeOpacity={0.7}
+                style={[styles.chip, isSelected && styles.chipSelected]}
+                onPress={() => setSelectedSportId(sport.id)}
+              >
+                <Text
+                  style={[
+                    styles.chipText,
+                    isSelected && styles.chipTextSelected,
+                  ]}
+                >
+                  {sport.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Club input */}
@@ -226,7 +283,10 @@ export default function TabAddScreen() {
                 onPress={() => {
                   setValue("clubName", item.name);
                   setSelectedClubId(item.id);
-                  setSelectedSportId(item.sportId);
+                  if (footballSportId) {
+                    setSelectedSportId(footballSportId);
+                  }
+
                   setIsDropdownVisible(false);
                 }}
               >
@@ -402,7 +462,18 @@ export default function TabAddScreen() {
         {/* Submit button */}
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(
+            (data) => {
+              console.log("✅ Formulaire valide, envoi en cours...");
+              onSubmit(data);
+            },
+            (errors) => {
+              console.error(
+                "❌ Erreurs de validation Zod trouvées :",
+                JSON.stringify(errors, null, 2),
+              );
+            },
+          )}
         >
           <Text style={styles.submitButtonText}>Add to Locker</Text>
         </TouchableOpacity>

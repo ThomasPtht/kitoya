@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jerseyService } from "@/services/jersey.service";
+import { sportsService } from "@/services/sport.service";
 
 // Get all jerseys query hook
 export const useJerseys = () => {
@@ -20,5 +21,12 @@ export const useCreateJersey = () => {
     onError: (error) => {
       console.error("Error creating jersey:", error);
     },
+  });
+};
+
+export const useSports = () => {
+  return useQuery({
+    queryKey: ["sports"],
+    queryFn: sportsService.getSports,
   });
 };

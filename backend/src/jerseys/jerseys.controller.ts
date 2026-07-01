@@ -43,24 +43,60 @@ export class JerseysController {
       backImage?: Express.Multer.File[];
     },
   ) {
-    if (!files.frontImage || files.frontImage.length === 0) {
+    if (!files.frontImage?.[0])
       throw new BadRequestException('Front image is required');
+
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new BadRequestException('Authenticated user id is missing');
     }
 
-    // upload front and back images to R2 if they exist
-    const frontUrl = files.frontImage
-      ? await this.R2Service.uploadFile(files.frontImage[0])
-      : null;
-    const backUrl = files.backImage
-      ? await this.R2Service.uploadFile(files.backImage[0])
-      : null;
+    console.log('--- DEBUG CONTROLLER ---');
+    console.log('Body reçu :', createJerseyDto); // Si ce log est vide, le DTO a déjà rejeté la requête
+    console.log('Files reçus :', files ? Object.keys(files) : 'Aucun');
 
-    // creation in database with the URLs of the uploaded images
-    return this.jerseysService.createJersey(req.user.id, {
-      ...createJerseyDto,
-      frontImageUrl: frontUrl || '',
-      backImageUrl: backUrl || undefined,
-    });
+    if (!createJerseyDto.sportId) {
+      console.log('ATTENTION : sportId est vide dans le DTO');
+    }
+
+    try {
+      // Upload
+      const frontUrl = await this.R2Service.uploadFile(files.frontImage[0]);
+      const backUrl = files.backImage
+        ? await this.R2Service.uploadFile(files.backImage[0])
+        : undefined;
+
+      console.log('Front image uploaded to:', frontUrl);
+      if (backUrl) {
+        console.log('Back image uploaded to:', backUrl);
+      }
+
+      const sportId = req.body.sportId || createJerseyDto.sportId;
+      const clubName = createJerseyDto.clubName;
+
+      if (!sportId) {
+        throw new BadRequestException('sportId est manquant dans le FormData');
+      }
+
+      const clubData = { name: clubName, sportId: sportId };
+
+      const jerseyDtoWithUrls = {
+        ...createJerseyDto,
+        sportId: sportId,
+        frontImageUrl: frontUrl,
+        backImageUrl: backUrl,
+      };
+
+      return this.jerseysService.createJersey(
+        userId,
+        jerseyDtoWithUrls,
+        clubData,
+      );
+    } catch (error) {
+      console.error('Error while creating jersey:', error);
+      throw error;
+    }
   }
 
   @Get(':id')

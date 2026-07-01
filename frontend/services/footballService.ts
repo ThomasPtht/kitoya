@@ -1,3 +1,5 @@
+import { apiClient } from "./api";
+
 const API_FOOTBALL_KEY = process.env.EXPO_PUBLIC_API_FOOTBALL_KEY;
 console.log("Clé API chargée :", API_FOOTBALL_KEY ? "OUI" : "NON");
 const BASE_URL = "https://v3.football.api-sports.io";
@@ -32,3 +34,5 @@ export const searchTeams = async (query: string) => {
     return [];
   }
 };
+
+

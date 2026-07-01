@@ -13,13 +13,17 @@ export class CreateJerseyDto {
   @IsUUID()
   sportId!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsUUID()
-  clubId!: string;
+  clubId?: string;
 
   @IsNotEmpty()
   @IsString()
-  frontImageUrl!: string;
+  clubName!: string;
+
+  @IsOptional()
+  @IsString()
+  frontImageUrl?: string;
 
   @IsOptional()
   @IsString()
