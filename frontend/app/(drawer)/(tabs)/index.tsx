@@ -1,7 +1,12 @@
+import CardCollection, {
+  CardCollectionProps,
+} from "@/components/CardCollection";
 import { Colors } from "@/constants/Colors";
+import { useJerseys } from "@/hooks/useJerseyHook";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,6 +16,7 @@ import {
 
 export default function TabOneScreen() {
   const router = useRouter();
+  const { data: jerseys, isLoading } = useJerseys();
 
   return (
     <View style={styles.container}>
@@ -45,9 +51,22 @@ export default function TabOneScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* <View style={styles.lastAddedContainer}>
-          <Text style={styles.ctaTitle}>Your last jersey added</Text>
-        </View> */}
+        {/* Last added to Locker section */}
+        <Text style={styles.lastAdded}>Last added to Locker</Text>
+        {isLoading ? (
+          <ActivityIndicator color={Colors.theme.primary} />
+        ) : (
+          <View style={styles.cardsRow}>
+            {jerseys?.slice(0, 3).map((jersey) => (
+              <CardCollection
+                key={jersey.id}
+                jersey={jersey}
+                width="30%"
+                size="small"
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -122,5 +141,17 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     justifyContent: "center",
     alignItems: "center",
+  },
+  lastAdded: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  cardsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
   },
 });
