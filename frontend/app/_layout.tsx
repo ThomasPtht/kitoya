@@ -9,7 +9,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
+import Toast from "react-native-toast-message";
 import { useColorScheme } from "@/components/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -52,6 +52,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <RootLayoutNav />;
+      <Toast />
     </QueryClientProvider>
   );
 }

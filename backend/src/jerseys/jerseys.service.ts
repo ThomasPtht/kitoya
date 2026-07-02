@@ -95,4 +95,27 @@ export class JerseysService {
 
     return this.signJersey(jersey);
   }
+
+  async deleteJersey(id: string) {
+    const jersey = await this.prisma.jersey.findUnique({
+      where: { id },
+    });
+
+    if (!jersey) {
+      throw new NotFoundException(`Jersey with ID ${id} not found`);
+    }
+
+    // delete the images from R2
+    await Promise.all([
+      this.r2Service.deleteFile(jersey.frontImageUrl),
+      jersey.backImageUrl
+        ? this.r2Service.deleteFile(jersey.backImageUrl)
+        : null,
+    ]);
+
+    // delete the jersey from the database
+    await this.prisma.jersey.delete({
+      where: { id },
+    });
+  }
 }

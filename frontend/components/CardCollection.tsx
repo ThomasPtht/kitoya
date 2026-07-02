@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    padding: 8,
+    padding: 2,
     height: 180,
     backgroundColor: Colors.theme.primaryTint,
   },

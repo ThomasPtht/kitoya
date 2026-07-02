@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -113,5 +114,11 @@ export class JerseysController {
   @Get()
   findAll() {
     return this.jerseysService.getJerseys();
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteJersey(@Param('id') id: string) {
+    return this.jerseysService.deleteJersey(id);
   }
 }

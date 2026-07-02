@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -52,6 +53,26 @@ export class R2Service {
       );
     } catch {
       return publicUrl;
+    }
+  }
+
+  async deleteFile(publicUrl?: string | null) {
+    if (!publicUrl) {
+      return;
+    }
+
+    try {
+      const url = new URL(publicUrl);
+      const key = url.pathname.replace(/^\//, '');
+
+      await this.s3.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME,
+          Key: key,
+        }),
+      );
+    } catch (error) {
+      console.error('Error deleting file from R2:', error);
     }
   }
 }

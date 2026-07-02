@@ -17,7 +17,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { searchTeams } from "@/services/footballService";
 import { useCreateJersey, useSports } from "@/hooks/useJerseyHook";
 import * as ImagePicker from "expo-image-picker";
-
+import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -38,11 +39,8 @@ type JerseyFormValues = z.infer<typeof jerseySchema>;
 
 const SIZES = ["S", "M", "L", "XL", "XXL"];
 const TYPES = ["Home", "Away", "Third", "Special"];
-const SPORTS = ["Football", "Basketball", "Baseball", "Hockey", "Soccer"];
 
 export default function TabAddScreen() {
-  // TODO: Remplacer plus tard par la fonction expo-image-picker pour permettre à l'utilisateur de choisir une photo de son kit
-
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [, setIsLoading] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -124,9 +122,6 @@ export default function TabAddScreen() {
 
   // Form Submission handler
   const onSubmit = async (data: JerseyFormValues) => {
-    console.log("--- DEBUG ENVOI ---");
-    console.log("selectedSportId actuel :", selectedSportId);
-    console.log("Données form :", data);
     const formData = new FormData();
 
     // Ajoutez les IDs manuellement (une seule fois suffit)
@@ -168,7 +163,33 @@ export default function TabAddScreen() {
       } as any);
     }
 
+    try {
+      await createJersey(formData);
+      Toast.show({
+        type: "success",
+        text1: "Jersey added",
+        text2: "The jersey has been added to your collection.",
+        position: "bottom",
+      });
+
+      reset(); // Reset the form after successful submission
+      setFrontImage("");
+      setBackImage(null);
+      setSelectedClubId("");
+      setSelectedSportId("");
+      router.navigate("/(drawer)/(tabs)/dressing");
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error adding jersey",
+        text2: "There was an error adding the jersey. Please try again.",
+        position: "bottom",
+      });
+      console.error("Error creating jersey:", error);
+    }
+
     createJersey(formData);
+    router.navigate("/(drawer)/(tabs)/dressing");
   };
 
   // Trouvez l'ID du sport "Football" automatiquement
@@ -473,7 +494,11 @@ export default function TabAddScreen() {
             },
           )}
         >
-          <Text style={styles.submitButtonText}>Add to Locker</Text>
+          {isPending ? (
+            <Text style={styles.submitButtonText}>Submitting...</Text>
+          ) : (
+            <Text style={styles.submitButtonText}>Add to Locker</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

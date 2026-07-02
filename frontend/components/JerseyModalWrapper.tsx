@@ -33,7 +33,7 @@ export default function JerseyModalWrapper({
 
         {/* On injecte votre fichier actuel ici */}
         <View style={styles.content}>
-          <JerseyDetail jersey={jersey} />
+          <JerseyDetail jersey={jersey} onClose={onClose} />
         </View>
       </View>
     </Modal>
