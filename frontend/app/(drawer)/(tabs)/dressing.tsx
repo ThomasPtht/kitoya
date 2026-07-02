@@ -21,7 +21,11 @@ export default function TabDressingScreen() {
         <FlatList
           data={jerseys}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <CardCollection jersey={item} />}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          renderItem={({ item }) => (
+            <CardCollection jersey={item} width="48%" />
+          )}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
@@ -43,5 +47,10 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+    // paddingHorizontal: 10,
+  },
+  row: {
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
 });

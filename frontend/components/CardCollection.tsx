@@ -1,6 +1,12 @@
-import Colors from "@/constants/Colors";
+import { Colors } from "@/constants/Colors";
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  type DimensionValue,
+} from "react-native";
 
 interface CardCollectionProps {
   jersey: {
@@ -9,9 +15,13 @@ interface CardCollectionProps {
     club: { name: string };
     season?: string | null;
   };
+  width?: DimensionValue;
 }
 
-export default function CardCollection({ jersey }: CardCollectionProps) {
+export default function CardCollection({
+  jersey,
+  width = "100%",
+}: CardCollectionProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
   const imageUri = useMemo(() => {
@@ -19,12 +29,12 @@ export default function CardCollection({ jersey }: CardCollectionProps) {
   }, [jersey.frontImageUrl, jersey.frontImage]);
 
   return (
-    <View style={styles.cardContainer}>
+    <View style={[styles.cardContainer, { width }]}>
       {imageUri && !imageFailed ? (
         <Image
           source={{ uri: imageUri }}
           style={styles.image}
-          resizeMode="cover"
+          resizeMode="contain"
           onError={() => setImageFailed(true)}
         />
       ) : (
@@ -32,8 +42,10 @@ export default function CardCollection({ jersey }: CardCollectionProps) {
           <Text style={styles.imageFallbackText}>No image</Text>
         </View>
       )}
-      <Text style={styles.clubName}>{jersey.club.name}</Text>
-      <Text style={styles.season}>{jersey.season}</Text>
+      <View style={styles.content}>
+        <Text style={styles.clubName}>{jersey.club.name}</Text>
+        <Text style={styles.season}>{jersey.season}</Text>
+      </View>
     </View>
   );
 }
@@ -41,28 +53,27 @@ export default function CardCollection({ jersey }: CardCollectionProps) {
 const styles = StyleSheet.create({
   cardContainer: {
     borderWidth: 1,
-    borderColor: "#2C2C2E",
+    borderColor: Colors.theme.primary,
     backgroundColor: "#1E1E1E",
     borderRadius: 12,
-    padding: 12,
     marginBottom: 16,
     overflow: "hidden",
   },
   image: {
     width: "100%",
+    padding: 8,
     height: 180,
-    borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: "#2C2C2E",
+    backgroundColor: Colors.theme.primaryTint,
   },
   imageFallback: {
     width: "100%",
     height: 180,
-    borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: "#2C2C2E",
+    backgroundColor: Colors.theme.primaryTint,
     alignItems: "center",
     justifyContent: "center",
+  },
+  content: {
+    padding: 12,
   },
   imageFallbackText: {
     color: "#8E8E93",
