@@ -17,9 +17,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { searchTeams } from "@/services/footballService";
 import { useCreateJersey, useSports } from "@/hooks/useJerseyHook";
 import * as ImagePicker from "expo-image-picker";
-import { authService } from "@/services/auth.service";
-import { uploadImageToR2 } from "@/lib/uploadImgetoR2";
-import { useQuery } from "@tanstack/react-query";
+
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({

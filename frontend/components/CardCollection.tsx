@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   Image,
+  Pressable,
   type DimensionValue,
 } from "react-native";
 
@@ -16,11 +17,13 @@ interface CardCollectionProps {
     season?: string | null;
   };
   width?: DimensionValue;
+  onPress?: () => void;
 }
 
 export default function CardCollection({
   jersey,
   width = "100%",
+  onPress,
 }: CardCollectionProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -29,7 +32,7 @@ export default function CardCollection({
   }, [jersey.frontImageUrl, jersey.frontImage]);
 
   return (
-    <View style={[styles.cardContainer, { width }]}>
+    <Pressable style={[styles.cardContainer, { width }]} onPress={onPress}>
       {imageUri && !imageFailed ? (
         <Image
           source={{ uri: imageUri }}
@@ -46,7 +49,7 @@ export default function CardCollection({
         <Text style={styles.clubName}>{jersey.club.name}</Text>
         <Text style={styles.season}>{jersey.season}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

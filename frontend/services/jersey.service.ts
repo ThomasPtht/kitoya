@@ -1,6 +1,7 @@
 import { apiClient } from "./api";
 
 export interface JerseyData {
+  id?: string;
   sportId: string;
   clubId: string;
   playerName?: string;
@@ -12,7 +13,12 @@ export interface JerseyData {
   version?: string;
   description?: string;
   frontImageUri: string;
+  frontImageUrl?: string;
   backImageUri?: string | null;
+  backImageUrl?: string | null;
+  club?: {
+    name: string;
+  };
 }
 
 export const jerseyService = {
