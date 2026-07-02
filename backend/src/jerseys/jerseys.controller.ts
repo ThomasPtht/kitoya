@@ -14,16 +14,15 @@ import { JerseysService } from './jerseys.service';
 import { R2Service } from '../r2/r2.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateJerseyDto } from './dto/createJersey.dto';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ImageProcessingService } from '../image-processing/image-processing.service';
 
 @Controller('jerseys')
 export class JerseysController {
   constructor(
     private readonly jerseysService: JerseysService,
     private readonly R2Service: R2Service,
+    private readonly imageProcessingService: ImageProcessingService,
   ) {}
 
   @Post()
@@ -60,9 +59,16 @@ export class JerseysController {
       console.log('ATTENTION : sportId est vide dans le DTO');
     }
 
+    const frontImageBuffer = files.frontImage[0].buffer;
+    const processedFrontImage =
+      await this.imageProcessingService.removeBackground(frontImageBuffer);
+
     try {
       // Upload
-      const frontUrl = await this.R2Service.uploadFile(files.frontImage[0]);
+      const frontUrl = await this.R2Service.uploadFile({
+        ...files.frontImage[0],
+        buffer: processedFrontImage,
+      });
       const backUrl = files.backImage
         ? await this.R2Service.uploadFile(files.backImage[0])
         : undefined;

@@ -51,21 +51,15 @@ This is a React Native application built with Expo, to allow users to easily man
 
 ## Technical Notes & Troubleshooting
 
-### Prisma Version Choice (v6 vs v7)
+### Known Issues We Solved
 
-During the initial setup of the backend, we encountered major compatibility issues with **Prisma 7** and **NestJS**'s architecture:
+- **Prisma 7 vs NestJS:** Prisma 7 introduced ESM and driver adapter constraints that did not fit our NestJS setup. We kept **Prisma 6** for a simpler CommonJS flow and native engine support.
+- **JWT user mapping on jersey creation:** the backend was reading `req.user.id`, while the JWT payload exposes `req.user.userId`. This caused jersey creation to fail until the controller was updated.
+- **R2 image display:** public R2 links returned `404`, so jersey images were not loading in the app. We switched to **signed R2 URLs** for read responses.
+- **Frontend image card:** the jersey card now tolerates missing or failing image URLs and shows a fallback instead of a blank area.
+- **TypeScript deprecation warning:** `baseUrl` triggered a TypeScript deprecation warning, so we aligned the compiler setup to keep the backend build clean.
 
-1. **Module Format Conflicts:** Prisma 7 generates ES Modules (`.js` imports) by default, which throws `ReferenceError: exports is not defined` when executed within NestJS's native CommonJS environment.
-2. **Driver Adapters Complexity:** Prisma 7 deprecates the built-in native Rust engines in favor of JavaScript Driver Adapters (like `@prisma/adapter-pg`). In a traditional NestJS local development environment, this introduces unnecessary boilerplate, manual connection pool managing (`pg` Pool), and runtime argument errors (`ERR_INVALID_ARG_TYPE`).
+### Install Notes
 
-**Decision:** To keep the codebase stable, clean, and production-ready without fighting configuration overhead, **we intentionally downgraded to Prisma 6**.
-Prisma 6 uses the native engine out-of-the-box, requires zero driver adapter boilerplate in the `PrismaService`, and integrates seamlessly with NestJS dependency injection.
-
-3. **Version Conflict:** Fixed an Expo SDK and `react-native-reanimated` version mismatch
-
-
-
-
-Install : 
-multer : npm install @nestjs/platform-express multer
-npm install -D @types/multer
+- `multer`: `npm install @nestjs/platform-express multer`
+- Types: `npm install -D @types/multer`

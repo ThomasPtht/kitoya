@@ -8,9 +8,10 @@ import { JerseysService } from './jerseys/jerseys.service';
 import { JerseysModule } from './jerseys/jerseys.module';
 import { R2Module } from './r2/r2.module';
 import { SportsModule } from './sports/sports.module';
+import { ImageProcessingModule } from './image-processing/image-processing.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, JerseysModule, R2Module, SportsModule],
+  imports: [PrismaModule, AuthModule, JerseysModule, R2Module, SportsModule, ImageProcessingModule],
   controllers: [AppController],
   providers: [AppService],
 })
