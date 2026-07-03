@@ -118,4 +118,37 @@ export class JerseysService {
       where: { id },
     });
   }
+
+  async getTotalJerseysCount(userId?: string): Promise<number> {
+    const count = await this.prisma.jersey.count({
+      where: {
+        userId: userId,
+      },
+    });
+    return count;
+  }
+
+  async getMostReprentedClub(userId: string) {
+  // 1. On cherche d'abord les maillots de l'utilisateur pour grouper par club
+  const result = await this.prisma.jersey.groupBy({
+    by: ['clubId'],
+    where: { userId: userId }, // On filtre bien par l'utilisateur ici
+    _count: { clubId: true },
+    orderBy: { _count: { clubId: 'desc' } },
+    take: 1,
+  });
+
+  if (result.length === 0) return null;
+
+  // 2. Maintenant on récupère le nom du club avec son ID
+  const club = await this.prisma.club.findUnique({
+    where: { id: result[0].clubId },
+    select: { name: true } // On ne prend que le nom
+  });
+
+  return {
+    name: club?.name || 'Unknown Club',
+    count: result[0]._count.clubId,
+  };
+}
 }

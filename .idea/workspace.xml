@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13001f76-35ca-43dd-bb74-28b5be1fb558" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/(drawer)/(tabs)/add.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(drawer)/(tabs)/add.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(drawer)/(tabs)/dressing.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(drawer)/(tabs)/dressing.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/(drawer)/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/(drawer)/(tabs)/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/hooks/useJerseyHook.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/hooks/useJerseyHook.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/services/jersey.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/services/jersey.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

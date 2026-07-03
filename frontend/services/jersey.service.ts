@@ -34,6 +34,19 @@ export const jerseyService = {
 
   create: async (formData: FormData) => {
     const { data } = await apiClient.post("/jerseys", formData);
+
+    return data;
+  },
+
+  getTotalJerseysCount: async () => {
+    const { data } = await apiClient.get("/jerseys/total");
+    console.log("Total jerseys count:", data);
+    return data;
+  },
+
+  getMostRepresentedClub: async () => {
+    const { data } = await apiClient.get("/jerseys/MostRepresentedClub");
+    console.log("Most represented club:", data);
     return data;
   },
 };

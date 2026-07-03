@@ -1,9 +1,11 @@
-import CardCollection, {
-  CardCollectionProps,
-} from "@/components/CardCollection";
+import CardCollection from "@/components/CardCollection";
 import { Colors } from "@/constants/Colors";
-import { useJerseys } from "@/hooks/useJerseyHook";
-import { FontAwesome } from "@expo/vector-icons";
+import {
+  useJerseyCount,
+  useJerseys,
+  useMostRepresentedClub,
+} from "@/hooks/useJerseyHook";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
   ActivityIndicator,
@@ -17,6 +19,9 @@ import {
 export default function TabOneScreen() {
   const router = useRouter();
   const { data: jerseys, isLoading } = useJerseys();
+  const { data: count } = useJerseyCount();
+  const { data: club, isLoading: isClubLoading } = useMostRepresentedClub();
+  console.log("Donnée reçue par le composant :", club);
 
   return (
     <View style={styles.container}>
@@ -52,7 +57,7 @@ export default function TabOneScreen() {
         </TouchableOpacity>
 
         {/* Last added to Locker section */}
-        <Text style={styles.lastAdded}>Last added to Locker</Text>
+        <Text style={styles.lastAdded}>LAST ADDED TO LOCKER</Text>
         {isLoading ? (
           <ActivityIndicator color={Colors.theme.primary} />
         ) : (
@@ -67,6 +72,39 @@ export default function TabOneScreen() {
             ))}
           </View>
         )}
+
+        <Text>YOUR COLLECTION AT A GLANCE</Text>
+        <View style={styles.containerStats}>
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Total Kits</Text>
+            <Ionicons
+              name="shirt-outline"
+              size={24}
+              color={Colors.theme.primary}
+            />
+            <Text style={styles.statValue}>{count ?? 0}</Text>
+          </View>
+
+          {/* Carte Top Team */}
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Top Team</Text>
+            <Ionicons
+              name="trophy-outline"
+              size={24}
+              color={Colors.theme.primary}
+            />
+            {isClubLoading ? (
+              <ActivityIndicator size="small" color={Colors.theme.primary} />
+            ) : (
+              <>
+                <Text style={styles.statValue}>{club?.name ?? "N/A"}</Text>
+                <Text style={styles.statSubValue}>
+                  {club?.count ? `${club.count} kits` : ""}
+                </Text>
+              </>
+            )}
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -151,7 +189,49 @@ const styles = StyleSheet.create({
   },
   cardsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    gap: 10,
     marginTop: 15,
+  },
+  containerTotalKits: {
+    borderWidth: 1,
+    borderColor: Colors.theme.primary,
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  containerStats: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 15, // Espace entre les deux cartes
+    marginTop: 20,
+  },
+  statCard: {
+    flex: 1, // Occupe la moitié de l'écran
+    backgroundColor: Colors.theme.surface, // Ajoute un fond
+    borderWidth: 1,
+    borderColor: Colors.theme.primary,
+    borderRadius: 16,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statLabel: {
+    color: Colors.theme.textMuted,
+    fontSize: 12,
+    textTransform: "uppercase",
+    marginBottom: 8,
+  },
+  statValue: {
+    color: Colors.theme.text,
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  statSubValue: {
+    color: Colors.theme.primary,
+    fontSize: 14,
+    marginTop: 4,
   },
 });

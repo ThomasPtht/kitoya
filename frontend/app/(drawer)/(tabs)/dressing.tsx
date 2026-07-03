@@ -20,7 +20,7 @@ export default function TabDressingScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Dressing</Text>
+      <Text style={styles.title}>My Locker</Text>
 
       {isLoading ? (
         <ActivityIndicator

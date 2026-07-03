@@ -106,9 +106,24 @@ export class JerseysController {
     }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jerseysService.getJerseyById(id);
+  @Get('total')
+  @UseGuards(JwtAuthGuard)
+  async totalJerseys(@Request() req) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user id is missing');
+    }
+    return await this.jerseysService.getTotalJerseysCount(userId);
+  }
+
+  @Get('MostRepresentedClub')
+  @UseGuards(JwtAuthGuard)
+  async mostRepresentedClub(@Request() req) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user id is missing');
+    }
+    return await this.jerseysService.getMostReprentedClub(userId);
   }
 
   @Get()
