@@ -73,16 +73,18 @@ export default function TabOneScreen() {
           </View>
         )}
 
-        <Text>YOUR COLLECTION AT A GLANCE</Text>
+        <Text style={styles.collectionTitle}>YOUR COLLECTION AT A GLANCE</Text>
         <View style={styles.containerStats}>
           <View style={styles.statCard}>
             <Text style={styles.statLabel}>Total Kits</Text>
-            <Ionicons
-              name="shirt-outline"
-              size={24}
-              color={Colors.theme.primary}
-            />
-            <Text style={styles.statValue}>{count ?? 0}</Text>
+            <View style={styles.statValueContainer}>
+              <Ionicons
+                name="shirt-outline"
+                size={24}
+                color={Colors.theme.primary}
+              />
+              <Text style={styles.statValue}>{count ?? 0}</Text>
+            </View>
           </View>
 
           {/* Carte Top Team */}
@@ -99,7 +101,11 @@ export default function TabOneScreen() {
               <>
                 <Text style={styles.statValue}>{club?.name ?? "N/A"}</Text>
                 <Text style={styles.statSubValue}>
-                  {club?.count ? `${club.count} kits` : ""}
+                  {club?.count
+                    ? `${club.count} kit`
+                    : club?.count > 1
+                      ? `${club.count} kits`
+                      : "0 kit"}
                 </Text>
               </>
             )}
@@ -205,12 +211,12 @@ const styles = StyleSheet.create({
   containerStats: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 15, // Espace entre les deux cartes
+    gap: 15,
     marginTop: 20,
   },
   statCard: {
-    flex: 1, // Occupe la moitié de l'écran
-    backgroundColor: Colors.theme.surface, // Ajoute un fond
+    flex: 1,
+    backgroundColor: Colors.theme.surface,
     borderWidth: 1,
     borderColor: Colors.theme.primary,
     borderRadius: 16,
@@ -233,5 +239,17 @@ const styles = StyleSheet.create({
     color: Colors.theme.primary,
     fontSize: 14,
     marginTop: 4,
+  },
+  statValueContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  collectionTitle: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 20,
+    marginBottom: 10,
   },
 });
