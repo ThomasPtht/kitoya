@@ -1,7 +1,13 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { router } from "expo-router";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
@@ -45,6 +51,25 @@ export default function DrawerLayout() {
                 </Text>
               </Pressable>
             </View>
+
+            <Pressable
+              onPress={() => {
+                props.navigation.closeDrawer();
+                router.push("/subscription");
+              }}
+              style={({ pressed }) => [
+                styles.upgradeContainer, // On applique le style du conteneur ici
+                { opacity: pressed ? 0.8 : 1 }, // L'effet visuel s'applique désormais sur TOUT le bloc au toucher
+              ]}
+            >
+              <Text style={styles.upgradeText}>Unlock Full Access</Text>
+
+              {/* Ce View remplace l'ancien Pressable interne pour garder le même design de bouton */}
+              <View style={styles.subButton}>
+                <Text style={styles.subText}>Level Up</Text>
+              </View>
+            </Pressable>
+
             {/* bottom zone of the drawer with the logout button */}
             <View style={styles.footer}>
               <Pressable
@@ -119,5 +144,46 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "500",
+  },
+  upgradeContainer: {
+    backgroundColor: "#1E1E1E",
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  upgradeText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  ctaButton: {
+    backgroundColor: "#05C785",
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  ctaText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 14,
+    textTransform: "uppercase",
+  },
+  subText: {
+    color: "#05C785",
+    fontWeight: "bold",
+    fontSize: 14,
+    textTransform: "uppercase",
+  },
+  subButton: {
+    backgroundColor: "#121212",
+    paddingVertical: 2,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

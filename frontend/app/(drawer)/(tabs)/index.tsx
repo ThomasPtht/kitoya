@@ -80,7 +80,7 @@ export default function TabOneScreen() {
             <View style={styles.statValueContainer}>
               <Ionicons
                 name="shirt-outline"
-                size={24}
+                size={32}
                 color={Colors.theme.primary}
               />
               <Text style={styles.statValue}>{count ?? 0}</Text>
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 15,
     marginTop: 20,
+    paddingHorizontal: 0,
   },
   statCard: {
     flex: 1,
@@ -220,9 +221,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.theme.primary,
     borderRadius: 16,
-    padding: 15,
+    padding: 20,
     alignItems: "center",
     justifyContent: "center",
+    maxWidth: "48%",
   },
   statLabel: {
     color: Colors.theme.textMuted,
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     color: Colors.theme.text,
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "bold",
   },
   statSubValue: {

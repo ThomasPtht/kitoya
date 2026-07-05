@@ -73,6 +73,13 @@ function RootLayoutNav() {
             animation: "slide_from_right", // Force the slide animation for the settings screen
           }}
         />
+        <Stack.Screen
+          name="subscription"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right", 
+          }}
+        />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
