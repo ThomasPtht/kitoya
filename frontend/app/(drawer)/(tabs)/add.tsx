@@ -483,7 +483,6 @@ export default function TabAddScreen() {
           style={styles.submitButton}
           onPress={handleSubmit(
             (data) => {
-              console.log("✅ Formulaire valide, envoi en cours...");
               onSubmit(data);
             },
             (errors) => {

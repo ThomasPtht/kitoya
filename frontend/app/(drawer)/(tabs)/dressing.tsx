@@ -4,24 +4,35 @@ import {
   ActivityIndicator,
   useWindowDimensions,
   TouchableOpacity,
+  View,
+  Text,
 } from "react-native";
-import { Text, View } from "@/components/Themed";
+
 import { useJerseys } from "@/hooks/useJerseyHook";
 import CardCollection from "@/components/CardCollection";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { JerseyData } from "@/services/jersey.service";
 import JerseyModalWrapper from "@/components/JerseyModalWrapper";
 import { Feather } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
 import { CustomSearchBar } from "@/components/CustomSearchBar";
 
+import { useFilterStore } from "@/stores/useFilterStore";
+import FilterModal from "@/components/FilterModal";
+
 export default function TabDressingScreen() {
-  // On récupère les maillots depuis ton hook
   const { data: jerseys, isLoading } = useJerseys();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJersey, setSelectedJersey] = useState<JerseyData | null>(null);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const { width } = useWindowDimensions();
-  const [search, setSearch] = useState("");
+
+  const {
+    search,
+    setSearch,
+    selectedClubs,
+    selectedSeasons,
+    selectedKitTypes,
+  } = useFilterStore();
 
   const updateSearch = (search: string) => {
     setSearch(search);
@@ -29,16 +40,28 @@ export default function TabDressingScreen() {
 
   const filteredJerseys = useMemo(() => {
     if (!jerseys) return [];
+    return jerseys.filter((j: JerseyData) => {
+      // Filter by search
+      const matchesSearch = j.club?.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      // Filter by club
+      const matchesClub =
+        selectedClubs.length === 0 ||
+        selectedClubs.includes(j.club?.name ?? "");
 
-    const searchLower = search.toLowerCase();
+      //Filter by season
+      const matchesSeason =
+        selectedSeasons.length === 0 ||
+        selectedSeasons.includes(j.season ?? "");
 
-    return jerseys.filter((jersey: JerseyData) => {
-      const clubName = jersey.club?.name?.toLowerCase() ?? "";
-      const season = jersey.season?.toLowerCase() ?? "";
-
-      return clubName.includes(searchLower) || season.includes(searchLower);
+      // Filter by kit type
+      const matchesKitType =
+        selectedKitTypes.length === 0 ||
+        selectedKitTypes.includes(j.type ?? "");
+      return matchesSearch && matchesClub && matchesSeason && matchesKitType;
     });
-  }, [jerseys, search]);
+  }, [jerseys, search, selectedClubs, selectedSeasons, selectedKitTypes]);
 
   return (
     <View style={styles.container}>
@@ -49,9 +72,20 @@ export default function TabDressingScreen() {
           <View style={{ flex: 1 }}>
             <CustomSearchBar value={search} onChangeText={updateSearch} />
           </View>
-          <TouchableOpacity onPress={() => console.log("Ouvrir filtre")}>
-            <Feather name="filter" size={24} color="white" />
+          <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
+            <Feather
+              name="filter"
+              size={24}
+              color={selectedClubs.length > 0 ? "#05C785" : "white"}
+            />
           </TouchableOpacity>
+
+          {/* La modale que tu affiches */}
+          <FilterModal
+            jerseys={jerseys || []}
+            visible={isFilterVisible}
+            onClose={() => setIsFilterVisible(false)}
+          />
         </View>
       </View>
 
@@ -103,6 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "900",
     marginBottom: 20,
+    color: "white",
   },
   listContent: {
     paddingBottom: 20,

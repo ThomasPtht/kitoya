@@ -85,11 +85,11 @@ export default function DrawerLayout() {
                   }
                 }}
               >
-                <Feather name="log-out" size={20} color="#ffffff" />
+                <Feather name="log-out" size={18} color="#ffffff" />
                 <Text
                   style={[
                     styles.logoutText,
-                    { textTransform: "uppercase", fontSize: 18 },
+                    { textTransform: "capitalize", fontSize: 16 },
                   ]}
                 >
                   Logout
