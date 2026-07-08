@@ -14,6 +14,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 
 export default function TabOneScreen() {
@@ -94,18 +95,26 @@ export default function TabOneScreen() {
               name="trophy-outline"
               size={24}
               color={Colors.theme.primary}
+              style={styles.iconStyle} // Ajoute un peu de marge si besoin
             />
+
             {isClubLoading ? (
               <ActivityIndicator size="small" color={Colors.theme.primary} />
             ) : (
               <>
+                {/* Affichage du logo si l'URL existe */}
+                {club?.logoUrl && (
+                  <Image
+                    source={{ uri: club.logoUrl }}
+                    style={styles.clubLogo}
+                    resizeMode="contain"
+                  />
+                )}
+
                 <Text style={styles.statValue}>{club?.name ?? "N/A"}</Text>
+
                 <Text style={styles.statSubValue}>
-                  {club?.count
-                    ? `${club.count} kit`
-                    : club?.count > 1
-                      ? `${club.count} kits`
-                      : "0 kit"}
+                  {club?.count === 1 ? "1 kit" : `${club?.count ?? 0} kits`}
                 </Text>
               </>
             )}
@@ -231,6 +240,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textTransform: "uppercase",
     marginBottom: 8,
+  },
+  clubLogo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginVertical: 10,
+    borderWidth: 2,
+    borderColor: Colors.theme.primary,
+    backgroundColor: "#fff",
+  },
+  iconStyle: {
+    marginVertical: 5,
   },
   statValue: {
     color: Colors.theme.text,

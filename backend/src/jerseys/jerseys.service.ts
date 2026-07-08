@@ -211,13 +211,14 @@ export class JerseysService {
     // 2. Maintenant on récupère le nom du club avec son ID
     const club = await this.prisma.club.findUnique({
       where: { id: result[0].clubId },
-      select: { id: true, name: true },
+      select: { id: true, name: true, logoUrl: true },
     });
 
     return {
       id: club?.id,
       name: club?.name || 'Unknown Club',
       count: result[0]._count.clubId,
+      logoUrl: club?.logoUrl || null,
     };
   }
 }
