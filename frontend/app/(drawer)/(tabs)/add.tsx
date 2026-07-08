@@ -14,11 +14,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Colors } from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { searchTeams } from "@/services/footballService";
 import { useCreateJersey, useSports } from "@/hooks/useJerseyHook";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
+import { searchClubs } from "@/services/football.service";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -109,7 +109,7 @@ export default function TabAddScreen() {
     timeoutRef.current = setTimeout(async () => {
       if (text.length >= 3) {
         setIsLoading(true);
-        const results = await searchTeams(text);
+        const results = await searchClubs(text, selectedSportId || "");
         setSuggestions(results);
         setIsDropdownVisible(results.length > 0);
         setIsLoading(false);

@@ -21,9 +21,9 @@ export class CreateJerseyDto {
   @IsString()
   clubName!: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  frontImageUrl?: string;
+  frontImageUrl!: string;
 
   @IsOptional()
   @IsString()

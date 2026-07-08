@@ -52,6 +52,7 @@ model Club {
   id       String     @id @default(uuid())
   sportId  String
   name     String
+  logoUrl  String? // logo url from Api-football
   sport    Sport      @relation(fields: [sportId], references: [id])
   jerseys  Jersey[]
   wishlist Wishlist[]

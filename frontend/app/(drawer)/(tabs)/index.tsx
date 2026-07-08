@@ -29,7 +29,7 @@ export default function TabOneScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <Text style={styles.title}>HOME</Text>
+        {/* <Text style={styles.title}>HOME</Text> */}
         <TouchableOpacity
           style={styles.ctaCard}
           activeOpacity={0.8}

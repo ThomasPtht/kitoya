@@ -27,7 +27,7 @@ export default function Header() {
           >
             <Feather name="user" size={20} color={Colors.light.text} />
           </Pressable>
-          <Feather name="bell" size={24} color="#FFFFFFBF" />
+          {/* <Feather name="bell" size={24} color="#FFFFFFBF" /> */}
         </View>
       </View>
     </View>

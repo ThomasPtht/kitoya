@@ -5,4 +5,6 @@ export const sportsService = {
     const { data } = await apiClient.get("/sports");
     return data;
   },
+
+  
 };

@@ -16,7 +16,7 @@ const CARD_WIDTH = SCREEN_WIDTH * 0.65;
 const CARD_HEIGHT = 440;
 const SIDE_OFFSET = SCREEN_WIDTH * 0.25;
 
-type PlanKey = "FREE" | "AMATEUR" | "PRO";
+type PlanKey = "FREE" | "ROOKIE" | "ELITE";
 
 interface PlanData {
   key: PlanKey;
@@ -30,7 +30,7 @@ interface PlanData {
 
 export default function SubscriptionScreen() {
   // By default, the AMATEUR plan is selected when the user first opens the subscription screen
-  const [activePlan, setActivePlan] = useState<PlanKey>("AMATEUR");
+  const [activePlan, setActivePlan] = useState<PlanKey>("ROOKIE");
 
   const plans: PlanData[] = [
     {
@@ -43,8 +43,8 @@ export default function SubscriptionScreen() {
       cta: "STAY FREE",
     },
     {
-      key: "AMATEUR",
-      name: "AMATEUR",
+      key: "ROOKIE",
+      name: "ROOKIE",
       price: "€2.99",
       period: "/ MONTH",
       subtext: "ANNUAL: €29.99",
@@ -57,8 +57,8 @@ export default function SubscriptionScreen() {
       cta: "START 7-DAY FREE TRIAL",
     },
     {
-      key: "PRO",
-      name: "PRO",
+      key: "ELITE",
+      name: "ELITE",
       price: "€9.99",
       period: "/ MONTH",
       subtext: "or €99.99 / YEAR",
@@ -68,7 +68,7 @@ export default function SubscriptionScreen() {
         "✓ Portfolio export",
         "✓ Priority support",
       ],
-      cta: "UPGRADE TO PRO",
+      cta: "UPGRADE TO ELITE",
     },
   ];
 
@@ -84,7 +84,7 @@ export default function SubscriptionScreen() {
     }
 
     // 2. Logic when the active card is AMATEUR (in the middle)
-    if (activePlan === "AMATEUR") {
+    if (activePlan === "ROOKIE") {
       if (key === "FREE") {
         return {
           zIndex: 1,
@@ -92,7 +92,7 @@ export default function SubscriptionScreen() {
           opacity: 0.5,
         };
       }
-      if (key === "PRO") {
+      if (key === "ELITE") {
         return {
           zIndex: 1,
           transform: [{ scale: 0.85 }, { translateX: SIDE_OFFSET }],
@@ -103,14 +103,14 @@ export default function SubscriptionScreen() {
 
     // 3. Logic when the active card is FREE (on the left)
     if (activePlan === "FREE") {
-      if (key === "AMATEUR") {
+      if (key === "ROOKIE") {
         return {
           zIndex: 2,
           transform: [{ scale: 0.85 }, { translateX: SIDE_OFFSET }],
           opacity: 0.6,
         };
       }
-      if (key === "PRO") {
+      if (key === "ELITE") {
         return {
           zIndex: 1,
           transform: [{ scale: 0.72 }, { translateX: SIDE_OFFSET * 1.8 }],
@@ -120,8 +120,8 @@ export default function SubscriptionScreen() {
     }
 
     // 4. Logic when the active card is PRO (on the right)
-    if (activePlan === "PRO") {
-      if (key === "AMATEUR") {
+    if (activePlan === "ELITE") {
+      if (key === "ROOKIE") {
         return {
           zIndex: 2,
           transform: [{ scale: 0.85 }, { translateX: -SIDE_OFFSET }],
@@ -161,11 +161,11 @@ export default function SubscriptionScreen() {
           const isSelected = plan.key === activePlan;
           const cardAnimatedStyle = getCardStyle(plan.key);
 
-          const isPro = plan.key === "PRO";
+          const isElite = plan.key === "ELITE";
           const isFree = plan.key === "FREE";
 
           let themeColor = "#05C785";
-          if (isPro) themeColor = "#D4AF37";
+          if (isElite) themeColor = "#D4AF37";
           if (isFree) themeColor = "#777777";
 
           return (
@@ -177,7 +177,7 @@ export default function SubscriptionScreen() {
                 cardAnimatedStyle,
                 { borderColor: isSelected ? themeColor : "#222222" },
                 isSelected &&
-                  (isPro
+                  (isElite
                     ? styles.glowPro
                     : isFree
                       ? styles.glowFree

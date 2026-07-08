@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UploadedFiles,
   UseGuards,
@@ -53,7 +54,7 @@ export class JerseysController {
     }
 
     console.log('--- DEBUG CONTROLLER ---');
-    console.log('Body reçu :', createJerseyDto); // Si ce log est vide, le DTO a déjà rejeté la requête
+    console.log('Body reçu :', createJerseyDto);
     console.log('Files reçus :', files ? Object.keys(files) : 'Aucun');
 
     if (!createJerseyDto.sportId) {
@@ -104,6 +105,20 @@ export class JerseysController {
       console.error('Error while creating jersey:', error);
       throw error;
     }
+  }
+
+  @Get('search-clubs')
+  @UseGuards(JwtAuthGuard)
+  async searchClubs(
+    @Query('query') query: string,
+    @Query('sportId') sportId: string,
+  ) {
+    console.log('DEBUG BACKEND - Query:', query);
+    console.log('DEBUG BACKEND - SportId:', sportId);
+    if (!query || !sportId) {
+      throw new BadRequestException('Query and sportId are required');
+    }
+    return await this.jerseysService.searchClubs(query, sportId);
   }
 
   @Get('total')
