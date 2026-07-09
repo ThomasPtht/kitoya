@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     gap: 10,
-    marginTop: 15,
+    marginTop: 10,
   },
   containerTotalKits: {
     borderWidth: 1,

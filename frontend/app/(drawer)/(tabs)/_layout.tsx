@@ -5,10 +5,18 @@ import React from "react";
 import Header from "@/components/Header";
 import { useColorScheme } from "@/components/useColorScheme";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
 
 const KITROOM_EMERALD = "#0DFFAA";
 const KITROOM_INACTIVE = "#6B7280";
+
+function AddButton() {
+  return (
+    <View style={styles.addButtonContainer}>
+      <AntDesign name="plus" size={30} color="#000" />
+    </View>
+  );
+}
 
 function StyledTabBarIcon({
   Component,
@@ -78,14 +86,17 @@ export default function TabLayout() {
         <Tabs.Screen
           name="add"
           options={{
-            title: "Add",
-            tabBarIcon: ({ color, focused }) => (
-              <StyledTabBarIcon
-                Component={AntDesign}
-                name="plus-circle"
-                color={color}
-                focused={focused}
-              />
+            title: "", // Vide le titre pour le look bouton seul
+            tabBarButton: (props) => (
+              <Pressable
+                {...props}
+                onPress={() => router.push("/add")}
+                style={styles.floatingButtonWrapper}
+              >
+                <View style={styles.addButtonContainer}>
+                  <AntDesign name="plus" size={28} color="#000" />
+                </View>
+              </Pressable>
             ),
           }}
         />
@@ -112,21 +123,32 @@ export default function TabLayout() {
 
 // --- STYLES ---
 const styles = StyleSheet.create({
-  iconBase: {
-    // align icon vertically with the label
-    marginBottom: -3,
-  },
+  iconBase: { marginBottom: -3 },
   iconNeonGlow: {
     shadowColor: KITROOM_EMERALD,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9,
-    shadowRadius: 10,
-
-    // For android we add an elevation to create a similar glow effect, but it's not as precise as iOS shadows
-    ...Platform.select({
-      android: {
-        elevation: 10,
-      },
-    }),
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  // Ces styles doivent être au même niveau que iconBase
+  floatingButtonWrapper: {
+    top: -20,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1, // Ajouté pour aider au centrage dans la TabBar
+  },
+  addButtonContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: KITROOM_EMERALD, // Bulle en couleur primary
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: KITROOM_EMERALD,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 4,
   },
 });

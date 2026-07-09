@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id        String     @id @default(uuid())
   username  String     @unique
@@ -15,9 +20,25 @@ model User {
   isPublic  Boolean    @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  role      Role       @default(USER)
   jerseys   Jersey[]
   wishlist  Wishlist[]
+  // subscription  Subscription? // 
 }
+
+// model Subscription {
+//   id                String    @id @default(uuid())
+//   userId            String    @unique
+//   user              User      @relation(fields: [userId], references: [id])
+
+//   // Le niveau d'accès (FREE, PRO, ELITE)
+//   status            String    // 'active', 'canceled', 'past_due'
+//   planType          String    // 'PRO_MONTHLY', 'PRO_YEARLY', 'ELITE_YEARLY' ...
+
+//   // Dates clés
+//   currentPeriodEnd  DateTime
+//   createdAt         DateTime  @default(now())
+// }
 
 model Jersey {
   id            String   @id @default(uuid())

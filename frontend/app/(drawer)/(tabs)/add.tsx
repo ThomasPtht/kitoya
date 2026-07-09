@@ -469,7 +469,7 @@ export default function TabAddScreen() {
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={[styles.input, { height: 100, textAlignVertical: "top" }]}
-              placeholder="Any details about the jersey..."
+              placeholder="Add your memories, stories, or any details about this jersey..."
               placeholderTextColor="#8E8E93"
               multiline
               onChangeText={onChange}
