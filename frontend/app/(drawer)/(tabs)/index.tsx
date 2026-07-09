@@ -90,29 +90,24 @@ export default function TabOneScreen() {
 
           {/* Carte Top Team */}
           <View style={styles.statCard}>
+            {/* Logo en arrière-plan */}
+            {club?.logoUrl && (
+              <Image
+                source={{ uri: club.logoUrl }}
+                style={styles.bgLogo}
+                resizeMode="contain"
+              />
+            )}
+
             <Text style={styles.statLabel}>Top Team</Text>
-            <Ionicons
-              name="trophy-outline"
-              size={24}
-              color={Colors.theme.primary}
-              style={styles.iconStyle} // Ajoute un peu de marge si besoin
-            />
 
             {isClubLoading ? (
               <ActivityIndicator size="small" color={Colors.theme.primary} />
             ) : (
               <>
-                {/* Affichage du logo si l'URL existe */}
-                {club?.logoUrl && (
-                  <Image
-                    source={{ uri: club.logoUrl }}
-                    style={styles.clubLogo}
-                    resizeMode="contain"
-                  />
-                )}
-
-                <Text style={styles.statValue}>{club?.name ?? "N/A"}</Text>
-
+                <Text style={[styles.statValue, { fontSize: 20 }]}>
+                  {club?.name ?? "N/A"}
+                </Text>
                 <Text style={styles.statSubValue}>
                   {club?.count === 1 ? "1 kit" : `${club?.count ?? 0} kits`}
                 </Text>
@@ -196,8 +191,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lastAdded: {
-    color: "#FFFFFF",
-    fontSize: 18,
+    color: "rgb(161 161 170)",
+    fontSize: 12,
     fontWeight: "600",
     marginTop: 30,
     marginBottom: 10,
@@ -230,10 +225,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.theme.primary,
     borderRadius: 16,
-    padding: 20,
+    padding: 12,
     alignItems: "center",
     justifyContent: "center",
     maxWidth: "48%",
+    height: 140,
+    overflow: "hidden",
   },
   statLabel: {
     color: Colors.theme.textMuted,
@@ -254,7 +251,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   statValue: {
-    color: Colors.theme.text,
+    color: "#fff",
     fontSize: 28,
     fontWeight: "bold",
   },
@@ -269,10 +266,17 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   collectionTitle: {
-    color: "#FFFFFF",
-    fontSize: 18,
+    color: "rgb(161 161 170)",
+    fontSize: 12,
     fontWeight: "600",
     marginTop: 20,
     marginBottom: 10,
+  },
+  bgLogo: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    opacity: 0.1,
+    // transform: [{ rotate: "-15deg" }],
   },
 });

@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +20,7 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import { searchClubs } from "@/services/football.service";
+import { AntDesign } from "@expo/vector-icons";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -214,22 +216,64 @@ export default function TabAddScreen() {
           <TouchableOpacity
             style={[
               styles.imagePickerHalf,
-              !frontImage && styles.imagePickerRequired,
+              frontImage && styles.imagePickerFilled,
             ]}
             onPress={handlePickFrontImage}
           >
-            <FontAwesome name="camera" size={20} color="#8E8E93" />
-            <Text style={styles.imagePickerText}>Front View *</Text>
+            {frontImage ? (
+              <View style={styles.imagePreviewContainer}>
+                <Image
+                  source={{ uri: frontImage }}
+                  style={styles.imagePreview}
+                />
+                <View style={styles.overlay}>
+                  <AntDesign
+                    name="check-circle"
+                    size={24}
+                    color={Colors.theme.primary}
+                  />
+                  <Text style={styles.changeText}>Change</Text>
+                </View>
+              </View>
+            ) : (
+              // État vide
+              <>
+                <FontAwesome name="camera" size={20} color="#8E8E93" />
+                <Text style={styles.imagePickerText}>Front View *</Text>
+              </>
+            )}
           </TouchableOpacity>
 
           {/* Back button */}
           <TouchableOpacity
-            style={styles.imagePickerHalf}
+            style={[
+              styles.imagePickerHalf,
+              backImage && styles.imagePickerFilled,
+            ]}
             onPress={handlePickBackImage}
           >
-            <FontAwesome name="camera" size={20} color="#8E8E93" />
-            <Text style={styles.imagePickerText}>Back View</Text>
-            <Text style={styles.imagePickerSubtext}>(Optional)</Text>
+            {backImage ? (
+              <View style={styles.imagePreviewContainer}>
+                <Image
+                  source={{ uri: backImage }}
+                  style={styles.imagePreview}
+                />
+                <View style={styles.overlay}>
+                  <AntDesign
+                    name="check-circle"
+                    size={24}
+                    color={Colors.theme.primary}
+                  />
+                  <Text style={styles.changeText}>Change</Text>
+                </View>
+              </View>
+            ) : (
+              <>
+                <FontAwesome name="camera" size={20} color="#8E8E93" />
+                <Text style={styles.imagePickerText}>Back View</Text>
+                <Text style={styles.imagePickerSubtext}>(Optional)</Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -650,5 +694,34 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     color: "#FFFFFF",
+  },
+  imagePickerFilled: {
+    borderWidth: 1,
+    borderColor: Colors.theme.primary,
+    padding: 0,
+  },
+  imagePreviewContainer: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
+    overflow: "hidden",
+    position: "relative",
+  },
+  imagePreview: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  changeText: {
+    color: "#FFF",
+    fontSize: 10,
+    marginTop: 4,
+    fontWeight: "bold",
   },
 });
