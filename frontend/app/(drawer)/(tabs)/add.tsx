@@ -21,6 +21,8 @@ import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import { searchClubs } from "@/services/football.service";
 import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -54,6 +56,23 @@ export default function TabAddScreen() {
   const [selectedSportId, setSelectedSportId] = useState<string>("");
 
   const { data: sports, isLoading } = useSports();
+
+  useFocusEffect(
+    useCallback(() => {
+      // this function runs when we enter the screen
+
+      return () => {
+        // this function runs when we leave the screen
+        reset(); // reset the form when leaving the screen
+        setFrontImage("");
+        setBackImage(null);
+        setSelectedClubId("");
+        setSelectedSportId("");
+        setSuggestions([]);
+        setIsDropdownVisible(false);
+      };
+    }, []),
+  );
 
   // React Hook Form setup
   const {
