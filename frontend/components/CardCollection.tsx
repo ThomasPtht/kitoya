@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   content: {
-    padding: 12,
+    padding: 8,
     backgroundColor: "#151515", // Ensure the content area has a solid background
   },
   imageFallbackText: {

@@ -38,9 +38,9 @@ export default function TabOneScreen() {
         >
           {/* Left part : texts */}
           <View style={styles.ctaTextContainer}>
-            <Text style={styles.ctaTitle}>GOT A NEW KIT?</Text>
+            <Text style={styles.ctaTitle}>GOT A NEW KIT ?</Text>
             <Text style={styles.ctaSubtitle}>
-              Scan or add a new jersey to your Locker.
+              Add a new jersey to your Locker.
             </Text>
           </View>
 
@@ -73,6 +73,15 @@ export default function TabOneScreen() {
             ))}
           </View>
         )}
+
+        <View style={styles.containerTitleKit}>
+          <Ionicons
+            name="sparkles-outline"
+            size={14}
+            color={Colors.theme.primary}
+          />
+          <Text style={styles.kitDay}>KIT OF THE DAY</Text>
+        </View>
 
         <Text style={styles.collectionTitle}>YOUR COLLECTION AT A GLANCE</Text>
         <View style={styles.containerStats}>
@@ -156,6 +165,7 @@ const styles = StyleSheet.create({
   },
   ctaTextContainer: {
     flex: 1,
+    padding: 10,
     marginRight: 15,
   },
   ctaTitle: {
@@ -229,7 +239,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     maxWidth: "48%",
-    height: 140,
+    height: 120,
     overflow: "hidden",
   },
   statLabel: {
@@ -239,8 +249,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   clubLogo: {
-    width: 60,
-    height: 60,
+    width: 40,
+    height: 40,
     borderRadius: 30,
     marginVertical: 10,
     borderWidth: 2,
@@ -274,9 +284,20 @@ const styles = StyleSheet.create({
   },
   bgLogo: {
     position: "absolute",
-    width: 120,
-    height: 120,
+    width: 110,
+    height: 110,
     opacity: 0.1,
     // transform: [{ rotate: "-15deg" }],
+  },
+  kitDay: {
+    color: Colors.theme.primary,
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  containerTitleKit: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginVertical: 10,
   },
 });
