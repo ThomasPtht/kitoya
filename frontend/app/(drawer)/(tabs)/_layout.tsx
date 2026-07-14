@@ -5,7 +5,7 @@ import React from "react";
 import Header from "@/components/Header";
 import { useColorScheme } from "@/components/useColorScheme";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 const KITROOM_EMERALD = "#0DFFAA";
 const KITROOM_INACTIVE = "#6B7280";

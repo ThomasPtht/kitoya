@@ -30,13 +30,15 @@ const jerseySchema = z.object({
   season: z.string().min(4, { message: "Season is required (e.g., 2004)" }),
   size: z.string().min(1, { message: "Please select a size" }),
   type: z.string().min(1, { message: "Please select a kit type" }),
+  purchasePrice: z.number().optional().nullable(),
+  isOfficial: z.boolean(),
   playerName: z.string().optional(),
   number: z.string().optional(),
   frontImageUri: z.string().min(1, { message: "Front image is required" }),
   backImageUri: z.string().optional().nullable(),
   description: z.string().optional(),
-  version: z.string().optional(),
-  condition: z.string().optional(),
+  version: z.string().min(1, { message: "Please select a version" }),
+  condition: z.string().min(1, { message: "Please select a condition" }),
 });
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
@@ -514,13 +516,26 @@ export default function TabAddScreen() {
           control={control}
           name="version"
           render={({ field: { onChange, value } }) => (
-            <TextInput
-              style={styles.input}
-              placeholder="e.g., Replica, Authentic, Player Issue"
-              placeholderTextColor="#8E8E93"
-              onChangeText={onChange}
-              value={value}
-            />
+
+            <View style={styles.chipRow}>
+              {TYPES.map((t) => (
+                <TouchableOpacity
+                  key={t}
+                  style={[styles.chip, value === t && styles.chipSelected]}
+                  onPress={() => onChange(t)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      value === t && styles.chipTextSelected,
+                    ]}
+                  >
+                    {t}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+           
           )}
         />
 
