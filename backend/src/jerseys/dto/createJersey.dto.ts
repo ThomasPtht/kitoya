@@ -1,3 +1,4 @@
+import { JerseyType, KitCondition, KitVersion } from '@prisma/client';
 import {
   IsString,
   IsNotEmpty,
@@ -6,6 +7,7 @@ import {
   IsUUID,
   Min,
   Max,
+  IsEnum,
 } from 'class-validator';
 
 export class CreateJerseyDto {
@@ -45,7 +47,8 @@ export class CreateJerseyDto {
 
   @IsOptional()
   @IsString()
-  type?: string;
+  @IsEnum(JerseyType)
+  type!: JerseyType;
 
   @IsOptional()
   @IsString()
@@ -53,13 +56,17 @@ export class CreateJerseyDto {
 
   @IsOptional()
   @IsString()
-  condition?: string;
+  @IsEnum(KitCondition)
+  condition!: KitCondition;
 
   @IsOptional()
   @IsString()
-  version?: string;
+  @IsEnum(KitVersion)
+  version!: KitVersion;
 
   @IsOptional()
   @IsString()
   description?: string;
+
+  isOfficial?: boolean;
 }

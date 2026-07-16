@@ -31,7 +31,7 @@ const jerseySchema = z.object({
   size: z.string().min(1, { message: "Please select a size" }),
   type: z.string().min(1, { message: "Please select a kit type" }),
   purchasePrice: z.number().optional().nullable(),
-  isOfficial: z.boolean(),
+  isOfficial: z.boolean().optional(),
   playerName: z.string().optional(),
   number: z.string().optional(),
   frontImageUri: z.string().min(1, { message: "Front image is required" }),
@@ -43,8 +43,50 @@ const jerseySchema = z.object({
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
 
+const SPORTS = [
+  "Football",
+  "Basketball",
+  "Baseball",
+  "Hockey",
+  "Foot US",
+  "Rugby",
+];
 const SIZES = ["S", "M", "L", "XL", "XXL"];
-const TYPES = ["Home", "Away", "Third", "Special"];
+export const JERSEY_TYPES_MAP: Record<string, string> = {
+  HOME: "Home",
+  AWAY: "Away",
+  THIRD: "Third",
+  FOURTH: "Fourth",
+  SPECIAL: "Special",
+  GOALKEEPER: "Goalkeeper",
+  TRAINING: "Training",
+};
+
+export const KIT_CONDITIONS_MAP: Record<string, string> = {
+  NEW_WITH_TAGS: "New with Tags",
+  EXCELLENT: "Excellent",
+  VERY_GOOD: "Very Good",
+  GOOD: "Good",
+  FAIR: "Fair",
+};
+
+export const KIT_VERSIONS_MAP: Record<string, string> = {
+  REPLICA: "Replica",
+  AUTHENTIC: "Authentic",
+  PLAYER_ISSUE: "Player Issue",
+  MATCH_WORN: "Match Worn",
+};
+
+// On génère les listes automatiquement à partir des clés du mapping
+const JERSEY_TYPES = Object.keys(JERSEY_TYPES_MAP) as Array<
+  keyof typeof JERSEY_TYPES_MAP
+>;
+const KIT_CONDITIONS = Object.keys(KIT_CONDITIONS_MAP) as Array<
+  keyof typeof KIT_CONDITIONS_MAP
+>;
+const KIT_VERSIONS = Object.keys(KIT_VERSIONS_MAP) as Array<
+  keyof typeof KIT_VERSIONS_MAP
+>;
 
 export default function TabAddScreen() {
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -58,6 +100,7 @@ export default function TabAddScreen() {
   const [selectedSportId, setSelectedSportId] = useState<string>("");
 
   const { data: sports, isLoading } = useSports();
+  console.log("DEBUG SPORTS:", { sports, isLoading });
 
   useFocusEffect(
     useCallback(() => {
@@ -436,7 +479,7 @@ export default function TabAddScreen() {
           name="type"
           render={({ field: { onChange, value } }) => (
             <View style={styles.chipRow}>
-              {TYPES.map((t) => (
+              {JERSEY_TYPES.map((t) => (
                 <TouchableOpacity
                   key={t}
                   style={[styles.chip, value === t && styles.chipSelected]}
@@ -448,7 +491,7 @@ export default function TabAddScreen() {
                       value === t && styles.chipTextSelected,
                     ]}
                   >
-                    {t}
+                    {JERSEY_TYPES_MAP[t]}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -500,25 +543,8 @@ export default function TabAddScreen() {
           control={control}
           name="condition"
           render={({ field: { onChange, value } }) => (
-            <TextInput
-              style={styles.input}
-              placeholder="e.g., New with tags, Used, Good"
-              placeholderTextColor="#8E8E93"
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-
-        {/* Version */}
-        <Text style={styles.label}>Version</Text>
-        <Controller
-          control={control}
-          name="version"
-          render={({ field: { onChange, value } }) => (
-
             <View style={styles.chipRow}>
-              {TYPES.map((t) => (
+              {KIT_CONDITIONS.map((t) => (
                 <TouchableOpacity
                   key={t}
                   style={[styles.chip, value === t && styles.chipSelected]}
@@ -530,12 +556,41 @@ export default function TabAddScreen() {
                       value === t && styles.chipTextSelected,
                     ]}
                   >
-                    {t}
+                    {KIT_CONDITIONS_MAP[t]}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
-           
+          )}
+        />
+        {/* {errors.condition && (
+          <Text style={styles.errorText}>{errors.condition.message}</Text>
+        )} */}
+
+        {/* Version */}
+        <Text style={styles.label}>Version</Text>
+        <Controller
+          control={control}
+          name="version"
+          render={({ field: { onChange, value } }) => (
+            <View style={styles.chipRow}>
+              {KIT_VERSIONS.map((t) => (
+                <TouchableOpacity
+                  key={t}
+                  style={[styles.chip, value === t && styles.chipSelected]}
+                  onPress={() => onChange(t)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      value === t && styles.chipTextSelected,
+                    ]}
+                  >
+                    {KIT_VERSIONS_MAP[t]}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           )}
         />
 
