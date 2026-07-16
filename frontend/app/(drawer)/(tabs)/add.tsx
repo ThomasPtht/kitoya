@@ -253,9 +253,6 @@ export default function TabAddScreen() {
       });
       console.error("Error creating jersey:", error);
     }
-
-    createJersey(formData);
-    router.navigate("/(drawer)/(tabs)/dressing");
   };
 
   // Trouvez l'ID du sport "Football" automatiquement
@@ -613,7 +610,11 @@ export default function TabAddScreen() {
 
         {/* Submit button */}
         <TouchableOpacity
-          style={styles.submitButton}
+          style={[
+            styles.submitButton,
+            isPending && styles.submitButtonDisabled,
+          ]}
+          disabled={isPending}
           onPress={handleSubmit(
             (data) => {
               onSubmit(data);
@@ -747,6 +748,10 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 16,
     fontWeight: "700",
+  },
+  submitButtonDisabled: {
+    backgroundColor: "#A0CFFF",
+    opacity: 0.6,
   },
   imagePickerRow: {
     flexDirection: "row",

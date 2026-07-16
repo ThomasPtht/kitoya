@@ -36,34 +36,46 @@ export class JerseysService {
     dto: CreateJerseyDto,
     clubData: { name: string; sportId: string },
   ) {
-    //search or create the club in the database
-    let club = await this.prisma.club.findFirst({
+    //search for the club in the database first
+    let club = await this.prisma.club.findUnique({
       where: {
-        sportId: clubData.sportId,
-        name: clubData.name,
+        sportId_name: {
+          sportId: clubData.sportId,
+          name: clubData.name,
+        },
       },
     });
 
-    if (!club || !club.logoUrl) {
-      // If the club doesn't exist or doesn't have a logo, search for it using the FootballService
-      console.log(`Club ${clubData.name} inconnu. Appel API en cours...`);
+    // if the club doesn't exist, search for it using the FootballService and create it in the database
+    if (!club) {
+      console.log(`Club ${clubData.name} inconnu. Recherche API...`);
+      const teams = await this.FootballService.searchTeams(clubData.name);
+
+      // search for the team with the exact name (case-insensitive), if not found, take the first one
+      const targetTeam =
+        teams.find(
+          (t) => t.name.toLowerCase() === clubData.name.toLowerCase(),
+        ) || teams[0];
+
+      if (!targetTeam) {
+        throw new BadRequestException(
+          "Impossible de trouver le club via l'API.",
+        );
+      }
+
+      club = await this.prisma.club.create({
+        data: {
+          name: targetTeam.name,
+          sportId: clubData.sportId,
+          logoUrl: targetTeam.logo,
+        },
+      });
+    }
+    // Update the club's logo if it's missing
+    else if (!club.logoUrl) {
       const teams = await this.FootballService.searchTeams(clubData.name);
       const foundLogo = teams[0]?.logo;
-
-      if (!club) {
-        // create the club if it doesn't exist
-        club = await this.prisma.club.create({
-          data: {
-            name: clubData.name,
-            sportId: clubData.sportId,
-            logoUrl: foundLogo,
-          },
-        });
-      } else if (foundLogo) {
-        // Update the club with the found logo if it exists but without a logo
-        console.log(
-          `Logo trouvé pour le club ${clubData.name}. Mise à jour en cours...`,
-        );
+      if (foundLogo) {
         club = await this.prisma.club.update({
           where: { id: club.id },
           data: { logoUrl: foundLogo },
@@ -71,8 +83,7 @@ export class JerseysService {
       }
     }
 
-    // Prepare and create the jersey data
-
+    // Prepare the jersey data for creation
     const jerseyData = {
       userId,
       sportId: clubData.sportId,
@@ -89,7 +100,6 @@ export class JerseysService {
       description: dto.description || null,
     };
 
-    // Create the jersey in the database and include the club and sport relations
     const createdJersey = await this.prisma.jersey.create({
       data: jerseyData,
       include: { club: true, sport: true },
@@ -119,27 +129,6 @@ export class JerseysService {
     // If no clubs were found in the database, search using the FootballService
     const apiClubs = await this.FootballService.searchTeams(query);
 
-    // Save the found clubs to the database for future searches
-    if (apiClubs && apiClubs.length > 0) {
-      for (const team of apiClubs) {
-        await this.prisma.club.upsert({
-          where: {
-            sportId_name: {
-              sportId: sportId,
-              name: team.name,
-            },
-          },
-          update: {
-            logoUrl: team.logo,
-          },
-          create: {
-            name: team.name,
-            sportId: sportId,
-            logoUrl: team.logo,
-          },
-        });
-      }
-    }
     return apiClubs;
   }
 
