@@ -17,6 +17,8 @@ export const useCreateJersey = () => {
     mutationFn: (data: FormData) => jerseyService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
+      queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
+      queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
     },
     onError: (error) => {
       console.error("Error creating jersey:", error);
@@ -42,7 +44,7 @@ export const useMostRepresentedClub = () => {
       return club;
     },
   });
-}
+};
 
 export const useSports = () => {
   return useQuery({
