@@ -109,13 +109,31 @@ export default function TabOneScreen() {
             )}
 
             <Text style={styles.statLabel}>Top Team</Text>
+            <TouchableOpacity
+              onPress={() => router.push("/add")}
+              style={{ alignItems: "center" }}
+            >
 
             {isClubLoading ? (
               <ActivityIndicator size="small" color={Colors.theme.primary} />
+            ) : count === 0 ? (
+              // Version cliquable pour inciter à l'action
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      fontSize: 14,
+                      color: Colors.theme.primary,
+                    },
+                  ]}
+                >
+                  Add your first kit
+                </Text>
+              </TouchableOpacity>
             ) : (
               <>
                 <Text style={[styles.statValue, { fontSize: 20 }]}>
-                  {club?.name ?? "N/A"}
+                  {club?.name}
                 </Text>
                 <Text style={styles.statSubValue}>
                   {club?.count === 1 ? "1 kit" : `${club?.count ?? 0} kits`}
