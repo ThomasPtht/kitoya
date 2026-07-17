@@ -29,6 +29,8 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
     mutationFn: (id: string) => apiClient.delete(`/jerseys/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
+      queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
+      queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
       onClose(); // Close the modal after deletion
       Toast.show({
         type: "success",
@@ -139,7 +141,10 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#121212" },
+  container: {
+    flex: 1,
+    backgroundColor: "#121212",
+  },
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -157,16 +162,33 @@ const styles = StyleSheet.create({
   image: { width: "100%", height: 300 },
   placeholder: { color: "#8E8E93", paddingVertical: 120 },
   infoSection: { backgroundColor: "#1E1E1E", borderRadius: 20, padding: 20 },
-  clubName: { fontSize: 28, fontWeight: "bold", color: "#FFFFFF" },
+  clubName: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textTransform: "capitalize",
+  },
   season: { fontSize: 18, color: "#8E8E93", marginBottom: 15 },
   divider: { height: 1, backgroundColor: "#2C2C2E", marginBottom: 15 },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginBottom: 10,
+    alignItems: "center",
   },
-  label: { color: "#8E8E93", fontSize: 16 },
-  value: { color: "#FFFFFF", fontSize: 16, fontWeight: "600" },
+  label: {
+    color: "#8E8E93",
+    fontSize: 16,
+    textTransform: "capitalize",
+    width: 120,
+  },
+  value: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    textTransform: "capitalize",
+    flex: 1,
+  },
   deleteButton: {
     marginTop: 30,
     padding: 16,

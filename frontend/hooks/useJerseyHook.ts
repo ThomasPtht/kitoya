@@ -19,6 +19,7 @@ export const useCreateJersey = () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
       queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
       queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
+      
     },
     onError: (error) => {
       console.error("Error creating jersey:", error);

@@ -1,7 +1,7 @@
 import Colors from "@/constants/Colors";
 import { Feather } from "@expo/vector-icons";
 import { DrawerActions } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -15,7 +15,9 @@ export default function Header() {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.title}>KITROOM</Text>
+        <Text onPress={() => router.push("/")} style={styles.title}>
+          KITROOM
+        </Text>
         <View style={styles.actions}>
           <Pressable
             style={styles.avatar}
