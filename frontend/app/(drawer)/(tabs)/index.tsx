@@ -109,15 +109,14 @@ export default function TabOneScreen() {
             )}
 
             <Text style={styles.statLabel}>Top Team</Text>
-            <TouchableOpacity
-              onPress={() => router.push("/add")}
-              style={{ alignItems: "center" }}
-            >
 
             {isClubLoading ? (
               <ActivityIndicator size="small" color={Colors.theme.primary} />
             ) : count === 0 ? (
-              // Version cliquable pour inciter à l'action
+              <TouchableOpacity
+                onPress={() => router.push("/add")}
+                style={{ alignItems: "center" }}
+              >
                 <Text
                   style={[
                     styles.statValue,

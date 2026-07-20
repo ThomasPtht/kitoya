@@ -3,7 +3,6 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { apiClient } from "./api";
 
-
 export const authService = {
   register: async (username: string, email: string, password: string) => {
     try {
@@ -63,10 +62,28 @@ export const authService = {
     return await SecureStore.getItemAsync("user_token");
   },
 
+  getUserInfo: async (): Promise<any> => {
+    const response = await apiClient.get("/auth/me");
+    return response.data;
+  },
+
   /**
    * Delete the token
    */
   logout: async (): Promise<void> => {
     await SecureStore.deleteItemAsync("user_token");
+  },
+
+  deleteAccount: async (): Promise<{ message: string }> => {
+    try {
+      const response = await apiClient.delete("/auth/delete-account");
+      return response.data;
+    } catch (error: any) {
+      // Extract the error message from the response if available, otherwise use a generic error message
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred during account deletion";
+      throw new Error(errorMessage);
+    }
   },
 };

@@ -29,8 +29,14 @@ export class AuthController {
 
   // useGuard to protect the route and require a valid JWT token to access it
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('me')
   getProfile(@Req() req: JwtRequest) {
     return this.authService.getProfile(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('delete-account')
+  deleteAccount(@Req() req: JwtRequest) {
+    return this.authService.deleteAccount(req.user.userId);
   }
 }
