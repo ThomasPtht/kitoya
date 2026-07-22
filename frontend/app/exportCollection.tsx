@@ -12,10 +12,11 @@ import {
   Alert,
 } from "react-native";
 import { useState } from "react";
-import { useJerseyCount } from "@/hooks/useJerseyHook";
+import { useJerseyCount, useJerseys } from "@/hooks/useJerseyHook";
 import { jerseyService } from "@/services/jersey.service";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { exportCollectionToPdf } from "../lib/pdf-export";
 
 type ExportFormat = "csv" | "json" | "pdf";
 
@@ -27,20 +28,22 @@ export default function ExportCollectionScreen() {
   const [includePurchaseHistory, setIncludePurchaseHistory] = useState(true);
 
   const { data: count } = useJerseyCount();
+  const { data: jerseyData = [] } = useJerseys();
 
   const handleExport = async () => {
-    if (selectedFormat === "pdf") {
-      Alert.alert(
-        "Pro Feature",
-        "Exporting as PDF is a Pro feature. Please upgrade to Pro to access this feature.",
-      );
+    if (!jerseyData || jerseyData.length === 0) {
+      Alert.alert("Error", "No data available to export");
       return;
     }
 
     try {
       setLoading(true);
 
-      const jerseyData = await jerseyService.exportCollection();
+      // if the selected format is PDF, call the exportCollectionToPdf function
+      if (selectedFormat === "pdf") {
+        await exportCollectionToPdf(jerseyData);
+        return;
+      }
 
       let fileContent = "";
       let fileName = "";
