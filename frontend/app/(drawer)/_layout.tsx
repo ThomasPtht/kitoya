@@ -8,7 +8,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -69,6 +69,26 @@ export default function DrawerLayout() {
                   ]}
                 >
                   Export collection
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.logoutButton,
+                  { paddingHorizontal: 20, marginTop: 10 },
+                ]}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/help");
+                }}
+              >
+                <AntDesign name="question-circle" size={18} color="#ffffff" />
+                <Text
+                  style={[
+                    styles.logoutText,
+                    { textTransform: "capitalize", fontSize: 18 },
+                  ]}
+                >
+                  Help & feedback
                 </Text>
               </Pressable>
             </View>

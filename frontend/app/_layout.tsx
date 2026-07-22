@@ -81,6 +81,14 @@ function RootLayoutNav() {
           }}
         />
         <Stack.Screen
+          name="help"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+
+        <Stack.Screen
           name="subscription"
           options={{
             headerShown: false,
