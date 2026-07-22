@@ -111,7 +111,7 @@ export default function DrawerLayout() {
                   router.push("/settings");
                 }}
               >
-                <Feather name="settings" size={18} color="#ffffff" />
+                <Feather name="settings" size={18} color="#9E9E9E" />
                 <Text style={styles.navText}>Settings</Text>
               </Pressable>
 
@@ -122,7 +122,7 @@ export default function DrawerLayout() {
                   router.push("/exportCollection");
                 }}
               >
-                <Feather name="download" size={18} color="#ffffff" />
+                <Feather name="download" size={18} color="#9E9E9E" />
                 <Text style={styles.navText}>Export collection</Text>
               </Pressable>
 
@@ -133,8 +133,19 @@ export default function DrawerLayout() {
                   router.push("/help");
                 }}
               >
-                <AntDesign name="question-circle" size={18} color="#ffffff" />
+                <AntDesign name="question-circle" size={18} color="#9E9E9E" />
                 <Text style={styles.navText}>Help & feedback</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.navItem}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/");
+                }}
+              >
+                <Feather name="user-plus" size={18} color="#9E9E9E" />
+                <Text style={styles.navText}>Invite friends</Text>
               </Pressable>
             </View>
 
@@ -166,7 +177,7 @@ export default function DrawerLayout() {
             width: 290,
           },
           drawerActiveTintColor: "#05C785",
-          drawerInactiveTintColor: "#ffffff",
+          drawerInactiveTintColor: "#9E9E9E",
           drawerLabelStyle: {
             fontSize: 16,
             fontWeight: "500",
@@ -187,7 +198,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "#121212",
     paddingHorizontal: 12,
-    paddingTop: 65, // Augmenté à 65 pour passer largement sous la status bar de l'iPhone (Dynamic Island / Notch)
+    paddingTop: 65,
   },
   userProfileSection: {
     paddingVertical: 12,
@@ -339,5 +350,23 @@ const styles = StyleSheet.create({
     color: "#FF4D4D",
     fontSize: 16,
     fontWeight: "500",
+  },
+  inviteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#161E1A",
+    borderWidth: 1,
+    borderColor: "#05C785",
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    gap: 10,
+    marginTop: 10,
+  },
+  inviteText: {
+    color: "#05C785",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
