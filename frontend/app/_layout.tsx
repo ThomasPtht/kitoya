@@ -51,7 +51,7 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RootLayoutNav />;
+      <RootLayoutNav />
       <Toast />
     </QueryClientProvider>
   );
@@ -74,10 +74,17 @@ function RootLayoutNav() {
           }}
         />
         <Stack.Screen
+          name="exportCollection"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen
           name="subscription"
           options={{
             headerShown: false,
-            animation: "slide_from_right", 
+            animation: "slide_from_right",
           }}
         />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />

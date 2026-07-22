@@ -142,13 +142,28 @@ export class JerseysController {
   }
 
   @Get()
-  findAll() {
-    return this.jerseysService.getJerseys();
+  @UseGuards(JwtAuthGuard)
+  async findAllByUser(@Request() req) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user id is missing');
+    }
+    return this.jerseysService.getJerseysByUser(userId);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async deleteJersey(@Param('id') id: string) {
     return this.jerseysService.deleteJersey(id);
+  }
+
+  @Get('export')
+  @UseGuards(JwtAuthGuard)
+  async exportCollection(@Request() req) {
+    const userId = req.user.userId;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user ID is required');
+    }
+    return await this.jerseysService.getJerseysByUser(userId);
   }
 }

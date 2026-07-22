@@ -1,12 +1,16 @@
 import {
   BadRequestException,
+  Get,
   Injectable,
   NotFoundException,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateJerseyDto } from './dto/createJersey.dto';
 import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Injectable()
 export class JerseysService {
@@ -132,9 +136,11 @@ export class JerseysService {
     return apiClubs;
   }
 
-  async getJerseys() {
+  async getJerseysByUser(userId: string) {
     const jerseys = await this.prisma.jersey.findMany({
-      include: { club: true },
+      where: { userId },
+      include: { club: true, sport: true },
+      orderBy: { createdAt: 'desc' },
     });
 
     return Promise.all(jerseys.map((jersey) => this.signJersey(jersey)));

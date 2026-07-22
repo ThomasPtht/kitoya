@@ -49,4 +49,9 @@ export const jerseyService = {
     console.log("Most represented club:", data);
     return data;
   },
+
+  exportCollection: async () => {
+    const { data } = await apiClient.get("/jerseys/export");
+    return data;
+  },
 };

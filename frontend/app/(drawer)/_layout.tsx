@@ -28,7 +28,6 @@ export default function DrawerLayout() {
           >
             <View style={{ flex: 1 }}>
               <DrawerItemList {...props} />
-
               {/* settings button on top of the drawer items */}
               <Pressable
                 style={[
@@ -48,6 +47,28 @@ export default function DrawerLayout() {
                   ]}
                 >
                   Settings
+                </Text>
+              </Pressable>
+
+              {/* export button  */}
+              <Pressable
+                style={[
+                  styles.logoutButton,
+                  { paddingHorizontal: 20, marginTop: 10 },
+                ]}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/exportCollection");
+                }}
+              >
+                <Feather name="download" size={18} color="#ffffff" />
+                <Text
+                  style={[
+                    styles.logoutText,
+                    { textTransform: "capitalize", fontSize: 18 },
+                  ]}
+                >
+                  Export collection
                 </Text>
               </Pressable>
             </View>
