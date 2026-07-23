@@ -57,7 +57,7 @@ model Subscription {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   status   String // 'active', 'canceled', 'past_due'
-  planType String // 'PRO_MONTHLY', 'PRO_YEARLY', 'ELITE_YEARLY' ...
+  planType String // 'PRO_MONTHLY', 'PRO_YEARLY', FREE
 
   // key dates for subscription management
   currentPeriodStart DateTime

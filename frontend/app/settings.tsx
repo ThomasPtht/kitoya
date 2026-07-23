@@ -86,6 +86,20 @@ export default function SettingsScreen() {
                 {userInfo?.email || "user@kitroom.app"}
               </Text>
             </View>
+            <View style={styles.separator} />
+            <View style={styles.row}>
+              <View style={styles.rowLeft}>
+                <Feather name="award" size={18} color="#05C785" />
+                <Text style={styles.label}>Subscription Plan</Text>
+              </View>
+              <View style={styles.planBadge}>
+                <Text style={styles.planBadgeText}>
+                  {userInfo?.planType
+                    ? userInfo.planType.toUpperCase()
+                    : "FREE"}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -174,7 +188,7 @@ export default function SettingsScreen() {
               onPress={handleDeleteAccount}
             >
               <View style={styles.rowLeft}>
-                <Feather name="trash-2" size={18} color="#FF4D4D" />
+                <Feather name="trash-2" size={18} color="#A66363" />
                 <Text style={styles.deleteText}>Delete Account</Text>
               </View>
               <Feather name="chevron-right" size={16} color="#555" />
@@ -194,7 +208,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
+    backgroundColor: "#050806",
   },
   header: {
     flexDirection: "row",
@@ -202,13 +216,15 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 20,
-    backgroundColor: "#121212",
+    backgroundColor: "#050806",
   },
   backButton: {
     marginRight: 15,
-    backgroundColor: "#1E1E1E",
+    backgroundColor: "#151515",
     padding: 10,
     borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
   },
   headerTitle: {
     fontSize: 22,
@@ -231,9 +247,9 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   card: {
-    backgroundColor: "#161616",
+    backgroundColor: "#151515",
     borderWidth: 1,
-    borderColor: "#1E2B24",
+    borderColor: "rgba(127, 206, 175, 0.2)",
     borderRadius: 16,
     paddingHorizontal: 16,
   },
@@ -258,6 +274,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  planBadge: {
+    backgroundColor: "rgba(5, 199, 133, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(5, 199, 133, 0.3)",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+  },
+  planBadgeText: {
+    color: "#05C785",
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 0.5,
+  },
   separator: {
     height: 1,
     backgroundColor: "#222222",
@@ -274,9 +304,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   deleteText: {
-    color: "#FF4D4D",
+    color: "#A66363",
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: "500",
   },
   footerInfo: {
     alignItems: "center",
