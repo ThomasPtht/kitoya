@@ -25,13 +25,6 @@ export default function JerseyModalWrapper({
       onRequestClose={onClose}
     >
       <View style={styles.container}>
-        <View style={styles.modalHeader}>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.closeText}>X</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* On injecte votre fichier actuel ici */}
         <View style={styles.content}>
           <JerseyDetail jersey={jersey} onClose={onClose} />
         </View>

@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Switch,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -104,11 +105,8 @@ export default function TabAddScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      // this function runs when we enter the screen
-
       return () => {
-        // this function runs when we leave the screen
-        reset(); // reset the form when leaving the screen
+        reset();
         setFrontImage("");
         setBackImage(null);
         setSelectedClubId("");
@@ -133,11 +131,15 @@ export default function TabAddScreen() {
       season: "",
       size: "",
       type: "",
+      purchasePrice: null,
+      isOfficial: true,
       playerName: "",
       number: undefined,
       frontImageUri: "",
       backImageUri: null,
       description: "",
+      condition: "",
+      version: "",
     },
   });
 
@@ -165,13 +167,14 @@ export default function TabAddScreen() {
     });
 
     if (!result.canceled) {
-      setBackImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setBackImage(uri);
+      setValue("backImageUri", uri, { shouldValidate: true });
     }
   };
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleSearch = async (text: string) => {
-    // if user types again before the timeout, clear the previous timeout
     timeoutRef.current = setTimeout(async () => {
       if (text.length >= 3) {
         setIsLoading(true);
@@ -180,21 +183,18 @@ export default function TabAddScreen() {
         setIsDropdownVisible(results.length > 0);
         setIsLoading(false);
       }
-    }, 500); // Wait for 500ms after the user stops typing before making the API call
+    }, 500);
   };
 
-  // hook initialization
   const { mutate: createJersey, isPending } = useCreateJersey();
 
   // Form Submission handler
   const onSubmit = async (data: JerseyFormValues) => {
     const formData = new FormData();
 
-    // Ajoutez les IDs manuellement (une seule fois suffit)
     if (selectedSportId) formData.append("sportId", selectedSportId);
     if (selectedClubId) formData.append("clubId", selectedClubId);
 
-    // Liste des champs à ignorer dans la boucle car gérés manuellement
     const fieldsToIgnore = [
       "frontImageUri",
       "backImageUri",
@@ -212,7 +212,6 @@ export default function TabAddScreen() {
       }
     });
 
-    // Ajout des fichiers
     if (frontImage) {
       formData.append("frontImage", {
         uri: frontImage,
@@ -238,7 +237,7 @@ export default function TabAddScreen() {
         position: "bottom",
       });
 
-      reset(); // Reset the form after successful submission
+      reset();
       setFrontImage("");
       setBackImage(null);
       setSelectedClubId("");
@@ -255,7 +254,6 @@ export default function TabAddScreen() {
     }
   };
 
-  // Trouvez l'ID du sport "Football" automatiquement
   const footballSportId = sports?.find(
     (s) => s.name.toLowerCase() === "football",
   )?.id;
@@ -271,8 +269,7 @@ export default function TabAddScreen() {
       >
         <Text style={styles.heading}>ADD NEW JERSEY</Text>
 
-        {/* Image */}
-        {/* face button */}
+        {/* Image Pickers */}
         <View style={styles.imagePickerRow}>
           <TouchableOpacity
             style={[
@@ -297,7 +294,6 @@ export default function TabAddScreen() {
                 </View>
               </View>
             ) : (
-              // État vide
               <>
                 <FontAwesome name="camera" size={20} color="#8E8E93" />
                 <Text style={styles.imagePickerText}>Front View *</Text>
@@ -305,7 +301,6 @@ export default function TabAddScreen() {
             )}
           </TouchableOpacity>
 
-          {/* Back button */}
           <TouchableOpacity
             style={[
               styles.imagePickerHalf,
@@ -341,11 +336,7 @@ export default function TabAddScreen() {
         <Text style={styles.label}>Sport *</Text>
         <View style={styles.chipRow}>
           {sports?.map((sport: any) => {
-            // Optionnel : Si vous voulez pré-sélectionner le premier sport ou le Football
-            // const isDefault = !selectedSportId && sport.name === 'Football';
-
             const isSelected = selectedSportId === sport.id;
-
             return (
               <TouchableOpacity
                 key={sport.id}
@@ -379,7 +370,6 @@ export default function TabAddScreen() {
               value={value}
               onChangeText={(text) => {
                 onChange(text);
-
                 if (text.length < 3) {
                   if (timeoutRef.current) clearTimeout(timeoutRef.current);
                   setSuggestions([]);
@@ -395,8 +385,6 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.clubName.message}</Text>
         )}
 
-        {console.log("Données reçues dans le composant :", suggestions)}
-
         {/* Suggestions List */}
         {isDropdownVisible && suggestions.length > 0 && (
           <View style={styles.dropdown}>
@@ -410,7 +398,6 @@ export default function TabAddScreen() {
                   if (footballSportId) {
                     setSelectedSportId(footballSportId);
                   }
-
                   setIsDropdownVisible(false);
                 }}
               >
@@ -420,7 +407,7 @@ export default function TabAddScreen() {
           </View>
         )}
 
-        {/* Season input*/}
+        {/* Season input */}
         <Text style={styles.label}>Season *</Text>
         <Controller
           control={control}
@@ -469,7 +456,7 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.size.message}</Text>
         )}
 
-        {/*  Type selector */}
+        {/* Type selector */}
         <Text style={styles.label}>Kit Type *</Text>
         <Controller
           control={control}
@@ -499,9 +486,28 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.type.message}</Text>
         )}
 
+        {/* Prix d'achat (Purchase Price) */}
+        <Text style={styles.label}>Purchase Price (Optional)</Text>
+        <Controller
+          control={control}
+          name="purchasePrice"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., 89.99"
+              placeholderTextColor="#8E8E93"
+              keyboardType="numeric"
+              onChangeText={(text) =>
+                onChange(text ? parseFloat(text.replace(",", ".")) : null)
+              }
+              value={value !== null && value !== undefined ? String(value) : ""}
+            />
+          )}
+        />
+
         <View style={styles.separator} />
 
-        {/* player */}
+        {/* Player */}
         <Text style={styles.label}>Player Name (Optional)</Text>
         <Controller
           control={control}
@@ -517,7 +523,7 @@ export default function TabAddScreen() {
           )}
         />
 
-        {/* jersey number */}
+        {/* Jersey Number */}
         <Text style={styles.label}>Number (Optional)</Text>
         <Controller
           control={control}
@@ -535,7 +541,7 @@ export default function TabAddScreen() {
         />
 
         {/* Condition */}
-        <Text style={styles.label}>Condition</Text>
+        <Text style={styles.label}>Condition *</Text>
         <Controller
           control={control}
           name="condition"
@@ -560,12 +566,12 @@ export default function TabAddScreen() {
             </View>
           )}
         />
-        {/* {errors.condition && (
+        {errors.condition && (
           <Text style={styles.errorText}>{errors.condition.message}</Text>
-        )} */}
+        )}
 
         {/* Version */}
-        <Text style={styles.label}>Version</Text>
+        <Text style={styles.label}>Version *</Text>
         <Controller
           control={control}
           name="version"
@@ -590,7 +596,31 @@ export default function TabAddScreen() {
             </View>
           )}
         />
+        {errors.version && (
+          <Text style={styles.errorText}>{errors.version.message}</Text>
+        )}
 
+        {/* Produit officiel (Is Official) */}
+        <View style={styles.switchRow}>
+          <View style={styles.switchTextContainer}>
+            <Text style={styles.labelInline}>Official Product</Text>
+            <Text style={styles.subLabel}>
+              Toggle off if it's a remake/copy
+            </Text>
+          </View>
+          <Controller
+            control={control}
+            name="isOfficial"
+            render={({ field: { onChange, value } }) => (
+              <Switch
+                value={value ?? true}
+                onValueChange={onChange}
+                trackColor={{ false: "#2C2C2E", true: Colors.theme.primary }}
+                thumbColor="#FFFFFF"
+              />
+            )}
+          />
+        </View>
         {/* Description */}
         <Text style={styles.label}>Description</Text>
         <Controller
@@ -656,35 +686,22 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     letterSpacing: 1,
   },
-  imagePicker: {
-    width: "100%",
-    height: 120,
-    backgroundColor: "#1E1E1E",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#2C2C2E",
-    borderStyle: "dashed",
-    marginBottom: 20,
-  },
-  imagePickerText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-    marginTop: 8,
-  },
-  imagePickerSubtext: {
-    color: "#8E8E93",
-    fontSize: 12,
-    marginTop: 2,
-  },
   label: {
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 8,
     marginTop: 12,
+  },
+  labelInline: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  subLabel: {
+    color: "#8E8E93",
+    fontSize: 12,
+    marginTop: 2,
   },
   input: {
     backgroundColor: Colors.theme.surface,
@@ -732,6 +749,18 @@ const styles = StyleSheet.create({
   chipTextSelected: {
     color: "#000000",
   },
+  switchRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 12,
+    marginBottom: 4,
+    paddingVertical: 4,
+  },
+  switchTextContainer: {
+    flex: 1,
+    paddingRight: 16,
+  },
   separator: {
     height: 1,
     backgroundColor: "#1A1A1A",
@@ -768,9 +797,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#2C2C2E",
     borderStyle: "dashed",
-  },
-  imagePickerRequired: {
-    borderColor: "#2C2C2E",
   },
   dropdown: {
     backgroundColor: "#1E1E1E",
@@ -817,5 +843,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 4,
     fontWeight: "bold",
+  },
+  imagePickerText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
+    marginTop: 6,
+  },
+  imagePickerSubtext: {
+    color: "#8E8E93",
+    fontSize: 11,
   },
 });
