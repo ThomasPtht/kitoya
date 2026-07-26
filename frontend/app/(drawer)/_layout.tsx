@@ -9,13 +9,13 @@ import {
 } from "@react-navigation/drawer";
 import { authService } from "@/services/auth.service";
 import { useUserMe } from "@/hooks/useAuthHook";
-import { useJerseys } from "@/hooks/useJerseyHook";
+
 import { calculateRank } from "@/lib/ranks";
+import { useJerseys } from "@/hooks/useJerseyHook";
 
 export default function DrawerLayout() {
   const { data: userMe } = useUserMe();
-
-  const { data: jerseys, isLoading } = useJerseys();
+  const { data: jerseys } = useJerseys();
 
   // Extract initials for the avatar if name exists
   const getInitials = (name?: string) => {
@@ -32,8 +32,9 @@ export default function DrawerLayout() {
   const displayEmail = userMe?.email || "user@kitroom.app";
   const userInitials = getInitials(displayName);
 
+  // Dynamic rank and collection count
   const currentRank = calculateRank(jerseys);
-  const totalCount = jerseys?.length || 0;
+  const totalCount = jerseys?.length ?? 0;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -44,21 +45,19 @@ export default function DrawerLayout() {
             style={{ backgroundColor: "#121212" }}
             contentContainerStyle={styles.scrollContainer}
           >
-            {/* User Profile Header Section */}
+            {/* User Profile Header Section - Centered */}
             <View style={styles.userProfileSection}>
-              <View style={styles.userTopRow}>
-                <View style={styles.avatarContainer}>
-                  <Text style={styles.avatarText}>{userInitials}</Text>
-                </View>
-                <View style={styles.userInfoText}>
-                  <Text style={styles.userName} numberOfLines={1}>
-                    {displayName}
-                  </Text>
-                  <Text style={styles.userEmail} numberOfLines={1}>
-                    {displayEmail}
-                  </Text>
-                </View>
+              <View style={styles.avatarContainer}>
+                <Text style={styles.avatarText}>{userInitials}</Text>
               </View>
+
+              <Text style={styles.userName} numberOfLines={1}>
+                {displayName}
+              </Text>
+
+              <Text style={styles.userEmail} numberOfLines={1}>
+                {displayEmail}
+              </Text>
 
               <View style={styles.badgeContainer}>
                 <MaterialCommunityIcons
@@ -69,7 +68,6 @@ export default function DrawerLayout() {
                 <Text style={styles.badgeText}>
                   {currentRank.toUpperCase()}
                 </Text>
-                {/* <Text style={styles.badgePoints}>• 150 pts</Text> */}
               </View>
             </View>
 
@@ -117,11 +115,11 @@ export default function DrawerLayout() {
                 style={styles.navItem}
                 onPress={() => {
                   props.navigation.closeDrawer();
-                  router.push("/settings");
+                  router.push("/");
                 }}
               >
-                <Feather name="settings" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Settings</Text>
+                <Feather name="user-plus" size={18} color="#9E9E9E" />
+                <Text style={styles.navText}>Invite friends</Text>
               </Pressable>
 
               <Pressable
@@ -139,22 +137,22 @@ export default function DrawerLayout() {
                 style={styles.navItem}
                 onPress={() => {
                   props.navigation.closeDrawer();
-                  router.push("/help");
+                  router.push("/settings");
                 }}
               >
-                <AntDesign name="question-circle" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Help & feedback</Text>
+                <Feather name="settings" size={18} color="#9E9E9E" />
+                <Text style={styles.navText}>Settings</Text>
               </Pressable>
 
               <Pressable
                 style={styles.navItem}
                 onPress={() => {
                   props.navigation.closeDrawer();
-                  router.push("/");
+                  router.push("/help");
                 }}
               >
-                <Feather name="user-plus" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Invite friends</Text>
+                <AntDesign name="question-circle" size={18} color="#9E9E9E" />
+                <Text style={styles.navText}>Help & feedback</Text>
               </Pressable>
             </View>
 
@@ -210,43 +208,41 @@ const styles = StyleSheet.create({
     paddingTop: 65,
   },
   userProfileSection: {
-    paddingVertical: 12,
+    paddingVertical: 20,
     paddingHorizontal: 4,
-    marginBottom: 10,
-  },
-  userTopRow: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 12,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
   avatarContainer: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    borderWidth: 1,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 1.5,
     borderColor: "#05C785",
     backgroundColor: "#161E1A",
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 12,
   },
   avatarText: {
     color: "#05C785",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
-  },
-  userInfoText: {
-    flex: 1,
   },
   userName: {
     color: "#FFFFFF",
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 2,
+    marginBottom: 4,
+    textAlign: "center",
   },
   userEmail: {
     color: "#888888",
     fontSize: 13,
+    marginBottom: 12,
+    textAlign: "center",
   },
   badgeContainer: {
     flexDirection: "row",
@@ -256,8 +252,7 @@ const styles = StyleSheet.create({
     borderColor: "#05C785",
     borderRadius: 20,
     paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignSelf: "flex-start",
+    paddingHorizontal: 14,
     gap: 6,
   },
   badgeText: {
@@ -276,7 +271,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     padding: 16,
-    marginTop: 6,
+    marginTop: 16,
     marginBottom: 20,
     shadowColor: "#05C785",
     shadowOffset: { width: 0, height: 0 },
@@ -359,23 +354,5 @@ const styles = StyleSheet.create({
     color: "#FF4D4D",
     fontSize: 16,
     fontWeight: "500",
-  },
-  inviteButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#161E1A",
-    borderWidth: 1,
-    borderColor: "#05C785",
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    gap: 10,
-    marginTop: 10,
-  },
-  inviteText: {
-    color: "#05C785",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
