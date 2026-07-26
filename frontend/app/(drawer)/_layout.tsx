@@ -9,9 +9,13 @@ import {
 } from "@react-navigation/drawer";
 import { authService } from "@/services/auth.service";
 import { useUserMe } from "@/hooks/useAuthHook";
+import { useJerseys } from "@/hooks/useJerseyHook";
+import { calculateRank } from "@/lib/ranks";
 
 export default function DrawerLayout() {
   const { data: userMe } = useUserMe();
+
+  const { data: jerseys, isLoading } = useJerseys();
 
   // Extract initials for the avatar if name exists
   const getInitials = (name?: string) => {
@@ -27,6 +31,9 @@ export default function DrawerLayout() {
   const displayName = userMe?.name || userMe?.username || "Collector";
   const displayEmail = userMe?.email || "user@kitroom.app";
   const userInitials = getInitials(displayName);
+
+  const currentRank = calculateRank(jerseys);
+  const totalCount = jerseys?.length || 0;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -59,8 +66,10 @@ export default function DrawerLayout() {
                   size={14}
                   color="#05C785"
                 />
-                <Text style={styles.badgeText}>COLLECTOR</Text>
-                <Text style={styles.badgePoints}>• 150 pts</Text>
+                <Text style={styles.badgeText}>
+                  {currentRank.toUpperCase()}
+                </Text>
+                {/* <Text style={styles.badgePoints}>• 150 pts</Text> */}
               </View>
             </View>
 
