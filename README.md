@@ -2,13 +2,16 @@
 
 This is a React Native application built with Expo, to allow users to easily manage their sports jerseys collection. The app features a sleek and modern design, with a focus on user experience and ease of use.
 
+<img width="900" height="1195" alt="IMG_9382" src="https://github.com/user-attachments/assets/6acd9271-e72e-4d0a-a1d5-a8301df11f39" />
+
+
 ### Features
 
 - Add and manage your sports jerseys collection
 - Take photos of your jerseys and add them to your collection
 - Locker room to view and organize your jerseys
-- Home screen with quick access to add new jersey, story about a jersey, and more
-- Wish list to keep track of jerseys you want to add to your collection
+- Home screen with quick access to add new jersey, last added, kit of community to share a random jersey from a user every day, statistics
+- export your collection in csv/ json / or printable pdf
 
 ### Technologies Used
 
@@ -37,7 +40,7 @@ This is a React Native application built with Expo, to allow users to easily man
 
 - Cloudflare R2 (image storage)
 - Sharp (image compression and resizing)
-- Replicate/ REMBG (background removal)
+- RemoveBG (background removal)
 
 #### Testing
 
