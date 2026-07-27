@@ -13,8 +13,9 @@ import CardCollection from "@/components/CardCollection";
 import React, { useMemo, useState } from "react";
 import { JerseyData } from "@/services/jersey.service";
 import JerseyModalWrapper from "@/components/JerseyModalWrapper";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CustomSearchBar } from "@/components/CustomSearchBar";
+import { router } from "expo-router";
 
 import { useFilterStore } from "@/stores/useFilterStore";
 import FilterModal from "@/components/FilterModal";
@@ -43,7 +44,7 @@ export default function TabDressingScreen() {
     return jerseys.filter((j: JerseyData) => {
       // Filter by search
       const matchesSearch = j.club?.name
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(search.toLowerCase());
       // Filter by club
       const matchesClub =
@@ -63,39 +64,43 @@ export default function TabDressingScreen() {
     });
   }, [jerseys, search, selectedClubs, selectedSeasons, selectedKitTypes]);
 
+  const hasJerseys = jerseys && jerseys.length > 0;
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>My Locker</Text>
 
-      <View style={styles.searchContainer}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <View style={{ flex: 1 }}>
-            <CustomSearchBar value={search} onChangeText={updateSearch} />
-          </View>
-          <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
-            <Feather
-              name="filter"
-              size={24}
-              color={selectedClubs.length > 0 ? "#05C785" : "white"}
-            />
-          </TouchableOpacity>
+      {/* On n'affiche la barre de recherche que s'il y a des maillots */}
+      {hasJerseys && (
+        <View style={styles.searchContainer}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View style={{ flex: 1 }}>
+              <CustomSearchBar value={search} onChangeText={updateSearch} />
+            </View>
+            <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
+              <Feather
+                name="filter"
+                size={24}
+                color={selectedClubs.length > 0 ? "#05C785" : "white"}
+              />
+            </TouchableOpacity>
 
-          {/* La modale que tu affiches */}
-          <FilterModal
-            jerseys={jerseys || []}
-            visible={isFilterVisible}
-            onClose={() => setIsFilterVisible(false)}
-          />
+            <FilterModal
+              jerseys={jerseys || []}
+              visible={isFilterVisible}
+              onClose={() => setIsFilterVisible(false)}
+            />
+          </View>
         </View>
-      </View>
+      )}
 
       {isLoading ? (
         <ActivityIndicator
           size="large"
-          color="#FFFFFF"
-          style={{ marginTop: 20 }}
+          color="#05C785"
+          style={{ marginTop: 40 }}
         />
-      ) : (
+      ) : hasJerseys ? (
         <FlatList
           data={filteredJerseys}
           keyExtractor={(item) => item.id}
@@ -114,6 +119,61 @@ export default function TabDressingScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
+      ) : (
+        /* Empty State */
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyContent}>
+            <View style={styles.iconBox}>
+              <MaterialCommunityIcons
+                name="tshirt-crew-outline"
+                size={32}
+                color="#05C785"
+              />
+            </View>
+
+            <Text style={styles.emptyTitle}>Your locker is empty</Text>
+            <Text style={styles.emptySubtitle}>
+              Start building your archive. Add your first shirt and unlock your
+              collector rank.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.addButton}
+              activeOpacity={0.8}
+              onPress={() => {
+                router.push("/(drawer)/(tabs)/add");
+              }}
+            >
+              <Feather name="plus" size={18} color="#121212" />
+              <Text style={styles.addButtonText}>Add your first kit</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Why Archive Card */}
+          <View style={styles.whyBox}>
+            <Text style={styles.whyTitle}>WHY ARCHIVE?</Text>
+            <View style={styles.whyItem}>
+              <Feather name="zap" size={14} color="#05C785" />
+              <Text style={styles.whyText}>Track all your kits and gems</Text>
+            </View>
+            <View style={styles.whyItem}>
+              <MaterialCommunityIcons
+                name="trophy-outline"
+                size={14}
+                color="#05C785"
+              />
+              <Text style={styles.whyText}>
+                Level up your rank as your collection grows
+              </Text>
+            </View>
+            <View style={styles.whyItem}>
+              <Feather name="arrow-up-right" size={14} color="#05C785" />
+              <Text style={styles.whyText}>
+                Export and showcase your ultimate locker
+              </Text>
+            </View>
+          </View>
+        </View>
       )}
 
       <JerseyModalWrapper
@@ -130,6 +190,7 @@ export default function TabDressingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#121212",
     paddingHorizontal: 20,
     paddingTop: 10,
   },
@@ -151,18 +212,80 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  searchBar: {
+  emptyContainer: {
     flex: 1,
-    backgroundColor: "transparent",
-    borderTopWidth: 0,
-    borderBottomWidth: 0,
-    paddingHorizontal: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 40,
   },
-  searchBarInput: {
-    borderRadius: 12,
+  emptyContent: {
+    alignItems: "center",
+    marginBottom: 30,
   },
-  filterButton: {
-    marginLeft: 10,
-    padding: 10,
+  iconBox: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    backgroundColor: "#161E1A",
+    borderWidth: 1,
+    borderColor: "#05C785",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  emptyTitle: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  emptySubtitle: {
+    color: "#888888",
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  addButton: {
+    backgroundColor: "#05C785",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 14,
+    gap: 8,
+  },
+  addButtonText: {
+    color: "#121212",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  whyBox: {
+    width: "100%",
+    backgroundColor: "#161E1A",
+    borderWidth: 1,
+    borderColor: "#05C785",
+    borderRadius: 16,
+    padding: 16,
+    gap: 12,
+  },
+  whyTitle: {
+    color: "#888888",
+    fontSize: 11,
+    fontWeight: "bold",
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  whyItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  whyText: {
+    color: "#CCCCCC",
+    fontSize: 13,
   },
 });

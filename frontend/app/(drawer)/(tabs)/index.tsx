@@ -5,7 +5,7 @@ import {
   useJerseys,
   useMostRepresentedClub,
 } from "@/hooks/useJerseyHook";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
   ActivityIndicator,
@@ -59,11 +59,12 @@ export default function TabOneScreen() {
 
         {/* Last added to Locker section */}
         <Text style={styles.lastAdded}>LAST ADDED TO LOCKER</Text>
+
         {isLoading ? (
           <ActivityIndicator color={Colors.theme.primary} />
-        ) : (
+        ) : jerseys && jerseys.length > 0 ? (
           <View style={styles.cardsRow}>
-            {jerseys?.slice(0, 3).map((jersey) => (
+            {jerseys.slice(0, 3).map((jersey) => (
               <CardCollection
                 key={jersey.id}
                 jersey={jersey}
@@ -71,6 +72,30 @@ export default function TabOneScreen() {
                 size="small"
               />
             ))}
+          </View>
+        ) : (
+          /* Empty State */
+          <View style={styles.emptyContainer}>
+            <View style={styles.emptyIconContainer}>
+              <Ionicons name="shirt-outline" size={28} color="#05C785" />
+            </View>
+            <Text style={styles.emptyTitle}>Your locker is empty</Text>
+            <Text style={styles.emptySubtitle}>
+              <Text style={styles.emptySubtitle}>
+                Start by adding your first jersey, complete with its photos,
+                personal stories, and all the details.
+              </Text>
+            </Text>
+            <TouchableOpacity
+              style={styles.uploadButton}
+              activeOpacity={0.8}
+              onPress={() => {
+                router.push("/(drawer)/(tabs)/add");
+              }}
+            >
+              <Feather name="upload" size={16} color="#05C785" />
+              <Text style={styles.uploadButtonText}>Upload a kit</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -316,5 +341,59 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     marginVertical: 10,
+  },
+  emptyContainer: {
+    borderWidth: 1.5,
+    borderColor: "#05C785",
+    borderStyle: "dashed",
+    borderRadius: 20,
+    padding: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#141C17",
+    marginVertical: 10,
+  },
+  emptyIconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: "#161E1A",
+    borderWidth: 1,
+    borderColor: "#05C785",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  emptySubtitle: {
+    color: "#888888",
+    fontSize: 13,
+    textAlign: "center",
+    lineHeight: 18,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
+  uploadButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#161E1A",
+    borderWidth: 1,
+    borderColor: "#05C785",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+  uploadButtonText: {
+    color: "#05C785",
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
