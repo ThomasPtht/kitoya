@@ -40,6 +40,7 @@ const jerseySchema = z.object({
   description: z.string().optional(),
   version: z.string().min(1, { message: "Please select a version" }),
   condition: z.string().min(1, { message: "Please select a condition" }),
+  isShareable: z.boolean().optional().default(false),
 });
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
@@ -140,6 +141,7 @@ export default function TabAddScreen() {
       description: "",
       condition: "",
       version: "",
+      isShareable: false,
     },
   });
 
@@ -621,6 +623,29 @@ export default function TabAddScreen() {
             )}
           />
         </View>
+
+        <View style={styles.switchRow}>
+          <View style={styles.switchTextContainer}>
+            <Text style={styles.labelInline}>Shareable ?</Text>
+            <Text style={styles.subLabel}>
+              Your jersey will be visible to the community and get likes if you
+              enable this option. You can always change it later in your locker.
+            </Text>
+          </View>
+          <Controller
+            control={control}
+            name="isShareable"
+            render={({ field: { onChange, value } }) => (
+              <Switch
+                value={value ?? false}
+                onValueChange={onChange}
+                trackColor={{ false: "#2C2C2E", true: Colors.theme.primary }}
+                thumbColor="#FFFFFF"
+              />
+            )}
+          />
+        </View>
+
         {/* Description */}
         <Text style={styles.label}>Description</Text>
         <Controller

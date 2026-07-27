@@ -47,7 +47,7 @@ export default function KitOfTheDayCard() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
-          <Text style={styles.headerTitle}>KIT OF THE DAY</Text>
+          <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
         </View>
 
         {/* Like button */}
