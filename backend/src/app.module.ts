@@ -9,9 +9,10 @@ import { JerseysModule } from './jerseys/jerseys.module';
 import { R2Module } from './r2/r2.module';
 import { SportsModule } from './sports/sports.module';
 import { ImageProcessingModule } from './image-processing/image-processing.module';
+import { KotdModule } from './kotd/kotd.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, JerseysModule, R2Module, SportsModule, ImageProcessingModule],
+  imports: [PrismaModule, AuthModule, JerseysModule, R2Module, SportsModule, ImageProcessingModule, KotdModule],
   controllers: [AppController],
   providers: [AppService],
 })

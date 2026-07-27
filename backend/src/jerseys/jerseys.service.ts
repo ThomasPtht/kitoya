@@ -20,7 +20,7 @@ export class JerseysService {
     private readonly FootballService: FootballService,
   ) {}
 
-  private async signJersey<
+  public async signJersey<
     T extends { frontImageUrl: string; backImageUrl: string | null },
   >(jersey: T) {
     const [frontImageUrl, backImageUrl] = await Promise.all([

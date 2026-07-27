@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jerseyService } from "@/services/jersey.service";
 import { sportsService } from "@/services/sport.service";
+import { kotdService } from "@/services/kotd.service";
 
 // Get all jerseys query hook
 export const useJerseys = () => {
@@ -19,7 +20,6 @@ export const useCreateJersey = () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
       queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
       queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
-      
     },
     onError: (error) => {
       console.error("Error creating jersey:", error);
@@ -51,5 +51,12 @@ export const useSports = () => {
   return useQuery({
     queryKey: ["sports"],
     queryFn: sportsService.getSports,
+  });
+};
+
+export const useJerseyOfTheDay = () => {
+  return useQuery({
+    queryKey: ["kotd"],
+    queryFn: kotdService.getJerseyOfTheDay,
   });
 };

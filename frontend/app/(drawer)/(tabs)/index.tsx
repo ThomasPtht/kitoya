@@ -1,4 +1,5 @@
 import CardCollection from "@/components/CardCollection";
+import KitOfTheDayCard from "@/components/KitOfTheDayCard";
 import { Colors } from "@/constants/Colors";
 import {
   useJerseyCount,
@@ -99,14 +100,7 @@ export default function TabOneScreen() {
           </View>
         )}
 
-        <View style={styles.containerTitleKit}>
-          <Ionicons
-            name="sparkles-outline"
-            size={14}
-            color={Colors.theme.primary}
-          />
-          <Text style={styles.kitDay}>KIT OF THE DAY</Text>
-        </View>
+        <KitOfTheDayCard />
 
         <Text style={styles.collectionTitle}>YOUR COLLECTION AT A GLANCE</Text>
         <View style={styles.containerStats}>

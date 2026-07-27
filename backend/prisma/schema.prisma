@@ -49,6 +49,7 @@ model User {
   jerseys      Jersey[]
   wishlist     Wishlist[]
   subscription Subscription? // one-to-one relationship with Subscriptions
+  jerseyLikes  JerseyLike[] // one-to-many relationship with JerseyLike
 }
 
 model Subscription {
@@ -82,11 +83,24 @@ model Jersey {
   isOfficial    Boolean?
   description   String? // e.g., any additional details about the jersey : buy at the stadium, signed by the player, etc.
   purchasePrice Float? // optionnal because some jerseys are gifts or free
+  isShareable   Boolean? // optionnal because user may not want to share the jersey with other users
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   sport         Sport        @relation(fields: [sportId], references: [id])
   club          Club         @relation(fields: [clubId], references: [id])
+  likes         JerseyLike[]
+}
+
+model JerseyLike {
+  id        String   @id @default(uuid())
+  jerseyId  String
+  jersey    Jersey   @relation(fields: [jerseyId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([jerseyId, userId]) // To avoid a user liking the same jersey multiple times
 }
 
 model Sport {
