@@ -65,8 +65,18 @@ export const useToggleLikeJersey = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (jerseyId: string) => kotdService.toggleLike(jerseyId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["kotd"] });
+    // Update the cached data for the jersey of the day after toggling like
+    onSuccess: (data: { liked: boolean }) => {
+      queryClient.setQueryData(["kotd"], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          hasLiked: data.liked,
+          likesCount: data.liked
+            ? oldData.likesCount + 1
+            : oldData.likesCount - 1,
+        };
+      });
     },
     onError: (error) => {
       console.error("Error toggling like:", error);
