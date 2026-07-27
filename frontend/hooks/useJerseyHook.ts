@@ -60,3 +60,16 @@ export const useJerseyOfTheDay = () => {
     queryFn: kotdService.getJerseyOfTheDay,
   });
 };
+
+export const useToggleLikeJersey = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (jerseyId: string) => kotdService.toggleLike(jerseyId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["kotd"] });
+    },
+    onError: (error) => {
+      console.error("Error toggling like:", error);
+    },
+  });
+};

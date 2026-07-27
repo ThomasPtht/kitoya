@@ -10,14 +10,17 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
-import { useJerseyOfTheDay } from "@/hooks/useJerseyHook";
+import { useJerseyOfTheDay, useToggleLikeJersey } from "@/hooks/useJerseyHook";
 
 export default function KitOfTheDayCard() {
   const router = useRouter();
   const { data: jersey, isLoading } = useJerseyOfTheDay();
   const [imageFailed, setImageFailed] = useState(false);
+  const { mutate: toggleLike, isPending: isLiking } = useToggleLikeJersey();
 
-  // Sécurisation de l'URL comme dans CardCollection
+  // Exemple : si ton hook renvoie aussi hasLiked et likesCount, ou une fonction toggleLike
+  // const { mutate: toggleLike } = useToggleLike();
+
   const imageUri = useMemo(() => {
     return jersey?.frontImageUrl?.trim() || jersey?.frontImage?.trim() || "";
   }, [jersey?.frontImageUrl, jersey?.frontImage]);
@@ -42,8 +45,27 @@ export default function KitOfTheDayCard() {
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
-        <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
-        <Text style={styles.headerTitle}>KIT OF THE DAY</Text>
+        <View style={styles.headerLeft}>
+          <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
+          <Text style={styles.headerTitle}>KIT OF THE DAY</Text>
+        </View>
+
+        {/* Like button */}
+        <TouchableOpacity
+          style={styles.likeButtonHeader}
+          activeOpacity={0.7}
+          disabled={isLiking}
+          onPress={() => {
+            toggleLike(jersey.id);
+          }}
+        >
+          <Ionicons
+            name={jersey.hasLiked ? "heart" : "heart-outline"}
+            size={18}
+            color={jersey.hasLiked ? "#EF4444" : Colors.theme.textMuted}
+          />
+          <Text style={styles.likesCountText}>{jersey.likesCount ?? 0}</Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -58,13 +80,7 @@ export default function KitOfTheDayCard() {
               source={{ uri: imageUri }}
               style={styles.image}
               resizeMode="cover"
-              onLoad={() => console.log("IMAGE CHARGÉE AVEC SUCCÈS 🎉")}
-              onError={(e) =>
-                console.log(
-                  "ERREUR EXACTE iOS 🚨:",
-                  JSON.stringify(e.nativeEvent, null, 2),
-                )
-              }
+              onError={() => setImageFailed(true)}
             />
           ) : (
             <View style={styles.imageFallback}>
@@ -81,7 +97,7 @@ export default function KitOfTheDayCard() {
               {jersey.club.name}
             </Text>
             <Text style={styles.seasonType}>
-              {jersey.season} / {jersey.type.toLowerCase()}
+              {jersey.season} / {jersey.type?.toLowerCase()}
             </Text>
 
             <Text style={styles.story} numberOfLines={2}>
@@ -89,7 +105,7 @@ export default function KitOfTheDayCard() {
             </Text>
           </View>
 
-          <Text style={styles.readMore}>READ THE STORY ➔</Text>
+          <Text style={styles.readMore}>READ MORE ➔</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -104,14 +120,35 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    justifyContent: "space-between",
     marginBottom: 10,
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   headerTitle: {
     color: Colors.theme.primary,
     fontSize: 12,
     fontWeight: "700",
     letterSpacing: 1,
+  },
+  likeButtonHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: Colors.theme.surface,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  likesCountText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
   },
   card: {
     flexDirection: "row",

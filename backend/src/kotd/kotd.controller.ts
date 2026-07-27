@@ -9,14 +9,15 @@ export class KotdController {
   @Get()
   @UseGuards(AuthGuard('jwt'))
   async getKOTD(@Req() req: Request) {
-    const currentUserId = (req as any).user?.id;
+    const currentUserId = (req as any).user?.userId || (req as any).user?.id;
     return this.kotdService.getJerseyOfTheDay(currentUserId);
   }
 
   @Post(':jerseyId/like')
   @UseGuards(AuthGuard('jwt'))
   async toggleLike(@Param('jerseyId') jerseyId: string, @Req() req: Request) {
-    const userId = (req as any).user?.id;
+    console.log('CONTENU REQ.USER 🔍:', (req as any).user);
+    const userId = (req as any).user?.userId;
     return this.kotdService.toggleLike(jerseyId, userId);
   }
 }
