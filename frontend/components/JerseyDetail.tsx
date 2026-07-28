@@ -11,12 +11,13 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
-  Share,
 } from "react-native";
 import { Entypo, Feather } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
+import { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
 
 interface JerseyDetailProps {
   jersey: JerseyData;
@@ -29,6 +30,10 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
   const activeImageUrl = showBackImage
     ? jersey.backImageUrl || jersey.frontImageUrl || jersey.frontImageUri
     : jersey.frontImageUrl || jersey.frontImageUri;
+
+  // Declare a ref for the card view to capture it for sharing
+  const cardRef = useRef<View>(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -71,16 +76,29 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
   };
 
   const handleShare = async () => {
-    try {
-      const clubName = jersey.club?.name || "Unknown Club";
-      const seasonText = jersey.season ? `(${jersey.season})` : "";
-      const brandText = jersey.brand ? `by ${jersey.brand}` : "";
+    if (!cardRef.current) return;
 
-      await Share.share({
-        message: `Check out this amazing ${clubName} jersey ${seasonText} ${brandText} in my collection on Kitroom! ⚽🔥`,
+    try {
+      setIsSharing(true);
+      // let the time for the UI to update before capturing the view
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
+      // Capturing the card view as an image
+      const uri = await captureRef(cardRef, {
+        format: "png",
+        quality: 1,
+      });
+
+      // Open native sharing dialog
+      await Sharing.shareAsync(uri, {
+        dialogTitle: "Share my jersey card",
+        mimeType: "image/png",
       });
     } catch (error) {
-      console.error("Error sharing jersey:", error);
+      console.error("Error sharing jersey card:", error);
+      Alert.alert("Error", "Could not share the jersey image.");
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -122,14 +140,25 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Conteneur de l'image avec le halo lumineux à l'intérieur */}
-        <View style={styles.imageContainer}>
+        {/* Container of the jersey image with gradient and watermark */}
+        <View ref={cardRef} collapsable={false} style={styles.imageContainer}>
           <LinearGradient
             colors={["rgba(255, 255, 255, 0.12)", "transparent"]}
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 0.6 }}
             style={styles.glowBackground}
           />
+
+          {/* If sharing, show the watermark and context */}
+          {isSharing && (
+            <View style={styles.cardHeaderContext}>
+              <Text style={styles.cardContextSubtitle}>MY COLLECTION</Text>
+              <Text style={styles.cardContextTitle}>
+                {jersey.club?.name || "Football Kit"}{" "}
+                {jersey.season ? `• ${jersey.season}` : ""}
+              </Text>
+            </View>
+          )}
 
           {activeImageUrl ? (
             <Image
@@ -175,6 +204,14 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
                   Back
                 </Text>
               </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Watermark brandisé */}
+          {isSharing && (
+            <View style={styles.watermarkContainer}>
+              <Text style={styles.watermarkBrand}>KITROOM</Text>
+              <Text style={styles.watermarkUrl}>kitroom.app</Text>
             </View>
           )}
         </View>
@@ -269,9 +306,15 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         </View>
 
         {/* Share Button */}
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+        <TouchableOpacity
+          style={[styles.shareButton, isSharing && { opacity: 0.7 }]}
+          onPress={handleShare}
+          disabled={isSharing}
+        >
           <Entypo name="share" size={18} color="#050806" />
-          <Text style={styles.shareButtonText}>Share this kit</Text>
+          <Text style={styles.shareButtonText}>
+            {isSharing ? "Generating card..." : "Share this kit"}
+          </Text>
         </TouchableOpacity>
 
         {/* Delete Button */}
@@ -405,6 +448,28 @@ const styles = StyleSheet.create({
   toggleTextActive: {
     color: "#121212",
   },
+  watermarkContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(127, 206, 175, 0.2)",
+    zIndex: 1,
+  },
+  watermarkBrand: {
+    color: "#05C785",
+    fontSize: 11,
+    fontWeight: "bold",
+    letterSpacing: 1.5,
+  },
+  watermarkUrl: {
+    color: "#8E8E93",
+    fontSize: 11,
+    fontWeight: "500",
+  },
   headerInfo: {
     marginBottom: 16,
   },
@@ -513,7 +578,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 4,
-
   },
   shareButtonText: {
     color: "#050806",
@@ -536,5 +600,23 @@ const styles = StyleSheet.create({
     color: "#A66363",
     fontSize: 14,
     fontWeight: "500",
+  },
+  cardHeaderContext: {
+    width: "100%",
+    marginBottom: 12,
+    zIndex: 1,
+  },
+  cardContextSubtitle: {
+    color: "#05C785",
+    fontSize: 10,
+    fontWeight: "bold",
+    letterSpacing: 1.5,
+    marginBottom: 2,
+    textTransform: "uppercase",
+  },
+  cardContextTitle: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
