@@ -5,10 +5,14 @@ interface FilterState {
   selectedClubs: string[];
   selectedSeasons: string[];
   selectedKitTypes: string[];
+  selectedVersions: string[];
+  selectedConditions: string[];
   setSearch: (search: string) => void;
   toggleClub: (club: string) => void;
   toggleSeason: (season: string) => void;
   toggleKitType: (kitType: string) => void;
+  toggleVersion: (version: string) => void;
+  toggleCondition: (condition: string) => void;
   resetFilters: () => void;
 }
 
@@ -17,6 +21,8 @@ export const useFilterStore = create<FilterState>((set) => ({
   selectedClubs: [],
   selectedSeasons: [],
   selectedKitTypes: [],
+  selectedVersions: [],
+  selectedConditions: [],
 
   setSearch: (search) => set({ search }),
 
@@ -41,11 +47,27 @@ export const useFilterStore = create<FilterState>((set) => ({
         : [...(state.selectedKitTypes || []), kitType],
     })),
 
+  toggleVersion: (version) =>
+    set((state) => ({
+      selectedVersions: state.selectedVersions?.includes(version)
+        ? state.selectedVersions.filter((v) => v !== version)
+        : [...(state.selectedVersions || []), version],
+    })),
+
+  toggleCondition: (condition) =>
+    set((state) => ({
+      selectedConditions: state.selectedConditions?.includes(condition)
+        ? state.selectedConditions.filter((v) => v !== condition)
+        : [...(state.selectedConditions || []), condition],
+    })),
+
   resetFilters: () =>
     set({
       search: "",
       selectedClubs: [],
       selectedSeasons: [],
       selectedKitTypes: [],
+      selectedVersions: [],
+      selectedConditions: [],
     }),
 }));

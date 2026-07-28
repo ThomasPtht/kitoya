@@ -147,7 +147,7 @@ export default function LoginScreen() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <ActivityIndicator color="#121214" />
+                <Text style={styles.buttonText}>Connecting ...</Text>
               ) : (
                 <Text style={styles.buttonText}>Login</Text>
               )}

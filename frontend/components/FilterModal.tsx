@@ -27,6 +27,8 @@ export default function FilterModal({
   const { selectedClubs, toggleClub } = useFilterStore();
   const { selectedSeasons, toggleSeason } = useFilterStore();
   const { selectedKitTypes, toggleKitType } = useFilterStore();
+  const { selectedVersions, toggleVersion } = useFilterStore();
+  const { selectedConditions, toggleCondition } = useFilterStore();
 
   // Extraction unique des clubs depuis tes données
   const allClubs = useMemo(() => {
@@ -41,6 +43,14 @@ export default function FilterModal({
 
   const allKitTypes = useMemo(() => {
     return Array.from(new Set(jerseys.map((j) => j.type))).sort();
+  }, [jerseys]);
+
+  const allVersions = useMemo(() => {
+    return Array.from(new Set(jerseys.map((j) => j.version))).sort();
+  }, [jerseys]);
+
+  const allConditions = useMemo(() => {
+    return Array.from(new Set(jerseys.map((j) => j.condition))).sort();
   }, [jerseys]);
 
   return (
@@ -129,10 +139,56 @@ export default function FilterModal({
               </TouchableOpacity>
             ))}
           </FilterSection>
+
+          <FilterSection
+            title="Version"
+            isOpen={openSection === "Version"}
+            onToggle={() =>
+              setOpenSection(openSection === "Version" ? null : "Version")
+            }
+          >
+            {allVersions.map((version) => (
+              <TouchableOpacity
+                key={version}
+                onPress={() => toggleVersion(version ? version : "")}
+                style={styles.item}
+              >
+                <Text style={styles.itemText}>
+                  {selectedVersions.includes(version ? version : "")
+                    ? "✅"
+                    : "⬜"}{" "}
+                  {version}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </FilterSection>
+
+          <FilterSection
+            title="Condition"
+            isOpen={openSection === "Condition"}
+            onToggle={() =>
+              setOpenSection(openSection === "Condition" ? null : "Condition")
+            }
+          >
+            {allConditions.map((condition) => (
+              <TouchableOpacity
+                key={condition}
+                onPress={() => toggleCondition(condition ? condition : "")}
+                style={styles.item}
+              >
+                <Text style={styles.itemText}>
+                  {selectedConditions.includes(condition ? condition : "")
+                    ? "✅"
+                    : "⬜"}{" "}
+                  {condition}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </FilterSection>
         </ScrollView>
 
         <TouchableOpacity style={styles.applyButton} onPress={onClose}>
-          <Text style={styles.applyButtonText}>Apply Filters</Text>
+          <Text style={styles.applyButtonText}>See results</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -161,7 +217,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#333",
   },
-  itemText: { color: "#fff", fontSize: 16 },
+  itemText: { color: "#fff", fontSize: 16, textTransform: "capitalize" },
   applyButton: {
     backgroundColor: "#05C785",
     padding: 15,
