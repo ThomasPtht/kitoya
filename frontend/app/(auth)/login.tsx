@@ -153,6 +153,13 @@ export default function LoginScreen() {
               <Text style={styles.errorText}>{errors.password.message}</Text>
             )}
 
+            <TouchableOpacity
+              style={styles.forgotPasswordContainer}
+              onPress={() => router.push("/(auth)/forgot-password")}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+            </TouchableOpacity>
+
             {/* Bouton de soumission ajouté pour pouvoir déclencher le formulaire */}
             <TouchableOpacity
               style={[styles.button, isSubmitting && styles.buttonDisabled]}
@@ -278,5 +285,14 @@ const styles = StyleSheet.create({
     color: Colors.theme.primary,
     fontSize: 14,
     fontWeight: "700",
+  },
+  forgotPasswordContainer: {
+    alignItems: "center",
+    marginTop: 8,
+  },
+  forgotPasswordText: {
+    color: Colors.theme.textMuted,
+    fontSize: 13,
+    fontWeight: "600",
   },
 });
