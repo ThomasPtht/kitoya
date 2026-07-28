@@ -14,6 +14,7 @@ import {
   Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { authService } from "@/services/auth.service";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function ForgotPasswordScreen() {
     try {
       setIsLoading(true);
       // TODO: Appeler ton service d'auth (ex: await authService.forgotPassword(email))
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulation
+     await authService.forgotPassword(email); // Remplace par ton service d'auth réel
       Alert.alert(
         "Email sent",
         "Check your inbox for password reset instructions.",
