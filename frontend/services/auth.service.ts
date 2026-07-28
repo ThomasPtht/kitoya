@@ -118,4 +118,20 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+
+  changePassword: async (data: {
+    oldPassword: string;
+    newPassword: string;
+  }) => {
+    try {
+      const response = await apiClient.post("/auth/change-password", data);
+      return response.data;
+    } catch (error: any) {
+      // Extract the error message from the response if available, otherwise use a generic error message
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred during password change";
+      throw new Error(errorMessage);
+    }
+  },
 };

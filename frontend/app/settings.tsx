@@ -167,12 +167,7 @@ export default function SettingsScreen() {
           <View style={styles.card}>
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() =>
-                Alert.alert(
-                  "Password",
-                  "Password reset instructions sent to your email.",
-                )
-              }
+              onPress={() => router.push("/(auth)/change-password")}
             >
               <View style={styles.rowLeft}>
                 <Feather name="key" size={18} color="#FFFFFF" />

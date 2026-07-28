@@ -39,4 +39,18 @@ export class AuthController {
   deleteAccount(@Req() req: JwtRequest) {
     return this.authService.deleteAccount(req.user.userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  changePassword(
+    @Req() req: JwtRequest,
+    @Body('oldPassword') oldPassword: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    return this.authService.changePassword(
+      req.user.userId,
+      oldPassword,
+      newPassword,
+    );
+  }
 }
