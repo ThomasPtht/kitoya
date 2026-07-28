@@ -29,6 +29,7 @@ export default function FilterModal({
   const { selectedKitTypes, toggleKitType } = useFilterStore();
   const { selectedVersions, toggleVersion } = useFilterStore();
   const { selectedConditions, toggleCondition } = useFilterStore();
+  const { selectedBrands, toggleBrand } = useFilterStore();
 
   // Extraction unique des clubs depuis tes données
   const allClubs = useMemo(() => {
@@ -51,6 +52,10 @@ export default function FilterModal({
 
   const allConditions = useMemo(() => {
     return Array.from(new Set(jerseys.map((j) => j.condition))).sort();
+  }, [jerseys]);
+
+    const allBrands = useMemo(() => {
+    return Array.from(new Set(jerseys.map((j) => j.brand))).sort();
   }, [jerseys]);
 
   return (
@@ -112,6 +117,28 @@ export default function FilterModal({
                 <Text style={styles.itemText}>
                   {selectedSeasons.includes(season ? season : "") ? "✅" : "⬜"}{" "}
                   {season}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </FilterSection>
+
+
+          <FilterSection
+            title="Brand"
+            isOpen={openSection === "Brand"}
+            onToggle={() =>
+              setOpenSection(openSection === "Brand" ? null : "Brand")
+            }
+          >
+            {allBrands.map((brand) => (
+              <TouchableOpacity
+                key={brand}
+                onPress={() => toggleBrand(brand ? brand : "")}
+                style={styles.item}
+              >
+                <Text style={styles.itemText}>
+                  {selectedBrands.includes(brand ? brand : "") ? "✅" : "⬜"}{" "}
+                  {brand}
                 </Text>
               </TouchableOpacity>
             ))}

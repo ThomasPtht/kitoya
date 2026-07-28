@@ -7,12 +7,14 @@ interface FilterState {
   selectedKitTypes: string[];
   selectedVersions: string[];
   selectedConditions: string[];
+  selectedBrands: string[];
   setSearch: (search: string) => void;
   toggleClub: (club: string) => void;
   toggleSeason: (season: string) => void;
   toggleKitType: (kitType: string) => void;
   toggleVersion: (version: string) => void;
   toggleCondition: (condition: string) => void;
+  toggleBrand: (brand: string) => void;
   resetFilters: () => void;
 }
 
@@ -23,6 +25,7 @@ export const useFilterStore = create<FilterState>((set) => ({
   selectedKitTypes: [],
   selectedVersions: [],
   selectedConditions: [],
+  selectedBrands: [],
 
   setSearch: (search) => set({ search }),
 
@@ -61,6 +64,13 @@ export const useFilterStore = create<FilterState>((set) => ({
         : [...(state.selectedConditions || []), condition],
     })),
 
+  toggleBrand: (brand) =>
+    set((state) => ({
+      selectedBrands: state.selectedBrands?.includes(brand)
+        ? state.selectedBrands.filter((v) => v !== brand)
+        : [...(state.selectedBrands || []), brand],
+    })),
+
   resetFilters: () =>
     set({
       search: "",
@@ -69,5 +79,6 @@ export const useFilterStore = create<FilterState>((set) => ({
       selectedKitTypes: [],
       selectedVersions: [],
       selectedConditions: [],
+      selectedBrands: [],
     }),
 }));
