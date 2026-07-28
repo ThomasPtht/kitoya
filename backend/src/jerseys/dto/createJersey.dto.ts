@@ -8,6 +8,7 @@ import {
   Min,
   Max,
   IsEnum,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateJerseyDto {
@@ -46,7 +47,6 @@ export class CreateJerseyDto {
   season?: string;
 
   @IsOptional()
-  @IsString()
   @IsEnum(JerseyType)
   type!: JerseyType;
 
@@ -55,12 +55,10 @@ export class CreateJerseyDto {
   size?: string;
 
   @IsOptional()
-  @IsString()
   @IsEnum(KitCondition)
   condition!: KitCondition;
 
   @IsOptional()
-  @IsString()
   @IsEnum(KitVersion)
   version!: KitVersion;
 
@@ -68,5 +66,13 @@ export class CreateJerseyDto {
   @IsString()
   description?: string;
 
-  isOfficial?: boolean;
+  @IsBoolean()
+  isOfficial!: boolean | string;
+
+  @IsBoolean()
+  isShareable!: boolean | string;
+
+  @IsNotEmpty()
+  @IsString()
+  brand!: string;
 }

@@ -3,7 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { authService } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   View,
@@ -20,6 +20,9 @@ import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
 import z from "zod";
 
 export default function LoginScreen() {
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
   const loginSchema = z.object({
     email: z.email({ message: "Invalid email address" }),
     password: z
@@ -43,18 +46,28 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
+      setIsLoggingIn(true);
       await authService.login(data.email, data.password);
       router.replace("/(drawer)/(tabs)");
     } catch (error) {
       Alert.alert("Authentification failed", "Invalid email or password");
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
   const passwordRef = useRef<TextInput>(null);
 
-  const handleGoogleLogin = () => {
-    console.log("Logique Google déclenchée !");
-    // Plus tard : authService.loginWithGoogle()
+  const handleGoogleLogin = async () => {
+    try {
+      setIsGoogleLoading(true);
+      console.log("Logique Google déclenchée !");
+      // Plus tard : await authService.loginWithGoogle()
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (

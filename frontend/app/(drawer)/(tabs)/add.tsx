@@ -24,6 +24,7 @@ import { searchClubs } from "@/services/football.service";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
+import { BRANDS } from "@/constants/Jerseys";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
@@ -32,7 +33,7 @@ const jerseySchema = z.object({
   size: z.string().min(1, { message: "Please select a size" }),
   type: z.string().min(1, { message: "Please select a kit type" }),
   purchasePrice: z.number().optional().nullable(),
-  isOfficial: z.boolean().optional(),
+  isOfficial: z.boolean().default(true),
   playerName: z.string().optional(),
   number: z.string().optional(),
   frontImageUri: z.string().min(1, { message: "Front image is required" }),
@@ -40,7 +41,8 @@ const jerseySchema = z.object({
   description: z.string().optional(),
   version: z.string().min(1, { message: "Please select a version" }),
   condition: z.string().min(1, { message: "Please select a condition" }),
-  isShareable: z.boolean().optional().default(false),
+  isShareable: z.boolean().default(false),
+  brand: z.string().min(1, { message: "Please select a brand" }),
 });
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
@@ -53,6 +55,7 @@ const SPORTS = [
   "Foot US",
   "Rugby",
 ];
+
 const SIZES = ["S", "M", "L", "XL", "XXL"];
 export const JERSEY_TYPES_MAP: Record<string, string> = {
   HOME: "Home",
@@ -101,8 +104,23 @@ export default function TabAddScreen() {
   const [selectedClubId, setSelectedClubId] = useState<string>("");
   const [selectedSportId, setSelectedSportId] = useState<string>("");
 
-  const { data: sports, isLoading } = useSports();
-  console.log("DEBUG SPORTS:", { sports, isLoading });
+  const [brandSuggestions, setBrandSuggestions] = useState<string[]>([]);
+  const [isBrandDropdownVisible, setIsBrandDropdownVisible] = useState(false);
+
+  const { data: sports } = useSports();
+
+  const handleBrandSearch = (text: string) => {
+    if (text.length >= 2) {
+      const filtered = BRANDS.filter((brand) =>
+        brand.toLowerCase().includes(text.toLowerCase()),
+      );
+      setBrandSuggestions(filtered);
+      setIsBrandDropdownVisible(filtered.length > 0);
+    } else {
+      setBrandSuggestions([]);
+      setIsBrandDropdownVisible(false);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -114,6 +132,7 @@ export default function TabAddScreen() {
         setSelectedSportId("");
         setSuggestions([]);
         setIsDropdownVisible(false);
+        setIsBrandDropdownVisible(false);
       };
     }, []),
   );
@@ -125,7 +144,7 @@ export default function TabAddScreen() {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<JerseyFormValues>({
+  } = useForm({
     resolver: zodResolver(jerseySchema),
     defaultValues: {
       clubName: "",
@@ -142,6 +161,7 @@ export default function TabAddScreen() {
       condition: "",
       version: "",
       isShareable: false,
+      brand: "",
     },
   });
 
@@ -427,6 +447,58 @@ export default function TabAddScreen() {
         {errors.season && (
           <Text style={styles.errorText}>{errors.season.message}</Text>
         )}
+
+        {/* Brand selector */}
+        <View
+          style={[styles.inputContainer, { position: "relative", zIndex: 50 }]}
+        >
+          <Text style={styles.label}>Brand *</Text>
+          <Controller
+            control={control}
+            name="brand"
+            render={({ field: { onChange, value } }) => (
+              <View style={{ position: "relative" }}>
+                <TextInput
+                  style={[styles.input, errors.brand && styles.inputError]}
+                  placeholder="e.g., Nike, Adidas"
+                  placeholderTextColor="#8E8E93"
+                  value={value}
+                  onChangeText={(text) => {
+                    onChange(text);
+                    handleBrandSearch(text);
+                  }}
+                />
+
+                {/* Dropdown des suggestions */}
+                {isBrandDropdownVisible && brandSuggestions.length > 0 && (
+                  <View style={styles.brandDropdown}>
+                    <ScrollView
+                      nestedScrollEnabled={true}
+                      style={{ maxHeight: 150 }}
+                      keyboardShouldPersistTaps="handled"
+                    >
+                      {brandSuggestions.map((item) => (
+                        <TouchableOpacity
+                          key={item}
+                          style={styles.dropdownItem}
+                          onPress={() => {
+                            onChange(item);
+                            setIsBrandDropdownVisible(false);
+                          }}
+                        >
+                          <Text style={styles.dropdownText}>{item}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                )}
+              </View>
+            )}
+          />
+          {errors.brand && (
+            <Text style={styles.errorText}>{errors.brand.message}</Text>
+          )}
+        </View>
 
         {/* Size selector */}
         <Text style={styles.label}>Size *</Text>
@@ -832,8 +904,24 @@ const styles = StyleSheet.create({
     borderColor: "#2C2C2E",
     maxHeight: 200,
   },
+  brandDropdown: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    backgroundColor: "#1E1E1E",
+    borderRadius: 12,
+    padding: 4,
+    marginTop: 4,
+    borderWidth: 1,
+    borderColor: "#2C2C2E",
+    maxHeight: 180,
+    zIndex: 1000,
+    elevation: 5,
+  },
   dropdownItem: {
     paddingVertical: 10,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#2C2C2E",
   },

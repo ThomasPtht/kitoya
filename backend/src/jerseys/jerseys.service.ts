@@ -102,6 +102,9 @@ export class JerseysService {
       condition: dto.condition || null,
       version: dto.version || null,
       description: dto.description || null,
+      isShareable: dto.isShareable === true || dto.isShareable === 'true',
+      isOfficial: dto.isOfficial === true || dto.isOfficial === 'true',
+      brand: dto.brand,
     };
 
     const createdJersey = await this.prisma.jersey.create({

@@ -80,6 +80,7 @@ model Jersey {
   size          String? // e.g., S, M, L, XL, etc.
   condition     KitCondition
   version       KitVersion
+  brand         String
   isOfficial    Boolean?
   description   String? // e.g., any additional details about the jersey : buy at the stadium, signed by the player, etc.
   purchasePrice Float? // optionnal because some jerseys are gifts or free
