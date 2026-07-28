@@ -56,14 +56,22 @@ export class R2Service {
     }
   }
 
-  async deleteFile(publicUrl?: string | null) {
-    if (!publicUrl) {
+  async deleteFile(fileUrlOrKey?: string | null) {
+    if (!fileUrlOrKey) {
       return;
     }
 
     try {
-      const url = new URL(publicUrl);
-      const key = url.pathname.replace(/^\//, '');
+      let key = fileUrlOrKey;
+
+      // If the input is a URL, extract the key from the pathname
+      if (
+        fileUrlOrKey.startsWith('http://') ||
+        fileUrlOrKey.startsWith('https://')
+      ) {
+        const url = new URL(fileUrlOrKey);
+        key = url.pathname.replace(/^\//, '');
+      }
 
       await this.s3.send(
         new DeleteObjectCommand({
