@@ -11,10 +11,11 @@ import { SportsModule } from './sports/sports.module';
 import { ImageProcessingModule } from './image-processing/image-processing.module';
 import { KotdModule } from './kotd/kotd.module';
 import { EmailService } from './email/email.service';
+import { PasswordResetService } from './password-reset/password-reset.service';
 
 @Module({
   imports: [PrismaModule, AuthModule, JerseysModule, R2Module, SportsModule, ImageProcessingModule, KotdModule],
   controllers: [AppController],
-  providers: [AppService, EmailService],
+  providers: [AppService, EmailService, PasswordResetService],
 })
 export class AppModule {}

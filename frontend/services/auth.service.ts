@@ -101,4 +101,17 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+
+  resetPassword: async (data: { token: string; newPassword: string }) => {
+    try {
+      const response = await apiClient.post("/auth/reset-password", data);
+      return response.data;
+    } catch (error: any) {
+      // Extract the error message from the response if available, otherwise use a generic error message
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred during password reset";
+      throw new Error(errorMessage);
+    } 
+  }
 };
