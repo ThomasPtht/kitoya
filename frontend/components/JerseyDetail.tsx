@@ -12,26 +12,23 @@ import {
   Alert,
   Share,
 } from "react-native";
-import { Entypo, Feather } from "@expo/vector-icons";
+import { Entypo, Feather, Ionicons } from "@expo/vector-icons";
 import { useState, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
 import { captureRef } from "react-native-view-shot";
-import * as Sharing from "expo-sharing";
 
 interface JerseyDetailProps {
-  jersey: JerseyData;
+  jersey: JerseyData & { likesCount?: number };
   onClose: () => void;
 }
 
 export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
-  // Gestion du basculement entre l'image avant et arrière si disponible
   const [showBackImage, setShowBackImage] = useState(false);
   const activeImageUrl = showBackImage
     ? jersey.backImageUrl || jersey.frontImageUrl || jersey.frontImageUri
     : jersey.frontImageUrl || jersey.frontImageUri;
 
-  // Declare a ref for the card view to capture it for sharing
   const cardRef = useRef<View>(null);
   const [isSharing, setIsSharing] = useState(false);
 
@@ -80,18 +77,15 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 
     try {
       setIsSharing(true);
-      // let the time for the UI to update before capturing the view
       await new Promise((resolve) => requestAnimationFrame(resolve));
 
-      // Capturing the card view as an image
       const uri = await captureRef(cardRef, {
         format: "png",
         quality: 1,
       });
 
-      setIsSharing(false); // cut the watermark and context after capturing
+      setIsSharing(false);
 
-      // Text to share along with the image
       const shareMessage = `Check out this kit from my collection! 👕✨ Join me on KITROOM to build and showcase your ultimate football locker: https://kitroom.app`;
 
       await Share.share({
@@ -154,7 +148,6 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
             style={styles.glowBackground}
           />
 
-          {/* If sharing, show the watermark and context */}
           {isSharing && (
             <View style={styles.cardHeaderContext}>
               <Text style={styles.cardContextSubtitle}>MY COLLECTION</Text>
@@ -212,7 +205,6 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
             </View>
           )}
 
-          {/* Watermark brandisé */}
           {isSharing && (
             <View style={styles.watermarkContainer}>
               <Text style={styles.watermarkBrand}>KITROOM</Text>
@@ -221,14 +213,27 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           )}
         </View>
 
-        {/* Header Info: Season & Club */}
-        <View style={styles.headerInfo}>
-          <Text style={styles.season}>
-            {jersey.season ? jersey.season.toUpperCase() : ""}
-          </Text>
-          <Text style={styles.clubName}>
-            {jersey.club?.name || "Club Unknown"}
-          </Text>
+        {/* Header Info: Season, Club & Community Likes */}
+        <View style={styles.headerInfoContainer}>
+          <View style={styles.headerInfo}>
+            <Text style={styles.season}>
+              {jersey.season ? jersey.season.toUpperCase() : ""}
+            </Text>
+            <Text style={styles.clubName}>
+              {jersey.club?.name || "Club Unknown"}
+            </Text>
+          </View>
+
+          {/* Like badge*/}
+          {(jersey.likesCount ?? 0) > 0 && (
+            <View style={styles.likesBadge}>
+              <Ionicons name="heart" size={16} color="#EF4444" />
+              <Text style={styles.likesCountText}>
+                {jersey.likesCount ?? 0}{" "}
+                {jersey.likesCount === 1 ? "like" : "likes"}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Badges / Tags row */}
@@ -475,8 +480,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "500",
   },
-  headerInfo: {
+  headerInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 16,
+  },
+  headerInfo: {
+    flex: 1,
   },
   season: {
     fontSize: 12,
@@ -489,6 +500,22 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "bold",
     color: "#FFFFFF",
+  },
+  likesBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#151515",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.3)",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+  },
+  likesCountText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "600",
   },
   badgesRow: {
     flexDirection: "row",
