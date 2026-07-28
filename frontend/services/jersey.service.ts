@@ -19,6 +19,10 @@ export interface JerseyData {
   club?: {
     name: string;
   };
+  isOfficial: boolean;
+  isShareable: boolean;
+  brand: string;
+  purchasePrice: number;
 }
 
 export const jerseyService = {

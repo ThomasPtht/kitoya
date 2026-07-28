@@ -11,8 +11,9 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  Share,
 } from "react-native";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
@@ -67,6 +68,20 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         },
       ],
     );
+  };
+
+  const handleShare = async () => {
+    try {
+      const clubName = jersey.club?.name || "Unknown Club";
+      const seasonText = jersey.season ? `(${jersey.season})` : "";
+      const brandText = jersey.brand ? `by ${jersey.brand}` : "";
+
+      await Share.share({
+        message: `Check out this amazing ${clubName} jersey ${seasonText} ${brandText} in my collection on Kitroom! ⚽🔥`,
+      });
+    } catch (error) {
+      console.error("Error sharing jersey:", error);
+    }
   };
 
   return (
@@ -232,6 +247,11 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               <Text style={styles.value}>{jersey.number}</Text>
             </View>
           )}
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Brand</Text>
+            <Text style={styles.value}>{jersey.brand}</Text>
+          </View>
           {jersey.version && (
             <View style={styles.row}>
               <Text style={styles.label}>Version</Text>
@@ -248,13 +268,19 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           </View>
         </View>
 
+        {/* Share Button */}
+        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+          <Entypo name="share" size={18} color="#050806" />
+          <Text style={styles.shareButtonText}>Share this kit</Text>
+        </TouchableOpacity>
+
         {/* Delete Button */}
         <TouchableOpacity
           style={[styles.deleteButton, mutation.isPending && { opacity: 0.5 }]}
           onPress={handleDelete}
           disabled={mutation.isPending}
         >
-          <Feather name="trash-2" size={15} color="#8C5252" />
+          <Feather name="trash-2" size={15} color="#A66363" />
           <Text style={styles.deleteButtonText}>Delete from collection</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -329,7 +355,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: "center",
     position: "relative",
-    overflow: "hidden", // Important pour contenir le dégradé dans la carte
+    overflow: "hidden",
     shadowColor: "rgba(127, 206, 175, 0.3)",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,
@@ -346,7 +372,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 300,
-    zIndex: 1, // S'assure que l'image est au-dessus du spot lumineux
+    zIndex: 1,
   },
   placeholder: {
     color: "#8E8E93",
@@ -473,6 +499,27 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
   },
+  shareButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#05C785",
+    padding: 16,
+    borderRadius: 16,
+    gap: 10,
+    marginTop: 10,
+    shadowColor: "rgba(5, 199, 133, 0.4)",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+
+  },
+  shareButtonText: {
+    color: "#050806",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -483,7 +530,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     gap: 10,
-    marginTop: 10,
+    marginTop: 12,
   },
   deleteButtonText: {
     color: "#A66363",
