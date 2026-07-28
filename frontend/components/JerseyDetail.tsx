@@ -1,4 +1,3 @@
-import { Colors } from "@/constants/Colors";
 import { apiClient } from "@/services/api";
 import { JerseyData } from "@/services/jersey.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  Share,
 } from "react-native";
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useState, useRef } from "react";
@@ -89,10 +89,15 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         quality: 1,
       });
 
-      // Open native sharing dialog
-      await Sharing.shareAsync(uri, {
-        dialogTitle: "Share my jersey card",
-        mimeType: "image/png",
+      setIsSharing(false); // cut the watermark and context after capturing
+
+      // Text to share along with the image
+      const shareMessage = `Check out this kit from my collection! 👕✨ Join me on KITROOM to build and showcase your ultimate football locker: https://kitroom.app`;
+
+      await Share.share({
+        message: shareMessage,
+        url: uri,
+        title: "Check out this football kit!",
       });
     } catch (error) {
       console.error("Error sharing jersey card:", error);
@@ -311,7 +316,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           onPress={handleShare}
           disabled={isSharing}
         >
-          <Entypo name="share" size={18} color="#050806" />
+          <Entypo name="share" size={18} color="#ffffff" />
           <Text style={styles.shareButtonText}>
             {isSharing ? "Generating card..." : "Share this kit"}
           </Text>
@@ -580,7 +585,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   shareButtonText: {
-    color: "#050806",
+    color: "#ffffff",
     fontSize: 14,
     fontWeight: "bold",
   },

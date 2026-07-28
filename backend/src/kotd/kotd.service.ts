@@ -17,6 +17,11 @@ export class KotdService {
       },
       include: {
         club: true,
+        user: {
+          select: {
+            username: true,
+          },
+        },
         _count: {
           select: { likes: true },
         },

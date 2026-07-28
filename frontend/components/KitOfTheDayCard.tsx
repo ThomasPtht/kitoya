@@ -9,17 +9,16 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import { useRouter } from "expo-router";
 import { useJerseyOfTheDay, useToggleLikeJersey } from "@/hooks/useJerseyHook";
+import KitOfTheDayModal from "./KitOfTheDayModal"; // Ajuste le chemin selon l'emplacement de ton fichier Modal
 
 export default function KitOfTheDayCard() {
-  const router = useRouter();
   const { data: jersey, isLoading } = useJerseyOfTheDay();
   const [imageFailed, setImageFailed] = useState(false);
   const { mutate: toggleLike, isPending: isLiking } = useToggleLikeJersey();
 
-  // Exemple : si ton hook renvoie aussi hasLiked et likesCount, ou une fonction toggleLike
-  // const { mutate: toggleLike } = useToggleLike();
+  // État pour contrôler l'ouverture de la modale
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const imageUri = useMemo(() => {
     return jersey?.frontImageUrl?.trim() || jersey?.frontImage?.trim() || "";
@@ -43,72 +42,82 @@ export default function KitOfTheDayCard() {
   };
 
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
-          <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
+    <>
+      <View style={styles.wrapper}>
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
+            <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
+          </View>
+
+          {/* Like button */}
+          <TouchableOpacity
+            style={styles.likeButtonHeader}
+            activeOpacity={0.7}
+            disabled={isLiking}
+            onPress={() => {
+              toggleLike(jersey.id);
+            }}
+          >
+            <Ionicons
+              name={jersey.hasLiked ? "heart" : "heart-outline"}
+              size={18}
+              color={jersey.hasLiked ? "#EF4444" : Colors.theme.textMuted}
+            />
+            <Text style={styles.likesCountText}>{jersey.likesCount ?? 0}</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Like button */}
         <TouchableOpacity
-          style={styles.likeButtonHeader}
-          activeOpacity={0.7}
-          disabled={isLiking}
-          onPress={() => {
-            toggleLike(jersey.id);
-          }}
+          style={styles.card}
+          activeOpacity={0.8}
+          onPress={() => setIsModalVisible(true)} // Ouvre la modale au clic sur la carte
         >
-          <Ionicons
-            name={jersey.hasLiked ? "heart" : "heart-outline"}
-            size={18}
-            color={jersey.hasLiked ? "#EF4444" : Colors.theme.textMuted}
-          />
-          <Text style={styles.likesCountText}>{jersey.likesCount ?? 0}</Text>
+          {/* Container Image avec gestion du fallback si l'image échoue */}
+          <View style={styles.imageContainer}>
+            {imageUri && !imageFailed ? (
+              <Image
+                source={{ uri: imageUri }}
+                style={styles.image}
+                resizeMode="cover"
+                onError={() => setImageFailed(true)}
+              />
+            ) : (
+              <View style={styles.imageFallback}>
+                <Ionicons name="shirt-outline" size={24} color="#8E8E93" />
+              </View>
+            )}
+          </View>
+
+          {/* Infos à droite */}
+          <View style={styles.infoContainer}>
+            <View>
+              <Text style={styles.tag}>{generateTag()}</Text>
+              <Text style={styles.clubName} numberOfLines={1}>
+                {jersey.club.name}
+              </Text>
+              <Text style={styles.seasonType}>
+                {jersey.season} / {jersey.type?.toLowerCase()}
+              </Text>
+
+              <Text style={styles.story} numberOfLines={2}>
+                {jersey.story}
+              </Text>
+            </View>
+
+            <Text style={styles.readMore}>READ MORE ➔</Text>
+          </View>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.card}
-        activeOpacity={0.8}
-        // onPress={() => router.push(`/jersey/${jersey.id}`)}
-      >
-        {/* Container Image avec gestion du fallback si l'image échoue */}
-        <View style={styles.imageContainer}>
-          {imageUri && !imageFailed ? (
-            <Image
-              source={{ uri: imageUri }}
-              style={styles.image}
-              resizeMode="cover"
-              onError={() => setImageFailed(true)}
-            />
-          ) : (
-            <View style={styles.imageFallback}>
-              <Ionicons name="shirt-outline" size={24} color="#8E8E93" />
-            </View>
-          )}
-        </View>
-
-        {/* Infos à droite */}
-        <View style={styles.infoContainer}>
-          <View>
-            <Text style={styles.tag}>{generateTag()}</Text>
-            <Text style={styles.clubName} numberOfLines={1}>
-              {jersey.club.name}
-            </Text>
-            <Text style={styles.seasonType}>
-              {jersey.season} / {jersey.type?.toLowerCase()}
-            </Text>
-
-            <Text style={styles.story} numberOfLines={2}>
-              {jersey.story}
-            </Text>
-          </View>
-
-          <Text style={styles.readMore}>READ MORE ➔</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+      {/* Intégration de la modale */}
+      <KitOfTheDayModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        jersey={jersey}
+        onToggleLike={(id) => toggleLike(id)}
+      />
+    </>
   );
 }
 
