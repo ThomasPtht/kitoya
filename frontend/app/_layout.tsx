@@ -69,6 +69,10 @@ function RootLayoutNav() {
           name="(auth)/forgot-password"
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="(auth)/reset-password"
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
         <Stack.Screen
           name="settings"

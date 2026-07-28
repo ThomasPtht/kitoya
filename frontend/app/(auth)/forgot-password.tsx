@@ -28,13 +28,15 @@ export default function ForgotPasswordScreen() {
 
     try {
       setIsLoading(true);
-      // TODO: Appeler ton service d'auth (ex: await authService.forgotPassword(email))
-     await authService.forgotPassword(email); // Remplace par ton service d'auth réel
+      await authService.forgotPassword(email);
       Alert.alert(
         "Email sent",
         "Check your inbox for password reset instructions.",
       );
-      router.back();
+      router.push({
+        pathname: "/(auth)/reset-password",
+        params: { email },
+      });
     } catch (error) {
       Alert.alert("Error", "Could not send reset email. Please try again.");
     } finally {

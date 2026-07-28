@@ -11,17 +11,21 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { authService } from "@/services/auth.service";
 
 export default function ResetPasswordScreen() {
-  // Get the token from the URL query parameters
-  const { token } = useLocalSearchParams<{ token: string }>();
-
+  const { email } = useLocalSearchParams<{ email: string }>();
+  const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleReset = async () => {
-    if (!newPassword || !confirmPassword) {
+    if (!email || !code || !newPassword || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (code.length !== 6) {
+      Alert.alert("Error", "The reset code must be 6 digits");
       return;
     }
 
@@ -30,23 +34,17 @@ export default function ResetPasswordScreen() {
       return;
     }
 
-    if (!token) {
-      Alert.alert("Error", "Invalid or missing reset token");
-      return;
-    }
-
     try {
       setIsLoading(true);
-      // Send the new password and token to the backend for validation and update
-      await authService.resetPassword({ token, newPassword });
+      await authService.resetPassword({ email, code, newPassword });
 
       Alert.alert("Success", "Your password has been reset successfully.", [
         { text: "Login", onPress: () => router.replace("/(auth)/login") },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert(
         "Error",
-        "Failed to reset password. The link may have expired.",
+        error.message || "Failed to reset password. The code may have expired.",
       );
     } finally {
       setIsLoading(false);
@@ -55,8 +53,29 @@ export default function ResetPasswordScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>New Password</Text>
-      <Text style={styles.subtitle}>Enter your new secure password below.</Text>
+      <Text style={styles.title}>Reset Password</Text>
+      <Text style={styles.subtitle}>
+        Enter the 6-digit code received by email and your new password.
+      </Text>
+
+      {/* Email field pre-filled and disabled */}
+      <TextInput
+        style={[styles.input, styles.disabledInput]}
+        placeholder="Email address"
+        placeholderTextColor="#666"
+        value={email}
+        editable={false}
+      />
+
+      <TextInput
+        style={styles.codeInput}
+        placeholder="123456"
+        placeholderTextColor="#666"
+        keyboardType="number-pad"
+        maxLength={6}
+        value={code}
+        onChangeText={setCode}
+      />
 
       <TextInput
         style={styles.input}
@@ -107,12 +126,30 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginBottom: 16,
   },
+  codeInput: {
+    backgroundColor: "#111",
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    fontSize: 22,
+    letterSpacing: 8,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#05C785",
+  },
   button: {
     backgroundColor: "#05C785",
     padding: 16,
     borderRadius: 8,
     alignItems: "center",
+    marginTop: 8,
   },
   buttonDisabled: { opacity: 0.7 },
   buttonText: { color: "#000", fontWeight: "bold", fontSize: 16 },
+  disabledInput: {
+    opacity: 0.5,
+    color: "#888",
+  },
 });

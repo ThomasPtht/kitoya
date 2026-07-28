@@ -12,9 +12,19 @@ import { ImageProcessingModule } from './image-processing/image-processing.modul
 import { KotdModule } from './kotd/kotd.module';
 import { EmailService } from './email/email.service';
 import { PasswordResetService } from './password-reset/password-reset.service';
+import { PasswordResetModule } from './password-reset/password-reset.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, JerseysModule, R2Module, SportsModule, ImageProcessingModule, KotdModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    JerseysModule,
+    R2Module,
+    SportsModule,
+    ImageProcessingModule,
+    KotdModule,
+    PasswordResetModule,
+  ],
   controllers: [AppController],
   providers: [AppService, EmailService, PasswordResetService],
 })

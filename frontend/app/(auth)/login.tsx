@@ -133,7 +133,7 @@ export default function LoginScreen() {
                 >
                   <TextInput
                     ref={passwordRef} // Allows the password input to be focused when the user presses "next" on the email input
-                    style={styles.input}
+                    style={[styles.input, { letterSpacing: 0 }]}
                     placeholder="Password"
                     placeholderTextColor="#8E8E93"
                     secureTextEntry

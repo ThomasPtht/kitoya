@@ -102,7 +102,11 @@ export const authService = {
     }
   },
 
-  resetPassword: async (data: { token: string; newPassword: string }) => {
+  resetPassword: async (data: {
+    email: string;
+    code: string;
+    newPassword: string;
+  }) => {
     try {
       const response = await apiClient.post("/auth/reset-password", data);
       return response.data;
@@ -112,6 +116,6 @@ export const authService = {
         error.response?.data?.message ||
         "An error occurred during password reset";
       throw new Error(errorMessage);
-    } 
-  }
+    }
+  },
 };
