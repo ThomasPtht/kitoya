@@ -38,20 +38,25 @@ enum JerseyType {
 }
 
 model User {
-  id              String        @id @default(uuid())
-  username        String        @unique
-  email           String        @unique
+  id              String    @id @default(uuid())
+  username        String    @unique
+  email           String    @unique
   password        String? // optionnal to allow for OAuth users, but mandatory for users registering with email/password thanks to class-validator in the DTOs
-  isPublic        Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  role            Role          @default(USER)
+  isPublic        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  role            Role      @default(USER)
   resetCode       String? // optionnal, used for password reset
   resetCodeExpiry DateTime? // optionnal, used for password reset
-  jerseys         Jersey[]
-  wishlist        Wishlist[]
-  subscription    Subscription? // one-to-one relationship with Subscriptions
-  jerseyLikes     JerseyLike[] // one-to-many relationship with JerseyLike
+
+  // Stripe integration
+  stripeCustomerId String? // optionnal, used for Stripe integration
+  subscription     Subscription? // one-to-one relationship with Subscriptions
+
+  // Relationships
+  jerseys     Jersey[]
+  wishlist    Wishlist[]
+  jerseyLikes JerseyLike[] // one-to-many relationship with JerseyLike
 }
 
 model Subscription {

@@ -13,6 +13,7 @@ import { KotdModule } from './kotd/kotd.module';
 import { EmailService } from './email/email.service';
 import { PasswordResetService } from './password-reset/password-reset.service';
 import { PasswordResetModule } from './password-reset/password-reset.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PasswordResetModule } from './password-reset/password-reset.module';
     ImageProcessingModule,
     KotdModule,
     PasswordResetModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmailService, PasswordResetService],
