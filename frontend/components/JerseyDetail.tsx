@@ -101,6 +101,13 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
     }
   };
 
+  // Helper function to format strings nicely (e.g. "Very_Good" -> "Very good")
+  const formatText = (text: string) => {
+    if (!text) return "";
+    const clean = text.replace(/_/g, " ").toLowerCase();
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Top Bar with Back / Code */}
@@ -248,7 +255,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           {jersey.condition && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>
-                {jersey.condition.replace(/_/g, " ")}
+                {formatText(jersey.condition)}
               </Text>
             </View>
           )}
@@ -293,13 +300,13 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           {jersey.version && (
             <View style={styles.row}>
               <Text style={styles.label}>Version</Text>
-              <Text style={styles.value}>{jersey.version}</Text>
+              <Text style={styles.value}>{formatText(jersey.version)}</Text>
             </View>
           )}
           <View style={styles.row}>
             <Text style={styles.label}>Condition</Text>
             <Text style={styles.value}>
-              {jersey.condition ? jersey.condition.replace(/_/g, " ") : "N/A"}
+              {jersey.condition ? formatText(jersey.condition) : "N/A"}
             </Text>
           </View>
           <View style={styles.row}>
@@ -596,7 +603,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
-    textTransform: "capitalize",
+    // textTransform retiré ici pour laisser le JavaScript formater proprement
   },
   priceValue: {
     color: "#05C785",
