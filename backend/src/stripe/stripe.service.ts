@@ -16,7 +16,10 @@ export class StripeService {
     });
   }
 
-  async createSubscription(userid: string, priceId: string) {
+  /**
+   * Create a subscription (Monthly without trial or Annual with a 7-day trial)
+   */
+  async createSubscription(userid: string, interval: 'month' | 'year') {
     const user = await this.prisma.user.findUnique({
       where: { id: userid },
     });
@@ -27,8 +30,25 @@ export class StripeService {
     const existingSubscription = await this.prisma.subscription.findUnique({
       where: { userId: userid },
     });
-    if (existingSubscription?.status === 'active') {
-      throw new BadRequestException('User already has an active subscription');
+    if (
+      existingSubscription?.status === 'active' ||
+      existingSubscription?.status === 'trialing'
+    ) {
+      throw new BadRequestException(
+        'User already has an active or trialing subscription',
+      );
+    }
+
+    // Retrieve the correct Price ID based on the selected interval
+    const priceId =
+      interval === 'year'
+        ? process.env.STRIPE_ELITE_YEARLY_PRICE_ID!
+        : process.env.STRIPE_ELITE_MONTHLY_PRICE_ID!;
+
+    if (!priceId) {
+      throw new BadRequestException(
+        `Price ID for interval ${interval} is not configured.`,
+      );
     }
 
     let customerId = user.stripeCustomerId;
@@ -47,16 +67,18 @@ export class StripeService {
       });
     }
 
+    // Apply a 7-day trial period exclusively for the annual subscription
+    const trialDays = interval === 'year' ? 7 : 0;
+
     const subscription = await this.stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
-      trial_period_days: 7, // Set a trial period of 7 days
+      ...(trialDays > 0 && { trial_period_days: trialDays }),
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent'],
     });
 
-    // Sécurité robuste pour récupérer la facture et le payment_intent peu importe le format renvoyé
     let invoice = subscription.latest_invoice as any;
 
     if (typeof invoice === 'string') {
@@ -69,7 +91,7 @@ export class StripeService {
 
     if (!paymentIntent || !paymentIntent.client_secret) {
       throw new BadRequestException(
-        "Impossible de générer l'intention de paiement pour cet abonnement.",
+        'Failed to generate payment intent for this subscription.',
       );
     }
 
@@ -80,6 +102,51 @@ export class StripeService {
     };
   }
 
+  /**
+   * Cancel subscription at the end of the current billing period (retaining access until then)
+   */
+  async cancelSubscription(userid: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userid },
+    });
+    if (!user || !user.stripeCustomerId) {
+      throw new NotFoundException('User or Stripe customer not found');
+    }
+
+    // Retrieve active or trialing subscriptions for the customer from Stripe
+    const subscriptions = await this.stripe.subscriptions.list({
+      customer: user.stripeCustomerId,
+      status: 'all',
+      limit: 5,
+    });
+
+    const activeSub = subscriptions.data.find(
+      (sub) => sub.status === 'active' || sub.status === 'trialing',
+    );
+
+    if (!activeSub) {
+      throw new NotFoundException('No active subscription found to cancel');
+    }
+
+    // Schedule cancellation at period end so the user keeps access until the period expires
+    const updatedSub = await this.stripe.subscriptions.update(activeSub.id, {
+      cancel_at_period_end: true,
+    });
+
+    // Optional: Update local status or handle via webhook when period actually ends
+    const periodEndTimestamp = (updatedSub as any).current_period_end * 1000;
+
+    return {
+      success: true,
+      message:
+        'Subscription will be canceled at the end of the billing period.',
+      cancelAt: new Date(periodEndTimestamp),
+    };
+  }
+
+  /**
+   * Handle incoming Stripe webhooks
+   */
   async handleWebhookEvent(signature: string, rawBody: Buffer) {
     let event: Stripe.Event;
 
@@ -96,7 +163,8 @@ export class StripeService {
     }
 
     switch (event.type) {
-      case 'invoice.payment_succeeded': {
+      case 'invoice.payment_succeeded':
+      case 'customer.subscription.trial_will_end': {
         const invoice = event.data.object as any;
         const subscriptionId =
           typeof invoice.subscription === 'string'

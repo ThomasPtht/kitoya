@@ -9,7 +9,7 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import type { Request, Response } from 'express'; // Ajout de 'type' pour éviter les confusions de valeurs
+import type { Request, Response } from 'express';
 import { StripeService } from './stripe.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -17,6 +17,9 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
+  /**
+   * Create a new subscription (handles monthly or yearly interval with trial support)
+   */
   @Post('create-subscription')
   @UseGuards(JwtAuthGuard)
   async createSubscription(
@@ -24,26 +27,36 @@ export class StripeController {
     @Body() body: { plan: string; interval?: 'month' | 'year' },
   ) {
     const userId = req.user.id || req.user.userId;
+    const interval = body.interval || 'month'; // Default to month if not provided
 
-    let priceId = '';
-    if (body.plan === 'ELITE') {
-      const interval = body.interval || 'month'; // 'month' by default if not provided
-      priceId =
-        interval === 'year'
-          ? process.env.STRIPE_PRICE_YEARLY!
-          : process.env.STRIPE_PRICE_MONTHLY!;
-    }
+    console.log(
+      `Creating subscription for user ${userId} with interval: ${interval}`,
+    );
 
-    console.log('PRICE ID UTILISE :', priceId);
-
-    return this.stripeService.createSubscription(userId, priceId);
+    return this.stripeService.createSubscription(userId, interval);
   }
 
+  /**
+   * Cancel an active user subscription at the end of the current period
+   */
+  @Post('cancel-subscription')
+  @UseGuards(JwtAuthGuard)
+  async cancelSubscription(@Req() req: any) {
+    const userId = req.user.id || req.user.userId;
+
+    console.log(`Canceling subscription for user ${userId}`);
+
+    return this.stripeService.cancelSubscription(userId);
+  }
+
+  /**
+   * Handle incoming Stripe webhook events
+   */
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
   async handleWebhook(
     @NestHeaders('stripe-signature') signature: string,
-    @Req() req: Request & { rawBody?: Buffer }, // Add 'rawBody' property to the Request type
+    @Req() req: Request & { rawBody?: Buffer },
     @Res() res: Response,
   ) {
     console.log('Received Stripe webhook event');

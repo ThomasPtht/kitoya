@@ -28,6 +28,7 @@ export default function UpgradeScreen() {
         "ELITE",
         selectedInterval,
       );
+      console.log("DONNEES STRIPE REÇUES :", data);
       const { clientSecret, customerId } = data;
 
       const { error: initError } = await initPaymentSheet({
