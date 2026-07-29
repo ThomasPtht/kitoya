@@ -10,6 +10,9 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
+import { stripeService } from "@/services/stripe.service";
+import Toast from "react-native-toast-message";
+import { useStripe } from "@stripe/stripe-react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -31,6 +34,8 @@ interface PlanData {
 
 export default function SubscriptionScreen() {
   const [activePlan, setActivePlan] = useState<PlanKey>("ELITE");
+  const [loading, setLoading] = useState(false);
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const plans: PlanData[] = [
     {
@@ -61,6 +66,56 @@ export default function SubscriptionScreen() {
       cta: "UPGRADE TO ELITE",
     },
   ];
+
+  const handlePressCta = async (planKey: PlanKey) => {
+    if (planKey === "FREE") {
+      router.back();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await stripeService.createSubscription("ELITE");
+      const { paymentIntentClientSecret, customerId } = data;
+
+      // Init payment sheet stripe
+      const { error: initError } = await initPaymentSheet({
+        paymentIntentClientSecret: paymentIntentClientSecret,
+        merchantDisplayName: "Kitroom",
+        customerId: customerId,
+        allowsDelayedPaymentMethods: true,
+      });
+
+      if (initError) {
+        Toast.show({
+          type: "error",
+          text1: "Payment Sheet Initialization Error",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // display payment sheet
+      const { error: paymentError } = await presentPaymentSheet();
+
+      if (paymentError) {
+        Toast.show({ type: "error", text1: paymentError.message });
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Bienvenue dans Kitroom ELITE !",
+        });
+        router.back();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Une erreur est survenue",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCardStyle = (key: PlanKey) => {
     if (key === activePlan) {
