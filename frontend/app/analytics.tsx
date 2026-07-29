@@ -6,10 +6,12 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCollectionAnalytics } from "@/hooks/useJerseyHook";
+import { useUserMe } from "@/hooks/useAuthHook";
 
 interface AnalyticsProps {
   onClose?: () => void;
@@ -28,7 +30,6 @@ interface AnalyticsProps {
   };
 }
 
-// Fonction utilitaire pour formater les labels (ex: VERY_GOOD -> Very good, matchworn -> Matchworn)
 const formatLabel = (text: string) => {
   if (!text) return "";
   const cleaned = text.replace(/[_]/g, " ").replace(/[-]/g, " ");
@@ -37,8 +38,15 @@ const formatLabel = (text: string) => {
 
 export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
   const router = useRouter();
+  const { data: userMe, isLoading: isUserLoading } = useUserMe();
   const { data, isLoading, error } = useCollectionAnalytics();
   console.log("Collection Analytics Data:", data);
+
+  const isAdmin = userMe?.role === "ADMIN";
+  const isElite =
+    userMe?.subscription?.planType === "ELITE" &&
+    userMe?.subscription?.status === "active";
+  const hasEliteAccess = isAdmin || isElite;
 
   const handleBack = () => {
     if (onClose) {
@@ -48,9 +56,53 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
     }
   };
 
+  if (isUserLoading) {
+    return (
+      <SafeAreaView style={[styles.container, styles.centerContainer]}>
+        <Text style={{ color: "#888888" }}>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!hasEliteAccess) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={handleBack} style={styles.backButton}>
+            <Feather name="arrow-left" size={24} color="#FFFFFF" />
+          </Pressable>
+          <Text style={styles.headerTitle}>Collection stats</Text>
+        </View>
+
+        <View style={styles.lockedContainer}>
+          <View style={styles.lockIconContainer}>
+            <Feather name="lock" size={32} color="#05C785" />
+          </View>
+          <Text style={styles.lockedTitle}>ELITE Feature</Text>
+          <Text style={styles.lockedText}>
+            Advanced collection analytics are reserved for Kitroom ELITE
+            members.
+          </Text>
+          <TouchableOpacity
+            style={styles.exportButton}
+            onPress={() => router.push("/subscription")}
+            activeOpacity={0.8}
+          >
+            <Feather
+              name="zap"
+              size={18}
+              color="#121212"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.exportButtonText}>Discover ELITE Plan</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header identique à ExportCollectionScreen */}
       <View style={styles.header}>
         <Pressable onPress={handleBack} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
@@ -65,7 +117,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Grid 2x3 pour les stats principales */}
         <View style={styles.gridRow}>
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
@@ -122,7 +173,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           </View>
         </View>
 
-        {/* SECTION: TOP CLUBS */}
         <Text style={styles.sectionHeader}>TOP CLUBS</Text>
         <View style={styles.sectionCard}>
           {(data?.topClubs ?? []).map((club, index, array) => (
@@ -153,7 +203,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        {/* SECTION: KITS BY ERA */}
         <Text style={styles.sectionHeader}>KITS BY ERA</Text>
         <View style={styles.sectionCard}>
           {(data?.eras ?? []).map((era, index, array) => (
@@ -184,7 +233,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        {/* SECTION: BRAND MIX (Pills) */}
         <Text style={styles.sectionHeader}>BRAND MIX</Text>
         <View style={styles.pillsRow}>
           {(data?.brands ?? []).map((brand, index) => (
@@ -196,7 +244,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        {/* SECTION: VARIANTS */}
         <Text style={styles.sectionHeader}>VARIANTS</Text>
         <View style={styles.sectionCard}>
           {(data?.variants ?? []).map((variant, index, array) => (
@@ -231,7 +278,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        {/* SECTION: CONDITION MIX */}
         <Text style={styles.sectionHeader}>CONDITION MIX</Text>
         <View style={styles.sectionCard}>
           {(data?.conditions ?? []).map((condition, index, array) => (
@@ -275,6 +321,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#121212",
   },
+  centerContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -299,6 +349,53 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "#FFFFFF",
+  },
+  lockedContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+    marginTop: -40,
+  },
+  lockIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "rgba(5, 199, 133, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "rgba(5, 199, 133, 0.3)",
+  },
+  lockedTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  lockedText: {
+    fontSize: 14,
+    color: "#888888",
+    textAlign: "center",
+    marginBottom: 30,
+    lineHeight: 20,
+  },
+  exportButton: {
+    backgroundColor: "#05C785",
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  exportButtonText: {
+    color: "#121212",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   scrollContent: {
     padding: 20,

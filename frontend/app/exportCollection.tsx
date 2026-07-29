@@ -17,11 +17,14 @@ import { jerseyService } from "@/services/jersey.service";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { exportCollectionToPdf } from "../lib/pdf-export";
+import { useUserMe } from "@/hooks/useAuthHook";
 
 type ExportFormat = "csv" | "json" | "pdf";
 
 export default function ExportCollectionScreen() {
   const router = useRouter();
+  const { data: userMe, isLoading: isUserLoading } = useUserMe();
+
   const [loading, setLoading] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("csv");
   const [includeStories, setIncludeStories] = useState(true);
@@ -29,6 +32,57 @@ export default function ExportCollectionScreen() {
 
   const { data: count } = useJerseyCount();
   const { data: jerseyData = [] } = useJerseys();
+
+  const isAdmin = userMe?.role === "ADMIN";
+  const isElite =
+    userMe?.subscription?.planType === "ELITE" &&
+    userMe?.subscription?.status === "active";
+  const hasEliteAccess = isAdmin || isElite;
+
+  if (isUserLoading) {
+    return (
+      <View style={[styles.container, styles.centerContainer]}>
+        <Text style={{ color: "#888888" }}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!hasEliteAccess) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
+            <Feather name="arrow-left" size={24} color="#FFFFFF" />
+          </Pressable>
+          <Text style={styles.headerTitle}>Export collection</Text>
+        </View>
+
+        <View style={styles.lockedContainer}>
+          <View style={styles.lockIconContainer}>
+            <Feather name="lock" size={32} color="#05C785" />
+          </View>
+          <Text style={styles.lockedTitle}>ELITE Feature</Text>
+          <Text style={styles.lockedText}>
+            Exporting your collection (CSV, JSON, PDF) is reserved for Kitroom
+            ELITE members.
+          </Text>
+          <TouchableOpacity
+            style={styles.exportButton}
+            onPress={() => router.push("/subscription")}
+            activeOpacity={0.8}
+          >
+            <Feather
+              name="zap"
+              size={18}
+              color="#121212"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.exportButtonText}>Discover ELITE Plan</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   const handleExport = async () => {
     if (!jerseyData || jerseyData.length === 0) {
@@ -39,7 +93,6 @@ export default function ExportCollectionScreen() {
     try {
       setLoading(true);
 
-      // if the selected format is PDF, call the exportCollectionToPdf function
       if (selectedFormat === "pdf") {
         await exportCollectionToPdf(jerseyData);
         return;
@@ -56,7 +109,6 @@ export default function ExportCollectionScreen() {
         mimeType = "application/json";
         uti = "public.json";
       } else if (selectedFormat === "csv") {
-        // Headers on one line, separated by commas
         let headers =
           "ID,Club,Season,Player Name,Number,Type,Size,Condition,Version";
         if (includePurchaseHistory) {
@@ -67,7 +119,6 @@ export default function ExportCollectionScreen() {
         }
         headers += "\n";
 
-        // Build rows for each jersey, ensuring that each field is properly quoted and separated by commas
         const rows = jerseyData
           .map((jersey: any) => {
             let row = `"${jersey.id || ""}","${jersey.club?.name || ""}","${jersey.season || ""}","${jersey.playerName || ""}","${jersey.number || ""}","${jersey.type || ""}","${jersey.size || ""}","${jersey.condition || ""}","${jersey.version || ""}"`;
@@ -88,7 +139,6 @@ export default function ExportCollectionScreen() {
         uti = "public.comma-separated-values-text";
       }
 
-      // Write the file to the device's cache directory
       const file = new File(Paths.cache, fileName);
 
       if (!file.exists) {
@@ -127,7 +177,6 @@ export default function ExportCollectionScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
@@ -142,7 +191,6 @@ export default function ExportCollectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Stat Box */}
         <View style={styles.statCard}>
           <View>
             <Text style={styles.statSubText}>IN YOUR ARCHIVE</Text>
@@ -153,10 +201,8 @@ export default function ExportCollectionScreen() {
           <Feather name="download" size={22} color="#05C785" />
         </View>
 
-        {/* Format Section */}
         <Text style={styles.sectionHeader}>FORMAT</Text>
 
-        {/* Format: CSV */}
         <Pressable
           style={[
             styles.optionCard,
@@ -180,7 +226,6 @@ export default function ExportCollectionScreen() {
           )}
         </Pressable>
 
-        {/* Format: JSON */}
         <Pressable
           style={[
             styles.optionCard,
@@ -204,7 +249,6 @@ export default function ExportCollectionScreen() {
           )}
         </Pressable>
 
-        {/* Format: PDF */}
         <Pressable
           style={[
             styles.optionCard,
@@ -236,7 +280,6 @@ export default function ExportCollectionScreen() {
           )}
         </Pressable>
 
-        {/* Include Section */}
         <Text style={styles.sectionHeader}>INCLUDE</Text>
 
         <View style={styles.switchesContainer}>
@@ -261,7 +304,6 @@ export default function ExportCollectionScreen() {
           </View>
         </View>
 
-        {/* Action Button */}
         <TouchableOpacity
           style={styles.exportButton}
           onPress={handleExport}
@@ -279,7 +321,6 @@ export default function ExportCollectionScreen() {
           </Text>
         </TouchableOpacity>
 
-        {/* Footer info */}
         <Text style={styles.footerInfo}>
           Your data stays yours. Files download directly to this device.
         </Text>
@@ -292,6 +333,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#121212",
+  },
+  centerContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     flexDirection: "row",
@@ -317,6 +362,38 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "#FFFFFF",
+  },
+  lockedContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+    marginTop: -40,
+  },
+  lockIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "rgba(5, 199, 133, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "rgba(5, 199, 133, 0.3)",
+  },
+  lockedTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  lockedText: {
+    fontSize: 14,
+    color: "#888888",
+    textAlign: "center",
+    marginBottom: 30,
+    lineHeight: 20,
   },
   scrollContent: {
     padding: 20,
@@ -437,6 +514,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#05C785",
     borderRadius: 16,
     paddingVertical: 16,
+    paddingHorizontal: 24,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

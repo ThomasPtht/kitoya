@@ -39,7 +39,15 @@ export default function DrawerLayout() {
 
   // Dynamic rank and collection count
   const currentRank = calculateRank(jerseys);
-  const totalCount = jerseys?.length ?? 0;
+
+  // Vérification des rôles et abonnements
+  const isAdmin = userMe?.role === "ADMIN";
+  const isElite =
+    userMe?.subscription?.planType === "ELITE" &&
+    userMe?.subscription?.status === "active";
+
+  // L'utilisateur a accès aux fonctionnalités ELITE s'il est Admin ou Elite
+  const hasEliteAccess = isAdmin || isElite;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -77,40 +85,42 @@ export default function DrawerLayout() {
             </View>
 
             {/* Top Upgrade / Pro Card */}
-            <Pressable
-              onPress={() => {
-                props.navigation.closeDrawer();
-                router.push("/subscription");
-              }}
-              style={({ pressed }) => [
-                styles.upgradeContainer,
-                { opacity: pressed ? 0.8 : 1 },
-              ]}
-            >
-              <View style={styles.upgradeHeader}>
-                <Feather name="zap" size={14} color="#05C785" />
-                <Text style={styles.upgradeBadge}>KITROOM PRO</Text>
-              </View>
+            {!isElite && !isAdmin && (
+              <Pressable
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/subscription");
+                }}
+                style={({ pressed }) => [
+                  styles.upgradeContainer,
+                  { opacity: pressed ? 0.8 : 1 },
+                ]}
+              >
+                <View style={styles.upgradeHeader}>
+                  <Feather name="zap" size={14} color="#05C785" />
+                  <Text style={styles.upgradeBadge}>KITROOM PRO</Text>
+                </View>
 
-              <Text style={styles.upgradeTitle}>Unlock the full archive</Text>
+                <Text style={styles.upgradeTitle}>Unlock the full archive</Text>
 
-              <View style={styles.featureList}>
-                <Text style={styles.featureItem}>
-                  • Unlimited wishlist & price alerts
-                </Text>
-                <Text style={styles.featureItem}>
-                  • PDF export for insurance
-                </Text>
-                <Text style={styles.featureItem}>
-                  • Advanced tags & filters
-                </Text>
-              </View>
+                <View style={styles.featureList}>
+                  <Text style={styles.featureItem}>
+                    • Unlimited wishlist & price alerts
+                  </Text>
+                  <Text style={styles.featureItem}>
+                    • PDF export for insurance
+                  </Text>
+                  <Text style={styles.featureItem}>
+                    • Advanced tags & filters
+                  </Text>
+                </View>
 
-              <View style={styles.subButton}>
-                <Text style={styles.subText}>Upgrade</Text>
-                <Feather name="arrow-right" size={14} color="#121212" />
-              </View>
-            </Pressable>
+                <View style={styles.subButton}>
+                  <Text style={styles.subText}>Upgrade</Text>
+                  <Feather name="arrow-right" size={14} color="#121212" />
+                </View>
+              </Pressable>
+            )}
 
             {/* Navigation Links Group */}
             <View style={styles.navSection}>
@@ -127,26 +137,70 @@ export default function DrawerLayout() {
                 <Text style={styles.navText}>Invite friends</Text>
               </Pressable>
 
+              {/* Export Collection (Réservé ELITE / ADMIN) */}
               <Pressable
                 style={styles.navItem}
                 onPress={() => {
                   props.navigation.closeDrawer();
-                  router.push("/exportCollection");
+                  if (hasEliteAccess) {
+                    router.push("/exportCollection");
+                  } else {
+                    router.push("/subscription");
+                  }
                 }}
               >
-                <Feather name="download" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Export collection</Text>
+                <Feather
+                  name="download"
+                  size={18}
+                  color={hasEliteAccess ? "#9E9E9E" : "#555555"}
+                />
+                <Text
+                  style={[
+                    styles.navText,
+                    !hasEliteAccess && { color: "#555555" },
+                  ]}
+                >
+                  Export collection
+                </Text>
+                {!hasEliteAccess && (
+                  <View style={styles.lockBadge}>
+                    <Feather name="lock" size={10} color="#05C785" />
+                    <Text style={styles.lockBadgeText}>ELITE</Text>
+                  </View>
+                )}
               </Pressable>
 
+              {/* Collection Stats (Réservé ELITE / ADMIN) */}
               <Pressable
                 style={styles.navItem}
                 onPress={() => {
                   props.navigation.closeDrawer();
-                  router.push("/analytics");
+                  if (hasEliteAccess) {
+                    router.push("/analytics");
+                  } else {
+                    router.push("/subscription");
+                  }
                 }}
               >
-                <FontAwesome name="bar-chart" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Collection stats</Text>
+                <FontAwesome
+                  name="bar-chart"
+                  size={18}
+                  color={hasEliteAccess ? "#9E9E9E" : "#555555"}
+                />
+                <Text
+                  style={[
+                    styles.navText,
+                    !hasEliteAccess && { color: "#555555" },
+                  ]}
+                >
+                  Collection stats
+                </Text>
+                {!hasEliteAccess && (
+                  <View style={styles.lockBadge}>
+                    <Feather name="lock" size={10} color="#05C785" />
+                    <Text style={styles.lockBadgeText}>ELITE</Text>
+                  </View>
+                )}
               </Pressable>
 
               <Pressable
@@ -277,10 +331,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.5,
   },
-  badgePoints: {
-    color: "#AAAAAA",
-    fontSize: 11,
-  },
   upgradeContainer: {
     backgroundColor: "#141C17",
     borderColor: "#05C785",
@@ -352,6 +402,23 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "500",
+    flex: 1, // Permet de pousser le badge ELITE à droite si besoin
+  },
+  lockBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(5, 199, 133, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(5, 199, 133, 0.3)",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    gap: 4,
+  },
+  lockBadgeText: {
+    color: "#05C785",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   footer: {
     paddingVertical: 15,
