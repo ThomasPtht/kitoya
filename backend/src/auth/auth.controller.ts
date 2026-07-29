@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import type { Request } from 'express';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 interface JwtRequest extends Request {
   user: {
@@ -35,22 +44,14 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('delete-account')
+  @Delete('delete-account')
   deleteAccount(@Req() req: JwtRequest) {
     return this.authService.deleteAccount(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
-  changePassword(
-    @Req() req: JwtRequest,
-    @Body('oldPassword') oldPassword: string,
-    @Body('newPassword') newPassword: string,
-  ) {
-    return this.authService.changePassword(
-      req.user.userId,
-      oldPassword,
-      newPassword,
-    );
+  changePassword(@Req() req: JwtRequest, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(req.user.userId, dto);
   }
 }
