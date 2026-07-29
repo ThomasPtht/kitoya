@@ -50,13 +50,28 @@ export class StripeService {
     const subscription = await this.stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
+      trial_period_days: 7, // Set a trial period of 7 days
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent'],
     });
 
-    const invoice = subscription.latest_invoice as any;
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+    // Sécurité robuste pour récupérer la facture et le payment_intent peu importe le format renvoyé
+    let invoice = subscription.latest_invoice as any;
+
+    if (typeof invoice === 'string') {
+      invoice = await this.stripe.invoices.retrieve(invoice, {
+        expand: ['payment_intent'],
+      });
+    }
+
+    const paymentIntent = invoice?.payment_intent as Stripe.PaymentIntent;
+
+    if (!paymentIntent || !paymentIntent.client_secret) {
+      throw new BadRequestException(
+        "Impossible de générer l'intention de paiement pour cet abonnement.",
+      );
+    }
 
     return {
       subscriptionId: subscription.id,

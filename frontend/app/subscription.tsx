@@ -10,9 +10,6 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-import { stripeService } from "@/services/stripe.service";
-import Toast from "react-native-toast-message";
-import { useStripe } from "@stripe/stripe-react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -34,8 +31,6 @@ interface PlanData {
 
 export default function SubscriptionScreen() {
   const [activePlan, setActivePlan] = useState<PlanKey>("ELITE");
-  const [loading, setLoading] = useState(false);
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const plans: PlanData[] = [
     {
@@ -67,53 +62,15 @@ export default function SubscriptionScreen() {
     },
   ];
 
-  const handlePressCta = async (planKey: PlanKey) => {
+  const handlePressCta = (planKey: PlanKey) => {
     if (planKey === "FREE") {
       router.back();
       return;
     }
 
-    setLoading(true);
-    try {
-      const data = await stripeService.createSubscription("ELITE");
-      const { paymentIntentClientSecret, customerId } = data;
-
-      // Init payment sheet stripe
-      const { error: initError } = await initPaymentSheet({
-        paymentIntentClientSecret: paymentIntentClientSecret,
-        merchantDisplayName: "Kitroom",
-        customerId: customerId,
-        allowsDelayedPaymentMethods: true,
-      });
-
-      if (initError) {
-        Toast.show({
-          type: "error",
-          text1: "Payment Sheet Initialization Error",
-        });
-        setLoading(false);
-        return;
-      }
-
-      // display payment sheet
-      const { error: paymentError } = await presentPaymentSheet();
-
-      if (paymentError) {
-        Toast.show({ type: "error", text1: paymentError.message });
-      } else {
-        Toast.show({
-          type: "success",
-          text1: "Bienvenue dans Kitroom ELITE !",
-        });
-        router.back();
-      }
-    } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Une erreur est survenue",
-      });
-    } finally {
-      setLoading(false);
+    if (planKey === "ELITE") {
+      router.push("/upgrade" as any);
+      return;
     }
   };
 
@@ -137,7 +94,6 @@ export default function SubscriptionScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header identique avec SafeAreaView */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
@@ -201,6 +157,7 @@ export default function SubscriptionScreen() {
               </View>
 
               <TouchableOpacity
+                onPress={() => handlePressCta(plan.key)}
                 disabled={!isSelected}
                 style={[
                   styles.ctaButton,
