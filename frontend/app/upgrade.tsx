@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import {
   View,
@@ -148,7 +148,7 @@ export default function UpgradeScreen() {
 
           <View style={styles.featureRow}>
             <View style={styles.featureIconContainer}>
-              <Feather name="layers" size={20} color="#D4AF37" />
+              <MaterialCommunityIcons name="hanger" size={20} color="#D4AF37" />
             </View>
             <View style={styles.featureTextContainer}>
               <Text style={styles.featureTitle}>Unlimited Slots</Text>
