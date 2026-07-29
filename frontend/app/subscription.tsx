@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Pressable,
   Dimensions,
+  SafeAreaView,
 } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -29,7 +30,7 @@ interface PlanData {
 }
 
 export default function SubscriptionScreen() {
-  const [activePlan, setActivePlan] = useState<PlanKey>("FREE");
+  const [activePlan, setActivePlan] = useState<PlanKey>("ELITE");
 
   const plans: PlanData[] = [
     {
@@ -70,8 +71,6 @@ export default function SubscriptionScreen() {
       };
     }
 
-    // Gestion du décalage entre les deux cartes restantes
-    const isFreeActive = activePlan === "FREE";
     const translateXValue = key === "FREE" ? -SIDE_OFFSET : SIDE_OFFSET;
 
     return {
@@ -82,15 +81,17 @@ export default function SubscriptionScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <SafeAreaView style={styles.container}>
+      {/* Header identique avec SafeAreaView */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
+        <View>
+          <Text style={styles.archiveSubtitle}>MEMBERSHIP</Text>
+          <Text style={styles.headerTitle}>Choose your plan</Text>
+        </View>
       </View>
-
-      <Text style={styles.screenTitle}>CHOOSE YOUR PLAN</Text>
 
       <View style={styles.stackContainer}>
         {plans.map((plan) => {
@@ -167,35 +168,47 @@ export default function SubscriptionScreen() {
           );
         })}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0A0A0A", paddingTop: 60 },
+  container: {
+    flex: 1,
+    backgroundColor: "#121212",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 10,
+    paddingBottom: 20,
   },
-  backButton: { marginRight: 15 },
-  screenTitle: {
-    color: "#5D7A5D",
-    fontSize: 20,
-    textAlign: "center",
-    marginTop: 20,
-    marginBottom: 50,
+  backButton: {
+    marginRight: 15,
+    backgroundColor: "#1E1E1E",
+    padding: 10,
+    borderRadius: 50,
+  },
+  archiveSubtitle: {
+    fontSize: 11,
     fontWeight: "bold",
+    color: "#05C785",
     letterSpacing: 1,
+    marginBottom: 2,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   stackContainer: {
-    height: CARD_HEIGHT + 40,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
     width: "100%",
-    marginTop: 10,
+    marginBottom: 40,
   },
   cardBase: {
     backgroundColor: "#161616",

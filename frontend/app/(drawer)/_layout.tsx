@@ -85,7 +85,7 @@ export default function DrawerLayout() {
             </View>
 
             {/* Top Upgrade / Pro Card */}
-            {!isElite && !isAdmin && (
+            {!isElite && isAdmin && (
               <Pressable
                 onPress={() => {
                   props.navigation.closeDrawer();
