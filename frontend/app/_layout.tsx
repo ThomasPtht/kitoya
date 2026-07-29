@@ -7,11 +7,12 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { useColorScheme } from "@/components/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -61,64 +62,71 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(auth)/forgot-password"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="(auth)/reset-password"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="(auth)/change-password"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="settings"
-          options={{
-            headerShown: false,
-            animation: "slide_from_right", // Force the slide animation for the settings screen
-          }}
-        />
-        <Stack.Screen
-          name="exportCollection"
-          options={{
-            headerShown: false,
-            animation: "slide_from_right",
-          }}
-        />
-        <Stack.Screen
-          name="analytics"
-          options={{
-            headerShown: false,
-            animation: "slide_from_right",
-          }}
-        />
-        <Stack.Screen
-          name="help"
-          options={{
-            headerShown: false,
-            animation: "slide_from_right",
-          }}
-        />
+    <StripeProvider
+      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
+    >
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(auth)/register"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(auth)/forgot-password"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(auth)/reset-password"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(auth)/change-password"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="settings"
+            options={{
+              headerShown: false,
+              animation: "slide_from_right", // Force the slide animation for the settings screen
+            }}
+          />
+          <Stack.Screen
+            name="exportCollection"
+            options={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+          <Stack.Screen
+            name="analytics"
+            options={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+          <Stack.Screen
+            name="help"
+            options={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
 
-        <Stack.Screen
-          name="subscription"
-          options={{
-            headerShown: false,
-            animation: "slide_from_right",
-          }}
-        />
-        <Stack.Screen
-          name="modal"
-          options={{ presentation: "modal", headerShown: false }}
-        />
-      </Stack>
-    </ThemeProvider>
+          <Stack.Screen
+            name="subscription"
+            options={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+          <Stack.Screen
+            name="modal"
+            options={{ presentation: "modal", headerShown: false }}
+          />
+        </Stack>
+      </ThemeProvider>
+    </StripeProvider>
   );
 }

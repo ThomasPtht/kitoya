@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^5.4.0",
     "@react-navigation/drawer": "^7.12.0",
     "@react-navigation/native": "^7.1.8",
+    "@stripe/stripe-react-native": "^0.72.0",
     "@tanstack/react-query": "^5.101.0",
     "axios": "^1.17.0",
     "expo": "~54.0.34",
