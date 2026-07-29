@@ -608,8 +608,8 @@ export default function TabAddScreen() {
               placeholder="e.g., 10, 14"
               placeholderTextColor="#8E8E93"
               keyboardType="number-pad"
-              onChangeText={onChange}
-              value={value}
+              onChangeText={(text) => onChange(text === "" ? undefined : text)}
+              value={value ?? ""}
             />
           )}
         />

@@ -40,8 +40,8 @@ export default function SubscriptionScreen() {
       subtext: "Basic collection tracking",
       features: [
         "✓ Up to 10 slots",
-        "✓ Export your collection",
-        "✓ Statistics advanced",
+        "✓ Share your collection",
+        "X Advanced analytics",
       ],
       cta: "STAY FREE",
     },

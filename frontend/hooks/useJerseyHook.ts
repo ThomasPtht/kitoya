@@ -83,3 +83,11 @@ export const useToggleLikeJersey = () => {
     },
   });
 };
+
+export const useCollectionAnalytics = () => {
+  return useQuery({
+    queryKey: ["collectionAnalytics"],
+    queryFn: jerseyService.getCollectionAnalytics,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+};

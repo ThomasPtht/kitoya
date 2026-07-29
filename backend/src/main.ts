@@ -1,11 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS to authorize requests from the frontend (React Native app) to the backend (NestJS API)
   app.enableCors();
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // active @Type() / @Transform() in DTOs (ex: convert string to number)
+      whitelist: true, // delete fields that are not in the DTO (useful for security)
+    }),
+  );
 
   // Starts the server on the specified port (default 3000) and binds to all network interfaces (0.0.0.0).
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');

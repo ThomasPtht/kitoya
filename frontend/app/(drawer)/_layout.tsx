@@ -2,7 +2,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { router } from "expo-router";
 import { View, StyleSheet, Text, Pressable } from "react-native";
-import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Feather,
+  FontAwesome,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -137,6 +142,17 @@ export default function DrawerLayout() {
                 style={styles.navItem}
                 onPress={() => {
                   props.navigation.closeDrawer();
+                  router.push("/analytics");
+                }}
+              >
+                <FontAwesome name="bar-chart" size={18} color="#9E9E9E" />
+                <Text style={styles.navText}>Collection stats</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.navItem}
+                onPress={() => {
+                  props.navigation.closeDrawer();
                   router.push("/settings");
                 }}
               >
@@ -171,7 +187,7 @@ export default function DrawerLayout() {
                   }
                 }}
               >
-                <Feather name="log-out" size={18} color="#FF4D4D" />
+                <Feather name="log-out" size={18} color="#ffffff" />
                 <Text style={styles.logoutText}>Log out</Text>
               </Pressable>
             </View>
@@ -351,7 +367,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   logoutText: {
-    color: "#FF4D4D",
+    color: "#ffffff",
     fontSize: 16,
     fontWeight: "500",
   },

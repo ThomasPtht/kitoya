@@ -12,6 +12,11 @@ import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
+type CreateJerseyWithUrls = CreateJerseyDto & {
+  frontImageUrl: string;
+  backImageUrl?: string;
+};
+
 @Injectable()
 export class JerseysService {
   constructor(
@@ -37,7 +42,7 @@ export class JerseysService {
 
   async createJersey(
     userId: string,
-    dto: CreateJerseyDto,
+    dto: CreateJerseyWithUrls,
     clubData: { name: string; sportId: string },
   ) {
     //search for the club in the database first
@@ -102,9 +107,10 @@ export class JerseysService {
       condition: dto.condition || null,
       version: dto.version || null,
       description: dto.description || null,
-      isShareable: dto.isShareable === true || dto.isShareable === 'true',
-      isOfficial: dto.isOfficial === true || dto.isOfficial === 'true',
+      isShareable: dto.isShareable,
+      isOfficial: dto.isOfficial,
       brand: dto.brand,
+      purchasePrice: dto.purchasePrice ?? null,
     };
 
     const createdJersey = await this.prisma.jersey.create({
@@ -217,6 +223,168 @@ export class JerseysService {
       name: club?.name || 'Unknown Club',
       count: result[0]._count.clubId,
       logoUrl: club?.logoUrl || null,
+    };
+  }
+
+  async getCollectionAnalytics(userId: string) {
+    const jerseys = await this.prisma.jersey.findMany({
+      where: { userId },
+      include: { club: true },
+    });
+
+    if (jerseys.length === 0) {
+      return {
+        totalKits: 0,
+        uniqueClubs: 0,
+        erasCovered: 0,
+        brandsCount: 0,
+        totalInvested: 0,
+        avgPrice: 0,
+        pricedKitsCount: 0,
+        topClubs: [],
+        eras: [],
+        brands: [],
+        variants: [],
+        conditions: [],
+      };
+    }
+
+    const totalKits = jerseys.length;
+
+    // Clubs uniques
+    const uniqueClubsSet = new Set(jerseys.map((j) => j.clubId));
+    const uniqueClubs = uniqueClubsSet.size;
+
+    // Era coverage
+    const erasSet = new Set(
+      jerseys
+        .map((j) => {
+          if (!j.season) return null;
+          const year = parseInt(j.season.substring(0, 4));
+          if (isNaN(year)) return null;
+          return `${Math.floor(year / 10) * 10}s`;
+        })
+        .filter(Boolean),
+    );
+    const erasCovered = erasSet.size;
+
+    // Uniques brands
+    const brandsSet = new Set(jerseys.map((j) => j.brand).filter(Boolean));
+    const brandsCount = brandsSet.size;
+
+    // --- TOTAL INVESTED & AVG PRICE ---
+    // Filter jerseys that have a purchasePrice defined and not null
+    const jerseysWithPrice = jerseys.filter(
+      (j) => j.purchasePrice !== null && j.purchasePrice !== undefined,
+    );
+    const totalInvested = jerseysWithPrice.reduce(
+      (acc, j) => acc + Number(j.purchasePrice),
+      0,
+    );
+    const avgPrice =
+      jerseysWithPrice.length > 0
+        ? Math.round(totalInvested / jerseysWithPrice.length)
+        : 0;
+    const pricedKitsCount = jerseysWithPrice.length;
+
+    // --- TOP CLUBS ---
+    const clubCounts: Record<string, { name: string; count: number }> = {};
+    jerseys.forEach((j) => {
+      const clubName = j.club?.name || 'Unknown';
+      if (!clubCounts[j.clubId]) {
+        clubCounts[j.clubId] = { name: clubName, count: 0 };
+      }
+      clubCounts[j.clubId].count += 1;
+    });
+
+    const sortedClubs = Object.values(clubCounts).sort(
+      (a, b) => b.count - a.count,
+    );
+    const maxClubCount = sortedClubs[0]?.count || 1;
+    const topClubs = sortedClubs.slice(0, 5).map((c) => ({
+      name: c.name,
+      count: c.count,
+      maxCount: maxClubCount,
+    }));
+
+    // --- KITS BY ERA ---
+    const eraCounts: Record<string, number> = {};
+    jerseys.forEach((j) => {
+      if (!j.season) return;
+      const year = parseInt(j.season.substring(0, 4));
+      const era = isNaN(year) ? 'Other' : `${Math.floor(year / 10) * 10}s`;
+      eraCounts[era] = (eraCounts[era] || 0) + 1;
+    });
+
+    const sortedEras = Object.entries(eraCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count);
+    const maxEraCount = sortedEras[0]?.count || 1;
+    const eras = sortedEras.map((e) => ({ ...e, maxCount: maxEraCount }));
+
+    // --- BRAND MIX ---
+    const brandCounts: Record<string, number> = {};
+    jerseys.forEach((j) => {
+      const brand = j.brand || 'Other';
+      brandCounts[brand] = (brandCounts[brand] || 0) + 1;
+    });
+    const brands = Object.entries(brandCounts).map(([name, count]) => ({
+      name,
+      count,
+    }));
+
+    // --- VARIANTS ---
+    const variantCounts: Record<string, number> = {};
+    jerseys.forEach((j) => {
+      const variant = j.type || 'Standard';
+      variantCounts[variant] = (variantCounts[variant] || 0) + 1;
+    });
+    const sortedVariants = Object.entries(variantCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count);
+    const maxVariantCount = sortedVariants[0]?.count || 1;
+    const variants = sortedVariants.map((v) => ({
+      ...v,
+      maxCount: maxVariantCount,
+    }));
+
+    // --- CONDITION MIX ---
+    const conditionCounts: Record<string, number> = {};
+    jerseys.forEach((j) => {
+      const condition = j.condition || 'Not specified';
+      conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
+    });
+    const sortedConditions = Object.entries(conditionCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count);
+    const maxConditionCount = sortedConditions[0]?.count || 1;
+    const conditions = sortedConditions.map((c) => ({
+      ...c,
+      maxCount: maxConditionCount,
+    }));
+
+    return {
+      totalKits,
+      uniqueClubs,
+      erasCovered,
+      brandsCount,
+      totalInvested,
+      avgPrice,
+      pricedKitsCount,
+      topClubs,
+      eras,
+      brands,
+      variants,
+      conditions,
     };
   }
 }

@@ -12,7 +12,7 @@ import {
   Alert,
   Share,
 } from "react-native";
-import { Entypo, Feather, Ionicons } from "@expo/vector-icons";
+import { Entypo, EvilIcons, Feather, Ionicons } from "@expo/vector-icons";
 import { useState, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
@@ -321,7 +321,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           onPress={handleShare}
           disabled={isSharing}
         >
-          <Entypo name="share" size={18} color="#ffffff" />
+          <EvilIcons name="share-google" size={22} color="#1E1A16" />
           <Text style={styles.shareButtonText}>
             {isSharing ? "Generating card..." : "Share this kit"}
           </Text>
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   shareButtonText: {
-    color: "#ffffff",
+    color: "#1E1A16",
     fontSize: 14,
     fontWeight: "bold",
   },

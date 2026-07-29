@@ -156,4 +156,15 @@ export class JerseysController {
   async deleteJersey(@Param('id') id: string) {
     return this.jerseysService.deleteJersey(id);
   }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard)
+  async getCollectionAnalytics(@Request() req) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user id is missing');
+    }
+
+    return this.jerseysService.getCollectionAnalytics(userId);
+  }
 }

@@ -1,4 +1,5 @@
 import { JerseyType, KitCondition, KitVersion } from '@prisma/client';
+import { Transform, Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
@@ -9,6 +10,7 @@ import {
   Max,
   IsEnum,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateJerseyDto {
@@ -24,19 +26,20 @@ export class CreateJerseyDto {
   @IsString()
   clubName!: string;
 
-  @IsNotEmpty()
-  @IsString()
-  frontImageUrl!: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // frontImageUrl!: string;
 
-  @IsOptional()
-  @IsString()
-  backImageUrl?: string;
+  // @IsOptional()
+  // @IsString()
+  // backImageUrl?: string;
 
   @IsOptional()
   @IsString()
   playerName?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   @Max(99)
@@ -46,7 +49,6 @@ export class CreateJerseyDto {
   @IsString()
   season?: string;
 
-  @IsOptional()
   @IsEnum(JerseyType)
   type!: JerseyType;
 
@@ -54,11 +56,9 @@ export class CreateJerseyDto {
   @IsString()
   size?: string;
 
-  @IsOptional()
   @IsEnum(KitCondition)
   condition!: KitCondition;
 
-  @IsOptional()
   @IsEnum(KitVersion)
   version!: KitVersion;
 
@@ -66,13 +66,20 @@ export class CreateJerseyDto {
   @IsString()
   description?: string;
 
+  @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
-  isOfficial!: boolean | string;
+  isOfficial!: boolean;
 
+  @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
-  isShareable!: boolean | string;
+  isShareable!: boolean;
 
   @IsNotEmpty()
   @IsString()
   brand!: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  purchasePrice?: number;
 }

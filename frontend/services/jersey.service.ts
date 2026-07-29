@@ -58,4 +58,9 @@ export const jerseyService = {
     const { data } = await apiClient.get("/jerseys/export");
     return data;
   },
+
+  getCollectionAnalytics: async () => {
+    const { data } = await apiClient.get("/jerseys/analytics");
+    return data;
+  },
 };
