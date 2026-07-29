@@ -240,12 +240,16 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         <View style={styles.badgesRow}>
           {jersey.type && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{jersey.type}</Text>
+              <Text style={styles.badgeText}>
+                {jersey.type.replace(/_/g, " ")}
+              </Text>
             </View>
           )}
           {jersey.condition && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{jersey.condition}</Text>
+              <Text style={styles.badgeText}>
+                {jersey.condition.replace(/_/g, " ")}
+              </Text>
             </View>
           )}
           {jersey.size && (
@@ -256,19 +260,6 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         </View>
 
         {/* Purchase History Card */}
-        {jersey.purchasePrice !== null &&
-          jersey.purchasePrice !== undefined && (
-            <View style={styles.card}>
-              <View style={styles.cardHeaderRow}>
-                <Feather name="tag" size={13} color="#05C785" />
-                <Text style={styles.cardSectionTitle}>PURCHASE INFO</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.label}>Purchase Price</Text>
-                <Text style={styles.priceValue}>{jersey.purchasePrice} €</Text>
-              </View>
-            </View>
-          )}
 
         {/* Story / Description Section */}
         {jersey.description && (
@@ -307,13 +298,29 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           )}
           <View style={styles.row}>
             <Text style={styles.label}>Condition</Text>
-            <Text style={styles.value}>{jersey.condition}</Text>
+            <Text style={styles.value}>
+              {jersey.condition ? jersey.condition.replace(/_/g, " ") : "N/A"}
+            </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Size</Text>
             <Text style={styles.value}>{jersey.size || "N/A"}</Text>
           </View>
         </View>
+
+        {jersey.purchasePrice !== null &&
+          jersey.purchasePrice !== undefined && (
+            <View style={styles.card}>
+              <View style={styles.cardHeaderRow}>
+                <Feather name="tag" size={13} color="#05C785" />
+                <Text style={styles.cardSectionTitle}>PURCHASE INFO</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Purchase Price</Text>
+                <Text style={styles.priceValue}>{jersey.purchasePrice} €</Text>
+              </View>
+            </View>
+          )}
 
         {/* Share Button */}
         <TouchableOpacity
