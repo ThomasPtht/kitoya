@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -25,9 +25,11 @@ import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { BRANDS } from "@/constants/Jerseys";
+import { useDebounce } from "@/hooks/useDebounce";
 
 // 1. 📜 SCHÉMA DE VALIDATION ZOD
 const jerseySchema = z.object({
+  clubId: z.string().optional().nullable(),
   clubName: z.string().min(2, { message: "Club or Country name is required" }),
   season: z.string().min(4, { message: "Season is required (e.g., 2004)" }),
   size: z.string().min(1, { message: "Please select a size" }),
@@ -104,10 +106,57 @@ export default function TabAddScreen() {
   const [selectedClubId, setSelectedClubId] = useState<string>("");
   const [selectedSportId, setSelectedSportId] = useState<string>("");
 
+  const isValidUuid = (value?: string | null) => {
+    if (!value) return false;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(value);
+  };
+
   const [brandSuggestions, setBrandSuggestions] = useState<string[]>([]);
   const [isBrandDropdownVisible, setIsBrandDropdownVisible] = useState(false);
 
   const { data: sports } = useSports();
+
+  const [clubSearchInput, setClubSearchInput] = useState<string>("");
+  const debouncedClubSearch = useDebounce(clubSearchInput, 500);
+
+  // Ce useEffect s'exécute automatiquement 500ms après la dernière frappe
+  useFocusEffect(
+    useCallback(() => {
+      const fetchClubs = async () => {
+        // SÉCURITÉ : On bloque si le sport n'est pas choisi ou si la recherche est trop courte
+        if (
+          !selectedSportId ||
+          !debouncedClubSearch ||
+          debouncedClubSearch.trim().length < 3
+        ) {
+          setSuggestions([]);
+          setIsDropdownVisible(false);
+          setIsLoading(false);
+          return;
+        }
+
+        setIsLoading(true);
+        try {
+          const results = await searchClubs(
+            debouncedClubSearch,
+            selectedSportId, // Garanti non vide ici
+          );
+          setSuggestions(results);
+          setIsDropdownVisible(results.length > 0);
+        } catch (error) {
+          console.error("Erreur recherche club", error);
+          setSuggestions([]);
+          setIsDropdownVisible(false);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchClubs();
+    }, [debouncedClubSearch, selectedSportId]),
+  );
 
   const handleBrandSearch = (text: string) => {
     if (text.length >= 2) {
@@ -147,6 +196,8 @@ export default function TabAddScreen() {
   } = useForm({
     resolver: zodResolver(jerseySchema),
     defaultValues: {
+      sportId: "",
+      clubId: "",
       clubName: "",
       season: "",
       size: "",
@@ -195,19 +246,6 @@ export default function TabAddScreen() {
     }
   };
 
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handleSearch = async (text: string) => {
-    timeoutRef.current = setTimeout(async () => {
-      if (text.length >= 3) {
-        setIsLoading(true);
-        const results = await searchClubs(text, selectedSportId || "");
-        setSuggestions(results);
-        setIsDropdownVisible(results.length > 0);
-        setIsLoading(false);
-      }
-    }, 500);
-  };
-
   const { mutate: createJersey, isPending } = useCreateJersey();
 
   // Form Submission handler
@@ -215,7 +253,9 @@ export default function TabAddScreen() {
     const formData = new FormData();
 
     if (selectedSportId) formData.append("sportId", selectedSportId);
-    if (selectedClubId) formData.append("clubId", selectedClubId);
+    if (selectedClubId && isValidUuid(selectedClubId)) {
+      formData.append("clubId", selectedClubId);
+    }
 
     const fieldsToIgnore = [
       "frontImageUri",
@@ -224,12 +264,19 @@ export default function TabAddScreen() {
       "clubId",
     ];
 
+    console.log("[JerseyForm] selectedSportId:", selectedSportId);
+    console.log("[JerseyForm] selectedClubId:", selectedClubId);
+    console.log("[JerseyForm] form values:", data);
+    console.log("[JerseyForm] has frontImage:", !!frontImage);
+    console.log("[JerseyForm] has backImage:", !!backImage);
+
     Object.entries(data).forEach(([key, value]) => {
       if (
         !fieldsToIgnore.includes(key) &&
         value !== undefined &&
         value !== null
       ) {
+        console.log("[JerseyForm] append", key, value);
         formData.append(key, String(value));
       }
     });
@@ -266,6 +313,11 @@ export default function TabAddScreen() {
       setSelectedSportId("");
       router.navigate("/(drawer)/(tabs)/dressing");
     } catch (error) {
+      const err = error as any;
+      console.log(
+        "❌ DÉTAIL ERREUR 400 :",
+        JSON.stringify(err.response?.data, null, 2),
+      );
       Toast.show({
         type: "error",
         text1: "Error adding jersey",
@@ -391,14 +443,8 @@ export default function TabAddScreen() {
               placeholderTextColor="#8E8E93"
               value={value}
               onChangeText={(text) => {
-                onChange(text);
-                if (text.length < 3) {
-                  if (timeoutRef.current) clearTimeout(timeoutRef.current);
-                  setSuggestions([]);
-                  setIsDropdownVisible(false);
-                } else {
-                  handleSearch(text);
-                }
+                onChange(text); // update the form value
+                setClubSearchInput(text); // Trigger the debounced search
               }}
             />
           )}

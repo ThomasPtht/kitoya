@@ -85,8 +85,8 @@ export default function UpgradeScreen() {
         <View style={styles.titleContainer}>
           <Text style={styles.mainTitle}>Take Your Collection Further</Text>
           <Text style={styles.subtitle}>
-            Organize your football shirts, fill your digital locker, and
-            showcase your passion without limits.
+            Organize your jerseys, fill your digital locker, and showcase your
+            passion without limits.
           </Text>
         </View>
 

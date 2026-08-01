@@ -26,20 +26,14 @@ export class CreateJerseyDto {
   @IsString()
   clubName!: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // frontImageUrl!: string;
-
-  // @IsOptional()
-  // @IsString()
-  // backImageUrl?: string;
-
   @IsOptional()
   @IsString()
   playerName?: string;
 
   @IsOptional()
-  @Type(() => Number)
+  @Transform(({ value }) =>
+    value === '' || value === null ? undefined : Number(value),
+  )
   @IsInt()
   @Min(0)
   @Max(99)
@@ -52,9 +46,9 @@ export class CreateJerseyDto {
   @IsEnum(JerseyType)
   type!: JerseyType;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  size?: string;
+  size!: string;
 
   @IsEnum(KitCondition)
   condition!: KitCondition;
@@ -66,20 +60,34 @@ export class CreateJerseyDto {
   @IsString()
   description?: string;
 
-  @Transform(({ value }) => value === 'true' || value === true)
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return false; // Valeur par défaut de secours
+  })
   @IsBoolean()
-  isOfficial!: boolean;
+  isOfficial: boolean = false;
 
-  @Transform(({ value }) => value === 'true' || value === true)
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return false; 
+  })
   @IsBoolean()
-  isShareable!: boolean;
+  isShareable: boolean = false;
 
   @IsNotEmpty()
   @IsString()
   brand!: string;
 
   @IsOptional()
-  @Type(() => Number)
+  @Transform(({ value }) =>
+    value === '' || value === null || value === undefined
+      ? undefined
+      : Number(value),
+  )
   @IsNumber()
   purchasePrice?: number;
 }

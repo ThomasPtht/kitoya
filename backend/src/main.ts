@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,7 +13,17 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // active @Type() / @Transform() in DTOs (ex: convert string to number)
-      whitelist: true, // delete fields that are not in the DTO (useful for security)
+      whitelist: true,
+      transformOptions: {
+        enableImplicitConversion: true, // Mandatory for FormData to work with @Transform() in DTOs (ex: convert string to number)
+      },
+      exceptionFactory: (errors) => {
+        console.log(
+          '[Validation] DTO errors:',
+          JSON.stringify(errors, null, 2),
+        );
+        return new BadRequestException(errors);
+      },
     }),
   );
 

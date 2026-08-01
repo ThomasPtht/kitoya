@@ -102,10 +102,10 @@ export class JerseysService {
       playerName: dto.playerName || null,
       number: dto.number ? Number(dto.number) : null,
       season: dto.season || null,
-      type: dto.type || null,
-      size: dto.size || null,
-      condition: dto.condition || null,
-      version: dto.version || null,
+      type: dto.type,
+      size: dto.size,
+      condition: dto.condition,
+      version: dto.version,
       description: dto.description || null,
       isShareable: dto.isShareable,
       isOfficial: dto.isOfficial,
@@ -122,6 +122,11 @@ export class JerseysService {
   }
 
   async searchClubs(query: string, sportId: string) {
+    // SÉCURITÉ BACKEND : Si le sportId est vide ou absent, on ne cherche rien
+    if (!sportId || sportId.trim() === '') {
+      return [];
+    }
+
     // Search for clubs in the database first
     const dbClubs = await this.prisma.club.findMany({
       where: {
@@ -144,7 +149,7 @@ export class JerseysService {
 
     return apiClubs;
   }
-
+  
   async getJerseysByUser(userId: string) {
     const jerseys = await this.prisma.jersey.findMany({
       where: { userId },

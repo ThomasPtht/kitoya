@@ -55,6 +55,7 @@ export class JerseysController {
 
     console.log('--- DEBUG CONTROLLER ---');
     console.log('Body reçu :', createJerseyDto);
+    console.log('req.body :', req.body);
     console.log('Files reçus :', files ? Object.keys(files) : 'Aucun');
 
     if (!createJerseyDto.sportId) {
@@ -82,6 +83,17 @@ export class JerseysController {
 
       const sportId = req.body.sportId || createJerseyDto.sportId;
       const clubName = createJerseyDto.clubName;
+
+      console.log('[JerseyController] resolved sportId:', sportId);
+      console.log('[JerseyController] clubName:', clubName);
+      console.log('[JerseyController] dto values:', {
+        type: createJerseyDto.type,
+        condition: createJerseyDto.condition,
+        version: createJerseyDto.version,
+        isOfficial: createJerseyDto.isOfficial,
+        isShareable: createJerseyDto.isShareable,
+        brand: createJerseyDto.brand,
+      });
 
       if (!sportId) {
         throw new BadRequestException('sportId est manquant dans le FormData');

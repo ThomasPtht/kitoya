@@ -82,16 +82,16 @@ model Jersey {
   backImageUrl  String? // optionnal because some jerseys don't have a back image
   playerName    String?
   number        Int?
-  season        String?
+  season        String
   type          JerseyType
-  size          String? // e.g., S, M, L, XL, etc.
+  size          String
   condition     KitCondition
   version       KitVersion
   brand         String
-  isOfficial    Boolean?
+  isOfficial    Boolean
   description   String? // e.g., any additional details about the jersey : buy at the stadium, signed by the player, etc.
   purchasePrice Float? // optionnal because some jerseys are gifts or free
-  isShareable   Boolean? // optionnal because user may not want to share the jersey with other users
+  isShareable   Boolean
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
