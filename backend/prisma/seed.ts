@@ -6,11 +6,11 @@ const prisma = new PrismaClient();
 async function main() {
   const sports = [
     { name: 'Football' },
-    { name: 'Basketball' },
-    { name: 'Baseball' },
-    { name: 'Hockey' },
-    { name: 'Rugby' },
-    { name: 'Foot US' },
+    // { name: 'Basketball' },
+    // { name: 'Baseball' },
+    // { name: 'Hockey' },
+    // { name: 'Rugby' },
+    // { name: 'Foot US' },
   ];
 
   for (const sport of sports) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -24,7 +24,6 @@ import Toast from "react-native-toast-message";
 import { searchClubs } from "@/services/football.service";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import { useCallback } from "react";
 import { BRANDS } from "@/constants/Jerseys";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -49,15 +48,6 @@ const jerseySchema = z.object({
 });
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
-
-const SPORTS = [
-  "Football",
-  "Basketball",
-  "Baseball",
-  "Hockey",
-  "Foot US",
-  "Rugby",
-];
 
 const SIZES = ["S", "M", "L", "XL", "XXL"];
 export const JERSEY_TYPES_MAP: Record<string, string> = {
@@ -119,6 +109,18 @@ export default function TabAddScreen() {
 
   const { data: sports } = useSports();
 
+  // Un seul sport disponible dans l'app pour l'instant : Football.
+  // Assigné automatiquement, aucune sélection requise de l'utilisateur.
+  const footballSportId = sports?.find(
+    (s: { name: string }) => s.name.toLowerCase() === "football",
+  )?.id;
+
+  useEffect(() => {
+    if (footballSportId) {
+      setSelectedSportId(footballSportId);
+    }
+  }, [footballSportId]);
+
   const [clubSearchInput, setClubSearchInput] = useState<string>("");
   const debouncedClubSearch = useDebounce(clubSearchInput, 500);
 
@@ -126,7 +128,7 @@ export default function TabAddScreen() {
   useFocusEffect(
     useCallback(() => {
       const fetchClubs = async () => {
-        // SÉCURITÉ : On bloque si le sport n'est pas choisi ou si la recherche est trop courte
+        // SÉCURITÉ : On bloque si le sport n'est pas prêt ou si la recherche est trop courte
         if (
           !selectedSportId ||
           !debouncedClubSearch ||
@@ -179,7 +181,8 @@ export default function TabAddScreen() {
         setFrontImage("");
         setBackImage(null);
         setSelectedClubId("");
-        setSelectedSportId("");
+        // On NE reset PAS selectedSportId : il est réassigné automatiquement
+        // par le useEffect dès que l'écran reprend le focus et que `sports` est chargé.
         setSuggestions([]);
         setIsDropdownVisible(false);
         setIsBrandDropdownVisible(false);
@@ -353,7 +356,6 @@ export default function TabAddScreen() {
       setFrontImage("");
       setBackImage(null);
       setSelectedClubId("");
-      setSelectedSportId("");
       router.navigate("/(drawer)/(tabs)/dressing");
     } catch (error) {
       const err = error as any;
@@ -371,10 +373,6 @@ export default function TabAddScreen() {
     }
   };
 
-  const footballSportId = sports?.find(
-    (s: { name: string }) => s.name.toLowerCase() === "football",
-  )?.id;
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -383,6 +381,7 @@ export default function TabAddScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.heading}>ADD NEW JERSEY</Text>
 
@@ -450,30 +449,6 @@ export default function TabAddScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.label}>Sport *</Text>
-        <View style={styles.chipRow}>
-          {sports?.map((sport: any) => {
-            const isSelected = selectedSportId === sport.id;
-            return (
-              <TouchableOpacity
-                key={sport.id}
-                activeOpacity={0.7}
-                style={[styles.chip, isSelected && styles.chipSelected]}
-                onPress={() => setSelectedSportId(sport.id)}
-              >
-                <Text
-                  style={[
-                    styles.chipText,
-                    isSelected && styles.chipTextSelected,
-                  ]}
-                >
-                  {sport.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
         {/* Club input */}
         <Text style={styles.label}>Club / National Team *</Text>
         <Controller
@@ -503,12 +478,10 @@ export default function TabAddScreen() {
               <TouchableOpacity
                 key={item.id}
                 style={styles.dropdownItem}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => {
                   setValue("clubName", item.name);
                   setSelectedClubId(item.id);
-                  if (footballSportId) {
-                    setSelectedSportId(footballSportId);
-                  }
                   setIsDropdownVisible(false);
                 }}
               >
@@ -568,6 +541,7 @@ export default function TabAddScreen() {
                         <TouchableOpacity
                           key={item}
                           style={styles.dropdownItem}
+                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                           onPress={() => {
                             onChange(item);
                             setIsBrandDropdownVisible(false);
