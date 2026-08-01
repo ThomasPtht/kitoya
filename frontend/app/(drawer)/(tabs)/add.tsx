@@ -10,6 +10,7 @@ import {
   Platform,
   Image,
   Switch,
+  Alert,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -196,7 +197,6 @@ export default function TabAddScreen() {
   } = useForm({
     resolver: zodResolver(jerseySchema),
     defaultValues: {
-      sportId: "",
       clubId: "",
       clubName: "",
       season: "",
@@ -216,35 +216,78 @@ export default function TabAddScreen() {
     },
   });
 
-  const handlePickFrontImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
+  const applySelectedImage = (uri: string, target: "front" | "back") => {
+    if (target === "front") {
       setFrontImage(uri);
       setValue("frontImageUri", uri, { shouldValidate: true });
-    }
-  };
-
-  const handlePickBackImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
+    } else {
       setBackImage(uri);
       setValue("backImageUri", uri, { shouldValidate: true });
     }
   };
+
+  const pickImage = async (target: "front" | "back") => {
+    Alert.alert("Add image", "Choose an image source", [
+      {
+        text: "Take photo",
+        onPress: async () => {
+          const { status } = await ImagePicker.requestCameraPermissionsAsync();
+          if (status !== "granted") {
+            Toast.show({
+              type: "error",
+              text1: "Camera permission required",
+              text2: "Please allow camera access to take a photo.",
+            });
+            return;
+          }
+
+          const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+          });
+
+          if (!result.canceled) {
+            applySelectedImage(result.assets[0].uri, target);
+          }
+        },
+      },
+      {
+        text: "Choose from gallery",
+        onPress: async () => {
+          const { status } =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (status !== "granted") {
+            Toast.show({
+              type: "error",
+              text1: "Gallery permission required",
+              text2: "Please allow photo access to choose an image.",
+            });
+            return;
+          }
+
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+          });
+
+          if (!result.canceled) {
+            applySelectedImage(result.assets[0].uri, target);
+          }
+        },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
+  };
+
+  const handlePickFrontImage = () => pickImage("front");
+  const handlePickBackImage = () => pickImage("back");
 
   const { mutate: createJersey, isPending } = useCreateJersey();
 
@@ -329,7 +372,7 @@ export default function TabAddScreen() {
   };
 
   const footballSportId = sports?.find(
-    (s) => s.name.toLowerCase() === "football",
+    (s: { name: string }) => s.name.toLowerCase() === "football",
   )?.id;
 
   return (
@@ -495,9 +538,7 @@ export default function TabAddScreen() {
         )}
 
         {/* Brand selector */}
-        <View
-          style={[styles.inputContainer, { position: "relative", zIndex: 50 }]}
-        >
+        <View style={{ position: "relative", zIndex: 50 }}>
           <Text style={styles.label}>Brand *</Text>
           <Controller
             control={control}
