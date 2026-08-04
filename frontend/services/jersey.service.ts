@@ -20,9 +20,10 @@ export interface JerseyData {
     name: string;
   };
   isOfficial: boolean;
-  isShareable: boolean;
   brand: string;
   purchasePrice: number;
+  likesCount?: number;
+  hasLiked?: boolean;
 }
 
 export const jerseyService = {

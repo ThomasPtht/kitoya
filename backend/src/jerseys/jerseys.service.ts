@@ -26,17 +26,25 @@ export class JerseysService {
   ) {}
 
   public async signJersey<
-    T extends { frontImageUrl: string; backImageUrl: string | null },
+    T extends {
+      frontImageUrl: string;
+      backImageUrl: string | null;
+      _count?: { likes?: number };
+      likesCount?: number;
+    },
   >(jersey: T) {
     const [frontImageUrl, backImageUrl] = await Promise.all([
       this.r2Service.getSignedUrl(jersey.frontImageUrl),
       this.r2Service.getSignedUrl(jersey.backImageUrl),
     ]);
 
+    const likesCount = jersey._count?.likes ?? jersey.likesCount ?? 0;
+
     return {
       ...jersey,
       frontImageUrl: frontImageUrl ?? jersey.frontImageUrl,
       backImageUrl,
+      likesCount,
     };
   }
 
@@ -152,7 +160,7 @@ export class JerseysService {
   async getJerseysByUser(userId: string) {
     const jerseys = await this.prisma.jersey.findMany({
       where: { userId },
-      include: { club: true, sport: true },
+      include: { club: true, sport: true, _count: { select: { likes: true } } },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -162,7 +170,7 @@ export class JerseysService {
   async getJerseyById(id: string) {
     const jersey = await this.prisma.jersey.findUnique({
       where: { id },
-      include: { club: true },
+      include: { club: true, _count: { select: { likes: true } } },
     });
 
     if (!jersey) {

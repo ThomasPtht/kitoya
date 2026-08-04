@@ -231,13 +231,13 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
             </Text>
           </View>
 
-          {/* Like badge*/}
+          {/* Like badge aux couleurs de l'app (Harmonie vert/sombre) */}
           {(jersey.likesCount ?? 0) > 0 && (
             <View style={styles.likesBadge}>
-              <Ionicons name="heart" size={16} color="#EF4444" />
-              <Text style={styles.likesCountText}>
-                {jersey.likesCount ?? 0}{" "}
-                {jersey.likesCount === 1 ? "like" : "likes"}
+              <Ionicons name="heart" size={13} color="#05C785" />
+              <Text style={styles.likesCountText}>{jersey.likesCount}</Text>
+              <Text style={styles.likesLabelText}>
+                {jersey.likesCount === 1 ? "LIKE" : "LIKES"}
               </Text>
             </View>
           )}
@@ -265,8 +265,6 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
             </View>
           )}
         </View>
-
-        {/* Purchase History Card */}
 
         {/* Story / Description Section */}
         {jersey.description && (
@@ -497,11 +495,12 @@ const styles = StyleSheet.create({
   headerInfoContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     marginBottom: 16,
   },
   headerInfo: {
     flex: 1,
+    marginRight: 12,
   },
   season: {
     fontSize: 12,
@@ -518,18 +517,24 @@ const styles = StyleSheet.create({
   likesBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
     backgroundColor: "#151515",
     borderWidth: 1,
-    borderColor: "rgba(239, 68, 68, 0.3)",
-    paddingVertical: 8,
+    borderColor: "rgba(127, 206, 175, 0.3)",
+    paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 14,
+    borderRadius: 20,
+    gap: 6,
   },
   likesCountText: {
     color: "#FFFFFF",
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "bold",
+  },
+  likesLabelText: {
+    color: "#05C785",
+    fontSize: 10,
+    fontWeight: "bold",
+    letterSpacing: 0.5,
   },
   badgesRow: {
     flexDirection: "row",
@@ -603,7 +608,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
-    // textTransform retiré ici pour laisser le JavaScript formater proprement
   },
   priceValue: {
     color: "#05C785",
