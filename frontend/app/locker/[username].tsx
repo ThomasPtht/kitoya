@@ -13,17 +13,26 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useToggleLikeJersey } from "@/hooks/useJerseyHook";
-import KitOfTheDayModal from "@/components/KitOfTheDayModal";
 import { useLocker } from "@/hooks/useLocker";
 
 export default function PublicLockerScreen() {
   const { username } = useLocalSearchParams<{ username: string }>();
   const router = useRouter();
 
-  const { data: profileData, isLoading } = useLocker(username);
+  const { data: profileData, isLoading } = useLocker(username as string);
   const { mutate: toggleLike } = useToggleLikeJersey();
 
-  const [selectedJersey, setSelectedJersey] = useState<any>(null);
+  // Local state to track which side (front/back) is displayed for each jersey { [jerseyId]: boolean }
+  const [showBackImage, setShowBackImage] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const toggleImageSide = (jerseyId: string) => {
+    setShowBackImage((prev) => ({
+      ...prev,
+      [jerseyId]: !prev[jerseyId],
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -56,7 +65,7 @@ export default function PublicLockerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Bar : Bouton Retour & Badge Public Locker */}
+      {/* Top Bar: Back Button & Public Locker Badge */}
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.iconButton}
@@ -79,7 +88,7 @@ export default function PublicLockerScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profil Header */}
+        {/* Profile Header */}
         <View style={styles.profileHeader}>
           <View style={styles.avatarContainer}>
             <Ionicons
@@ -145,83 +154,94 @@ export default function PublicLockerScreen() {
           </Text>
         </View>
 
-        {/* Grille des maillots */}
+        {/* Jerseys Grid */}
         <View style={styles.jerseysGrid}>
-          {profileData.jerseys?.map((jersey: any) => (
-            <TouchableOpacity
-              key={jersey.id}
-              style={styles.jerseyCard}
-              activeOpacity={0.8}
-              onPress={() => setSelectedJersey(jersey)}
-            >
-              <View style={styles.jerseyImageContainer}>
-                <Image
-                  source={{ uri: jersey.frontImageUrl || jersey.frontImage }}
-                  style={styles.jerseyImage}
-                  resizeMode="cover"
-                />
+          {profileData.jerseys?.map((jersey: any) => {
+            const hasBack = !!(jersey.backImageUrl || jersey.backImage);
+            const isShowingBack = showBackImage[jersey.id] && hasBack;
+            const currentImage = isShowingBack
+              ? jersey.backImageUrl || jersey.backImage
+              : jersey.frontImageUrl || jersey.frontImage;
 
-                {/* Tag type en haut à droite de l'image */}
-                <View style={styles.imageTagBadge}>
-                  <Text style={styles.imageTagText}>
-                    {jersey.club?.name
-                      ? jersey.club.name.substring(0, 3).toUpperCase()
-                      : "KIT"}
-                    -{jersey.season?.slice(-2) || "XX"}-
-                    {jersey.type?.charAt(0).toUpperCase() || "H"}
-                  </Text>
+            return (
+              <View key={jersey.id} style={styles.jerseyCard}>
+                <View style={styles.jerseyImageContainer}>
+                  <Image
+                    source={{ uri: currentImage }}
+                    style={styles.jerseyImage}
+                    resizeMode="cover"
+                  />
+
+                  {/* Type tag at the top right of the image */}
+                  <View style={styles.imageTagBadge}>
+                    <Text style={styles.imageTagText}>
+                      {jersey.club?.name
+                        ? jersey.club.name.substring(0, 3).toUpperCase()
+                        : "KIT"}
+                      -{jersey.season?.slice(-2) || "XX"}-
+                      {jersey.type?.charAt(0).toUpperCase() || "H"}
+                    </Text>
+                  </View>
+
+                  {/* Button to toggle Front / Back (if a back image exists) */}
+                  {hasBack && (
+                    <TouchableOpacity
+                      style={styles.flipButtonMini}
+                      onPress={() => toggleImageSide(jersey.id)}
+                    >
+                      <Ionicons
+                        name="repeat-outline"
+                        size={13}
+                        color="#FFFFFF"
+                      />
+                      <Text style={styles.flipButtonText}>
+                        {isShowingBack ? "FRONT" : "BACK"}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {/* Like button at the bottom left of the image */}
+                  <TouchableOpacity
+                    style={[
+                      styles.likeButtonMini,
+                      jersey.hasLiked ? styles.likedBg : styles.unlikedBg,
+                    ]}
+                    onPress={() => toggleLike(jersey.id)}
+                  >
+                    <Ionicons
+                      name="heart"
+                      size={14}
+                      color={
+                        jersey.hasLiked ? "#05C785" : Colors.theme.textMuted
+                      }
+                    />
+                    <Text
+                      style={[
+                        styles.likeCountMiniText,
+                        jersey.hasLiked
+                          ? styles.likedTextColor
+                          : styles.unlikedTextColor,
+                      ]}
+                    >
+                      {jersey.likesCount ?? 0}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
-                {/* Bouton Like en bas à gauche de l'image */}
-                <TouchableOpacity
-                  style={[
-                    styles.likeButtonMini,
-                    jersey.hasLiked ? styles.likedBg : styles.unlikedBg,
-                  ]}
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    toggleLike(jersey.id);
-                  }}
-                >
-                  <Ionicons
-                    name="heart"
-                    size={14}
-                    color={jersey.hasLiked ? "#05C785" : Colors.theme.textMuted}
-                  />
-                  <Text
-                    style={[
-                      styles.likeCountMiniText,
-                      jersey.hasLiked
-                        ? styles.likedTextColor
-                        : styles.unlikedTextColor,
-                    ]}
-                  >
-                    {jersey.likesCount ?? 0}
+                {/* Text info below the card */}
+                <View style={styles.jerseyInfo}>
+                  <Text style={styles.jerseyClubName} numberOfLines={1}>
+                    {jersey.club?.name}
                   </Text>
-                </TouchableOpacity>
+                  <Text style={styles.jerseySeasonType}>
+                    {jersey.season} {jersey.type ? `/ ${jersey.type}` : ""}
+                  </Text>
+                </View>
               </View>
-
-              {/* Infos textuelles sous la carte */}
-              <View style={styles.jerseyInfo}>
-                <Text style={styles.jerseyClubName} numberOfLines={1}>
-                  {jersey.club?.name}
-                </Text>
-                <Text style={styles.jerseySeasonType}>
-                  {jersey.season} {jersey.type ? `/ ${jersey.type}` : ""}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+            );
+          })}
         </View>
       </ScrollView>
-
-      {/* Modale de détail du maillot */}
-      <KitOfTheDayModal
-        visible={!!selectedJersey}
-        onClose={() => setSelectedJersey(null)}
-        jersey={selectedJersey}
-        onToggleLike={(id) => toggleLike(id)}
-      />
     </SafeAreaView>
   );
 }
@@ -439,6 +459,26 @@ const styles = StyleSheet.create({
     color: Colors.theme.primary,
     fontSize: 10,
     fontWeight: "800",
+    letterSpacing: 0.5,
+  },
+  flipButtonMini: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.15)",
+  },
+  flipButtonText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   likeButtonMini: {

@@ -77,6 +77,8 @@ export const useToggleLikeJersey = () => {
             : oldData.likesCount - 1,
         };
       });
+      // Invalidate the locker query to refresh the data after toggling like
+      queryClient.invalidateQueries({ queryKey: ["locker"] });
     },
     onError: (error) => {
       console.error("Error toggling like:", error);
