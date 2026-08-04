@@ -27,8 +27,6 @@ export default function KitOfTheDayModal({
 }: KitOfTheDayModalProps) {
   if (!jersey) return null;
 
-  console.log("DONNÉES DU MAILLOT:", jersey);
-
   return (
     <Modal
       visible={visible}
@@ -58,39 +56,90 @@ export default function KitOfTheDayModal({
           {/* Infos principales & Like */}
           <View style={styles.metaRow}>
             <View style={styles.metaInfo}>
-              <Text style={styles.clubName}>{jersey.club.name}</Text>
-              <Text style={styles.seasonType}>
-                {jersey.season} • {jersey.type}
+              <Text style={styles.seasonTypeHeader}>
+                {jersey.season} / {jersey.type?.toUpperCase()}
               </Text>
+              <Text style={styles.clubName}>{jersey.club.name}</Text>
+
+              {/* Badges (Style similaire au screenshot) */}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.badgesContainer}
+              >
+                {jersey.type && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>
+                      {jersey.type.toUpperCase()}
+                    </Text>
+                  </View>
+                )}
+                {jersey.brand && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>
+                      {jersey.brand.toUpperCase()}
+                    </Text>
+                  </View>
+                )}
+                {jersey.sport?.name && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>
+                      {jersey.sport.name.toUpperCase()}
+                    </Text>
+                  </View>
+                )}
+                {jersey.isGrail && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>GRAIL</Text>
+                  </View>
+                )}
+              </ScrollView>
 
               {/* Propriétaire du maillot */}
               {jersey.user?.username && (
                 <View style={styles.modalOwnerContainer}>
-                  <Ionicons
-                    name="person-circle-outline"
-                    size={16}
-                    color={Colors.theme.primary}
-                  />
+                  <View style={styles.iconTshirtContainer}>
+                    <Ionicons
+                      name="shirt-outline"
+                      size={14}
+                      color={Colors.theme.primary}
+                    />
+                  </View>
                   <Text style={styles.modalOwnerText}>
-                    Locker of{" "}
+                    From{" "}
                     <Text style={styles.modalOwnerName}>
                       @{jersey.user.username}
                     </Text>
+                    's locker
                   </Text>
                 </View>
               )}
             </View>
 
+            {/* Bouton Like unifié */}
             <TouchableOpacity
-              style={styles.likeButton}
+              style={[
+                styles.likeButtonFooter,
+                jersey.hasLiked
+                  ? styles.likedBackground
+                  : styles.notLikedBackground,
+              ]}
+              activeOpacity={0.7}
               onPress={() => onToggleLike(jersey.id)}
             >
               <Ionicons
-                name={jersey.hasLiked ? "heart" : "heart-outline"}
-                size={22}
-                color={jersey.hasLiked ? "#EF4444" : Colors.theme.textMuted}
+                name="heart"
+                size={16}
+                color={jersey.hasLiked ? "#05C785" : Colors.theme.textMuted}
               />
-              <Text style={styles.likesCount}>{jersey.likesCount ?? 0}</Text>
+              <Text
+                style={[
+                  styles.likesCountText,
+                  jersey.hasLiked ? styles.likedText : styles.notLikedText,
+                ]}
+              >
+                {jersey.likesCount ?? 0}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -132,6 +181,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 40,
   },
   imageContainer: {
     width: "100%",
@@ -155,46 +205,86 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 10,
   },
+  seasonTypeHeader: {
+    color: Colors.theme.primary,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
   clubName: {
     color: "#FFFFFF",
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 4,
+    marginBottom: 12,
   },
-  seasonType: {
-    color: Colors.theme.textMuted,
-    fontSize: 14,
-    textTransform: "capitalize",
+  badgesContainer: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 12,
+  },
+  badge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.theme.primary,
+    backgroundColor: "rgba(5, 199, 133, 0.05)",
+  },
+  badgeText: {
+    color: Colors.theme.primary,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   modalOwnerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginTop: 8,
+    gap: 8,
+    marginTop: 4,
+  },
+  iconTshirtContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "rgba(5, 199, 133, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   modalOwnerText: {
     color: Colors.theme.textMuted,
     fontSize: 13,
   },
   modalOwnerName: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
+    color: Colors.theme.primary,
+    fontWeight: "600",
   },
-  likeButton: {
+  likeButtonFooter: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: Colors.theme.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 16,
     borderWidth: 1,
+  },
+  notLikedBackground: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
-  likesCount: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
+  likedBackground: {
+    backgroundColor: "rgba(5, 199, 133, 0.15)",
+    borderColor: "rgba(5, 199, 133, 0.3)",
+  },
+  likesCountText: {
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  notLikedText: {
+    color: Colors.theme.textMuted,
+  },
+  likedText: {
+    color: "#05C785",
   },
   storySection: {
     backgroundColor: Colors.theme.surface,
