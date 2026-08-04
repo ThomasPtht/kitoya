@@ -15,6 +15,12 @@ import { PasswordResetService } from './password-reset/password-reset.service';
 import { PasswordResetModule } from './password-reset/password-reset.module';
 import { StripeModule } from './stripe/stripe.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { GooglestrategyService } from './googlestrategy/googlestrategy.service';
+import { GooglestrategyController } from './googlestrategy/googlestrategy.controller';
+import { GooglestrategyModule } from './googlestrategy/googlestrategy.module';
+import { GoogleStrategyService } from './google-strategy/google-strategy.service';
+import { GoogleStrategyController } from './google-strategy/google-strategy.controller';
+import { GoogleStrategyModule } from './google-strategy/google-strategy.module';
 
 @Module({
   imports: [
@@ -28,8 +34,10 @@ import { SubscriptionModule } from './subscription/subscription.module';
     PasswordResetModule,
     StripeModule,
     SubscriptionModule,
+    GooglestrategyModule,
+    GoogleStrategyModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, EmailService, PasswordResetService],
+  controllers: [AppController, GooglestrategyController, GoogleStrategyController],
+  providers: [AppService, EmailService, PasswordResetService, GooglestrategyService, GoogleStrategyService],
 })
 export class AppModule {}

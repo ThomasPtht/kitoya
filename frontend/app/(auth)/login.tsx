@@ -1,6 +1,7 @@
 import GoogleButton from "@/components/GoogleButton";
 import { Colors } from "@/constants/Colors";
 import { authService } from "@/services/auth.service";
+import { googleAuthService } from "@/services/google.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
@@ -17,6 +18,7 @@ import {
   Alert,
 } from "react-native";
 import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
+import Toast from "react-native-toast-message";
 import z from "zod";
 
 export default function LoginScreen() {
@@ -61,10 +63,17 @@ export default function LoginScreen() {
   const handleGoogleLogin = async () => {
     try {
       setIsGoogleLoading(true);
-      console.log("Logique Google déclenchée !");
-      // Plus tard : await authService.loginWithGoogle()
+      const success = await googleAuthService.loginWithGoogle();
+      if (success) {
+        router.replace("/(drawer)/(tabs)");
+      }
     } catch (error) {
-      console.error(error);
+      Toast.show({
+        type: "error",
+        text1: "Google login failed",
+        text2: "Please try again later.",
+      });
+      console.error("Google login error:", error);
     } finally {
       setIsGoogleLoading(false);
     }
@@ -176,7 +185,7 @@ export default function LoginScreen() {
             {/* google button */}
             <GoogleButton
               onPress={handleGoogleLogin}
-              isLoading={isSubmitting}
+              isLoading={isGoogleLoading}
             />
           </View>
 

@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import type { Request } from 'express';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 interface JwtRequest extends Request {
   user: {
@@ -53,5 +54,17 @@ export class AuthController {
   @Post('change-password')
   changePassword(@Req() req: JwtRequest, @Body() dto: ChangePasswordDto) {
     return this.authService.changePassword(req.user.userId, dto);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {
+    return this.authService.validateGoogleUser(req.user);
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req) {
+    return this.authService.validateGoogleUser(req.user);
   }
 }

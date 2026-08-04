@@ -3,7 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { authService } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   View,
@@ -18,7 +18,12 @@ import {
 import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
 import z from "zod";
 
+import Toast from "react-native-toast-message";
+import { googleAuthService } from "@/services/google.service";
+
 export default function RegisterScreen() {
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
   const registerSchema = z.object({
     username: z
       .string()
@@ -55,9 +60,23 @@ export default function RegisterScreen() {
 
   const passwordRef = useRef<TextInput>(null);
 
-  const handleGoogleRegister = () => {
-    console.log("Logique Google déclenchée !");
-    // Plus tard : authService.loginWithGoogle()
+  const handleGoogleRegister = async () => {
+    try {
+      setIsGoogleLoading(true);
+      const success = await googleAuthService.loginWithGoogle();
+      if (success) {
+        router.push("/(drawer)/(tabs)");
+      }
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Google login failed",
+        text2: "Please try again later.",
+      });
+      console.error("Google login error:", error);
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
@@ -185,7 +204,10 @@ export default function RegisterScreen() {
                 <Text style={styles.buttonText}>Sign Up</Text>
               )}
             </TouchableOpacity>
-            <GoogleButton onPress={handleGoogleRegister} />
+            <GoogleButton
+              onPress={handleGoogleRegister}
+              isLoading={isGoogleLoading}
+            />
           </View>
 
           {/* Footer */}
