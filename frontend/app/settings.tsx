@@ -12,15 +12,51 @@ import {
   View,
   ScrollView,
   Switch,
+  Modal,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SettingsScreen() {
-  const { data: userInfo, isLoading, error } = useUserMe();
+  const { data: userInfo } = useUserMe();
+  const queryClient = useQueryClient();
 
-  // Nouvel état pour les préférences de l'application
+  // États pour les préférences de l'application
   const [pushNotifications, setPushNotifications] = useState(true);
-  const [emailAlerts, setEmailAlerts] = useState(true);
   const [publicLocker, setPublicLocker] = useState(false);
+
+  // États pour la modale de modification du username
+  const [isUsernameModalVisible, setIsUsernameModalVisible] = useState(false);
+  const [newUsernameInput, setNewUsernameInput] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // Ouvrir la modale et pré-remplir avec le username actuel
+  const handleOpenUsernameModal = () => {
+    setNewUsernameInput(userInfo?.username || "");
+    setIsUsernameModalVisible(true);
+  };
+
+  // Enregistrer le nouveau username
+  const handleSaveUsername = async () => {
+    if (!newUsernameInput || newUsernameInput.trim().length < 3) {
+      Alert.alert("Error", "Username must be at least 3 characters long.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await authService.changeUsername(newUsernameInput.trim());
+      // Rafraîchir les données de l'utilisateur (via React Query)
+      queryClient.invalidateQueries({ queryKey: ["userMe"] });
+      setIsUsernameModalVisible(false);
+      Alert.alert("Success", "Username changed successfully.");
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to change username");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     Alert.alert(
@@ -66,16 +102,30 @@ export default function SettingsScreen() {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Profile</Text>
           <View style={styles.card}>
-            <View style={styles.row}>
+            {/* Username modifiable */}
+            <TouchableOpacity
+              style={styles.row}
+              onPress={handleOpenUsernameModal}
+            >
               <View style={styles.rowLeft}>
                 <Feather name="user" size={18} color="#05C785" />
                 <Text style={styles.label}>Username</Text>
               </View>
-              <Text style={styles.value}>
-                {userInfo?.username || "Collector"}
-              </Text>
-            </View>
+              <View style={styles.rowRight}>
+                <Text style={styles.value}>
+                  {userInfo?.username || "Collector"}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color="#555"
+                  style={{ marginLeft: 6 }}
+                />
+              </View>
+            </TouchableOpacity>
+
             <View style={styles.separator} />
+
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="mail" size={18} color="#05C785" />
@@ -85,7 +135,9 @@ export default function SettingsScreen() {
                 {userInfo?.email || "user@kitroom.app"}
               </Text>
             </View>
+
             <View style={styles.separator} />
+
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="award" size={18} color="#05C785" />
@@ -120,6 +172,7 @@ export default function SettingsScreen() {
             </View>
 
             <View style={styles.separator} />
+
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="globe" size={18} color="#05C785" />
@@ -164,12 +217,56 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* App Version Info */}
-        {/* <View style={styles.footerInfo}>
-          <Text style={styles.footerText}>Kitroom v1.2.0 • Build 42</Text>
-        </View> */}
       </ScrollView>
+
+      {/* Modal de modification du Username (fonctionne sur iOS et Android) */}
+      <Modal
+        visible={isUsernameModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsUsernameModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Change Username</Text>
+            <Text style={styles.modalSubtitle}>
+              Enter your new unique username (min. 3 characters)
+            </Text>
+
+            <TextInput
+              style={styles.modalInput}
+              value={newUsernameInput}
+              onChangeText={(text: string) => setNewUsernameInput(text)}
+              placeholder="New username"
+              placeholderTextColor="#555"
+              autoCapitalize="none"
+              autoFocus={true}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setIsUsernameModalVisible(false)}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, styles.saveButton]}
+                onPress={handleSaveUsername}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <ActivityIndicator size="small" color="#050806" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -233,6 +330,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
+  rowRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   label: {
     color: "#FFFFFF",
     fontSize: 15,
@@ -277,12 +378,68 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "500",
   },
-  footerInfo: {
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    padding: 20,
   },
-  footerText: {
-    color: "#555555",
-    fontSize: 12,
+  modalContent: {
+    backgroundColor: "#151515",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.3)",
+    borderRadius: 20,
+    padding: 24,
+    width: "100%",
+    maxWidth: 340,
+  },
+  modalTitle: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    color: "#888888",
+    fontSize: 13,
+    marginBottom: 20,
+  },
+  modalInput: {
+    backgroundColor: "#0A0E0C",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    color: "#FFFFFF",
+    fontSize: 15,
+    marginBottom: 20,
+  },
+  modalActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#222222",
+  },
+  cancelButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  saveButton: {
+    backgroundColor: "#05C785",
+  },
+  saveButtonText: {
+    color: "#050806",
+    fontWeight: "bold",
+    fontSize: 14,
   },
 });

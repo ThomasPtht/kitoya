@@ -187,4 +187,25 @@ export class AuthService {
       },
     };
   }
+
+  async changeUsername(userId: string, newUsername: string) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { username: newUsername },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Username already taken');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { username: newUsername },
+    });
+
+    return {
+      message: 'Username changed successfully',
+      user: { 
+id: updatedUser.id, email: updatedUser.email, username: updatedUser.username },
+    };
+  }
 }

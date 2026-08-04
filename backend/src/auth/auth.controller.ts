@@ -14,6 +14,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import type { Request } from 'express';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ChangeUsernameDto } from './dto/change-username';
 
 interface JwtRequest extends Request {
   user: {
@@ -66,5 +67,11 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
     return this.authService.validateGoogleUser(req.user);
+  }
+
+  @Post('change-username')
+  @UseGuards(JwtAuthGuard)
+  async changeUsername(@Req() req: JwtRequest, @Body() dto: ChangeUsernameDto) {
+    return this.authService.changeUsername(req.user.userId, dto.newUsername);
   }
 }

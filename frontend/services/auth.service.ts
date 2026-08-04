@@ -134,4 +134,19 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+
+  changeUsername: async (newUsername: string) => {
+    try {
+      const response = await apiClient.post("/auth/change-username", {
+        newUsername,
+      });
+      return response.data;
+    } catch (error: any) {
+      // Extract the error message from the response if available, otherwise use a generic error message
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred during username change";
+      throw new Error(errorMessage);
+    }
+  },
 };
