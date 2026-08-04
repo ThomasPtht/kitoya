@@ -39,9 +39,8 @@ export class CreateJerseyDto {
   @Max(99)
   number?: number;
 
-  @IsOptional()
   @IsString()
-  season?: string;
+  season!: string;
 
   @IsEnum(JerseyType)
   type!: JerseyType;

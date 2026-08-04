@@ -101,7 +101,7 @@ export class JerseysService {
       backImageUrl: dto.backImageUrl || null,
       playerName: dto.playerName || null,
       number: dto.number ? Number(dto.number) : null,
-      season: dto.season || null,
+      season: dto.season,
       type: dto.type,
       size: dto.size,
       condition: dto.condition,

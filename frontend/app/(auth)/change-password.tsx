@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { authService } from "@/services/auth.service";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 export default function ChangePasswordScreen() {
   const [oldPassword, setOldPassword] = useState("");
@@ -58,6 +60,15 @@ export default function ChangePasswordScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Bouton Back */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => router.back()}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      >
+        <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Change Password</Text>
       <Text style={styles.subtitle}>
         Enter your current password and choose a new one.
@@ -112,6 +123,20 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: "center",
     backgroundColor: "#000",
+  },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.theme?.surface || "#111",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#333",
+    zIndex: 10,
   },
   title: { fontSize: 28, fontWeight: "bold", color: "#fff", marginBottom: 8 },
   subtitle: { fontSize: 14, color: "#888", marginBottom: 24 },

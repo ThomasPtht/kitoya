@@ -13,6 +13,7 @@ import Toast from "react-native-toast-message";
 import { useColorScheme } from "@/components/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StripeProvider } from "@stripe/stripe-react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -52,8 +53,10 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RootLayoutNav />
-      <Toast />
+      <SafeAreaProvider>
+        <RootLayoutNav />
+        <Toast />
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }

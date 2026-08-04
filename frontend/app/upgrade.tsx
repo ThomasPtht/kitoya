@@ -10,58 +10,69 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import { stripeService } from "@/services/stripe.service";
 import Toast from "react-native-toast-message";
-import { useStripe } from "@stripe/stripe-react-native";
+import { useSubscription } from "@/hooks/useSubscription";
 
 type IntervalKey = "month" | "year";
 
 export default function UpgradeScreen() {
   const [selectedInterval, setSelectedInterval] = useState<IntervalKey>("year");
   const [loading, setLoading] = useState(false);
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
+  // Hook RevenueCat
+  const { packages, purchasePackage, restorePurchases, isElite } =
+    useSubscription();
+
+  // Si l'utilisateur est déjà ELITE, on peut afficher un écran de succès direct ou un message
+  if (isElite) {
+    return (
+      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
+        <Feather name="check-circle" size={64} color="#D4AF37" />
+        <Text style={styles.mainTitle}>You are a Kitroom ELITE member!</Text>
+        <TouchableOpacity
+          style={styles.ctaButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.ctaButtonText}>Back to App</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   const handleSubscribe = async () => {
+    // Trouve le package correspondant dans ceux renvoyés par RevenueCat
+    // (Par convention RevenueCat identifie souvent les abonnements par durée ou type)
+    const targetPackage = packages.find((pkg) => {
+      if (selectedInterval === "year") {
+        return (
+          pkg.packageType === "ANNUAL" ||
+          pkg.product.identifier.includes("annual")
+        );
+      } else {
+        return (
+          pkg.packageType === "MONTHLY" ||
+          pkg.product.identifier.includes("monthly")
+        );
+      }
+    });
+
+    // Si on est en mode Expo Go ou si les packages ne sont pas chargés, fallback de sécurité
+    if (!targetPackage) {
+      Toast.show({
+        type: "error",
+        text1: "Subscription package not available right now.",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = await stripeService.createSubscription(
-        "ELITE",
-        selectedInterval,
-      );
-      console.log("DONNEES STRIPE REÇUES :", data);
-      const { clientSecret, customerId } = data;
-
-      const { error: initError } = await initPaymentSheet({
-        paymentIntentClientSecret: clientSecret,
-        merchantDisplayName: "Kitroom",
-        customerId: customerId,
-        allowsDelayedPaymentMethods: true,
-      });
-
-      if (initError) {
-        Toast.show({
-          type: "error",
-          text1: "Payment Sheet Initialization Error",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const { error: paymentError } = await presentPaymentSheet();
-
-      if (paymentError) {
-        Toast.show({ type: "error", text1: paymentError.message });
-      } else {
-        Toast.show({
-          type: "success",
-          text1: "Welcome to Kitroom ELITE!",
-        });
-        router.back();
-      }
+      await purchasePackage(targetPackage);
+      // Le hook gère déjà les alertes de succès/erreur, on peut juste fermer si c'est bon
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: error.message || "An error occurred",
+        text1: error.message || "An error occurred during purchase",
       });
     } finally {
       setLoading(false);
@@ -182,6 +193,14 @@ export default function UpgradeScreen() {
             </View>
           </View>
         </View>
+
+        {/* Restore Purchases Button */}
+        <TouchableOpacity
+          onPress={restorePurchases}
+          style={styles.restoreButton}
+        >
+          <Text style={styles.restoreButtonText}>Restore Purchases</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Fixed Footer with CTA */}
@@ -196,11 +215,13 @@ export default function UpgradeScreen() {
               ? "Loading..."
               : selectedInterval === "year"
                 ? "Start 7-Day Free Trial"
-                : "Subscribe Monthly"}
+                : "Subscribe Monthly (€4.99/mo)"}
           </Text>
         </TouchableOpacity>
         <Text style={styles.footerLegal}>
-          7-day free trial, then recurring billing. Cancel anytime.
+          {selectedInterval === "year"
+            ? "7-day free trial, then €39.99/year. Cancel anytime."
+            : "Billed monthly at €4.99. Cancel anytime."}
         </Text>
       </View>
     </SafeAreaView>
@@ -211,6 +232,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#121212",
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
   header: {
     flexDirection: "row",
@@ -248,7 +274,7 @@ const styles = StyleSheet.create({
   },
   plansContainer: {
     gap: 12,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   planCard: {
     backgroundColor: "#1A1A1A",
@@ -349,6 +375,16 @@ const styles = StyleSheet.create({
   featureDesc: {
     fontSize: 12,
     color: "#888888",
+  },
+  restoreButton: {
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  restoreButtonText: {
+    color: "#D4AF37",
+    fontSize: 14,
+    textDecorationLine: "underline",
   },
   footer: {
     paddingHorizontal: 20,

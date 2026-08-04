@@ -42,4 +42,5 @@ export const BRANDS = [
   "Jako",
   "Legea",
   "Zeus",
+  "Other",
 ];

@@ -21,7 +21,6 @@ export default function SettingsScreen() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [publicLocker, setPublicLocker] = useState(false);
-  const [biometricLogin, setBiometricLogin] = useState(false);
 
   const handleDeleteAccount = async () => {
     Alert.alert(
@@ -119,19 +118,7 @@ export default function SettingsScreen() {
                 thumbColor="#FFFFFF"
               />
             </View>
-            <View style={styles.separator} />
-            <View style={styles.row}>
-              <View style={styles.rowLeft}>
-                <Feather name="send" size={18} color="#05C785" />
-                <Text style={styles.label}>Price Alert Emails</Text>
-              </View>
-              <Switch
-                value={emailAlerts}
-                onValueChange={setEmailAlerts}
-                trackColor={{ false: "#222", true: "#05C785" }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
+
             <View style={styles.separator} />
             <View style={styles.row}>
               <View style={styles.rowLeft}>
@@ -141,19 +128,6 @@ export default function SettingsScreen() {
               <Switch
                 value={publicLocker}
                 onValueChange={setPublicLocker}
-                trackColor={{ false: "#222", true: "#05C785" }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-            <View style={styles.separator} />
-            <View style={styles.row}>
-              <View style={styles.rowLeft}>
-                <Feather name="lock" size={18} color="#05C785" />
-                <Text style={styles.label}>Biometric Lock</Text>
-              </View>
-              <Switch
-                value={biometricLogin}
-                onValueChange={setBiometricLogin}
                 trackColor={{ false: "#222", true: "#05C785" }}
                 thumbColor="#FFFFFF"
               />
@@ -192,9 +166,9 @@ export default function SettingsScreen() {
         </View>
 
         {/* App Version Info */}
-        <View style={styles.footerInfo}>
+        {/* <View style={styles.footerInfo}>
           <Text style={styles.footerText}>Kitroom v1.2.0 • Build 42</Text>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );
