@@ -144,4 +144,19 @@ export class AuthService {
 
     return { message: 'Password changed successfully' };
   }
+
+  async generateUniqueUsername(baseEmail: string) {
+    let baseUsername = baseEmail.split('@')[0].replace(/[^a-zA-Z0-9]/g, ''); // Remove special characters
+    let username = baseUsername;
+    let counter = 1;
+
+    // loop until we find a unique username
+    while (await this.prisma.user.findUnique({ where: { username } })) {
+      username = `${baseUsername}${counter}`;
+      counter++;
+    }
+    return username;
+  }
+
+  async googleLogin
 }
