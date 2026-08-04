@@ -68,15 +68,6 @@ export class CreateJerseyDto {
   @IsBoolean()
   isOfficial: boolean = false;
 
-  @IsOptional()
-  @Transform(({ value }) => {
-    if (value === 'true' || value === true) return true;
-    if (value === 'false' || value === false) return false;
-    return false; 
-  })
-  @IsBoolean()
-  isShareable: boolean = false;
-
   @IsNotEmpty()
   @IsString()
   brand!: string;

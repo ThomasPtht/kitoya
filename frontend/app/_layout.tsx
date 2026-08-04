@@ -87,6 +87,10 @@ function RootLayoutNav() {
             name="(auth)/change-password"
             options={{ headerShown: false }}
           />
+           <Stack.Screen
+            name="locker/[username]"
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
           <Stack.Screen
             name="settings"

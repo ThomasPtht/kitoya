@@ -38,7 +38,6 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  // useGuard to protect the route and require a valid JWT token to access it
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getProfile(@Req() req: JwtRequest) {
@@ -57,21 +56,17 @@ export class AuthController {
     return this.authService.changePassword(req.user.userId, dto);
   }
 
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {
-    return this.authService.validateGoogleUser(req.user);
-  }
-
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    return this.authService.validateGoogleUser(req.user);
-  }
+  
 
   @Post('change-username')
   @UseGuards(JwtAuthGuard)
   async changeUsername(@Req() req: JwtRequest, @Body() dto: ChangeUsernameDto) {
     return this.authService.changeUsername(req.user.userId, dto.newUsername);
+  }
+
+  @Post('update-profile')
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(@Req() req: JwtRequest, @Body() dto: any) {
+    return this.authService.updateProfile(req.user.userId, dto);
   }
 }

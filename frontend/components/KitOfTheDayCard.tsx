@@ -8,17 +8,18 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useJerseyOfTheDay, useToggleLikeJersey } from "@/hooks/useJerseyHook";
-// Assure-toi que ce chemin est correct
 import KitOfTheDayModal from "./KitOfTheDayModal";
 
 export default function KitOfTheDayCard() {
+  const router = useRouter();
   const { data: jersey, isLoading } = useJerseyOfTheDay();
   const [imageFailed, setImageFailed] = useState(false);
   const { mutate: toggleLike, isPending: isLiking } = useToggleLikeJersey();
 
-  // État pour contrôler l'ouverture de la modale
+  // State to control modal visibility
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const imageUri = useMemo(() => {
@@ -33,7 +34,7 @@ export default function KitOfTheDayCard() {
     );
   }
 
-  // Si pas de maillot ou pas de données utilisateur associées, on ne rend rien
+  // If no jersey or no associated user data, render nothing
   if (!jersey || !jersey.user) return null;
 
   const generateTag = () => {
@@ -43,24 +44,33 @@ export default function KitOfTheDayCard() {
     return `${club}-${season}-${type}`;
   };
 
+  const handleAuthorPress = (e: any) => {
+    e.stopPropagation(); // Prevent card press / modal opening
+
+    router.push({
+      pathname: "/locker/[username]",
+      params: { username: jersey.user.username },
+    });
+  };
+
   return (
     <>
       <View style={styles.wrapper}>
-        {/* En-tête Titre */}
+        {/* Title Header */}
         <View style={styles.header}>
           <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
           <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
         </View>
 
-        {/* Carte principale avec bordure */}
+        {/* Main card container */}
         <TouchableOpacity
           style={styles.card}
           activeOpacity={0.8}
-          onPress={() => setIsModalVisible(true)} // Ouvre la modale au clic sur la carte
+          onPress={() => setIsModalVisible(true)} // Open modal on card press
         >
-          {/* Contenu principal (Image + Infos) */}
+          {/* Main content (Image + Info) */}
           <View style={styles.mainContent}>
-            {/* Container Image */}
+            {/* Image Container */}
             <View style={styles.imageContainer}>
               {imageUri && !imageFailed ? (
                 <Image
@@ -76,7 +86,7 @@ export default function KitOfTheDayCard() {
               )}
             </View>
 
-            {/* Infos à droite */}
+            {/* Info container */}
             <View style={styles.infoContainer}>
               <View>
                 <Text style={styles.tag}>{generateTag()}</Text>
@@ -96,12 +106,16 @@ export default function KitOfTheDayCard() {
             </View>
           </View>
 
-          {/* Ligne de séparation */}
+          {/* Divider line */}
           <View style={styles.divider} />
 
-          {/* Pied de page de la carte (Auteur + Like) */}
+          {/* Card footer (Author + Like) */}
           <View style={styles.footerContainer}>
-            <View style={styles.authorContainer}>
+            <TouchableOpacity
+              style={styles.authorContainer}
+              activeOpacity={0.7}
+              onPress={handleAuthorPress}
+            >
               <View style={styles.iconTshirtContainer}>
                 <Ionicons
                   name="shirt-outline"
@@ -116,9 +130,9 @@ export default function KitOfTheDayCard() {
                 </Text>
                 's locker
               </Text>
-            </View>
+            </TouchableOpacity>
 
-            {/* Like button (Désactivé pendant l'action) */}
+            {/* Like button (Disabled during action) */}
             <TouchableOpacity
               style={[
                 styles.likeButtonFooter,
@@ -133,9 +147,9 @@ export default function KitOfTheDayCard() {
               }}
             >
               <Ionicons
-                name={jersey.hasLiked ? "heart" : "heart"} // Changé pour toujours 'heart' comme dans l'image
+                name="heart"
                 size={16}
-                color={jersey.hasLiked ? "#05C785" : Colors.theme.textMuted} // Vert si liké, gris sinon
+                color={jersey.hasLiked ? "#05C785" : Colors.theme.textMuted}
               />
               <Text
                 style={[
@@ -150,7 +164,7 @@ export default function KitOfTheDayCard() {
         </TouchableOpacity>
       </View>
 
-      {/* Intégration de la modale */}
+      {/* Detail Modal */}
       <KitOfTheDayModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
@@ -182,10 +196,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.theme.surface,
     borderWidth: 1,
-    borderColor: Colors.theme.primary, // Bordure verte
-    borderRadius: 20, // Plus arrondi comme sur l'image
-    padding: 0, // Padding à 0 car on gère les paddings internes
-    overflow: "hidden", // Important pour que le footer respecte le radius
+    borderColor: Colors.theme.primary,
+    borderRadius: 20,
+    padding: 0,
+    overflow: "hidden",
   },
   mainContent: {
     flexDirection: "row",
@@ -248,7 +262,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.theme.primary, // Ligne de séparation verte
+    backgroundColor: Colors.theme.primary,
     opacity: 0.3,
   },
   footerContainer: {
@@ -257,7 +271,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: "rgba(5, 199, 133, 0.05)", // Fond vert très clair pour le footer
+    backgroundColor: "rgba(5, 199, 133, 0.05)",
   },
   authorContainer: {
     flexDirection: "row",
@@ -277,17 +291,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   authorUsername: {
-    color: Colors.theme.primary, // Pseudo en vert
+    color: Colors.theme.primary,
     fontWeight: "600",
   },
-  // Styles spécifiques au bouton like du footer
   likeButtonFooter: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 16, // Très arrondi
+    borderRadius: 16,
     borderWidth: 1,
   },
   notLikedBackground: {
@@ -295,7 +308,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
   likedBackground: {
-    backgroundColor: "rgba(5, 199, 133, 0.15)", // Fond vert pâle si liké
+    backgroundColor: "rgba(5, 199, 133, 0.15)",
     borderColor: "rgba(5, 199, 133, 0.3)",
   },
   likesCountText: {
@@ -306,7 +319,7 @@ const styles = StyleSheet.create({
     color: Colors.theme.textMuted,
   },
   likedText: {
-    color: "#05C785", // Texte du compteur vert si liké
+    color: "#05C785",
   },
   loadingContainer: {
     height: 150,

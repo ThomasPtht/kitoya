@@ -17,6 +17,9 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { GoogleStrategyService } from './google-strategy/google-strategy.service';
 import { GoogleStrategyController } from './google-strategy/google-strategy.controller';
 import { GoogleStrategyModule } from './google-strategy/google-strategy.module';
+import { LockerService } from './locker/locker.service';
+import { LockerController } from './locker/locker.controller';
+import { LockerModule } from './locker/locker.module';
 
 @Module({
   imports: [
@@ -31,13 +34,15 @@ import { GoogleStrategyModule } from './google-strategy/google-strategy.module';
     StripeModule,
     SubscriptionModule,
     GoogleStrategyModule,
+    LockerModule,
   ],
-  controllers: [AppController, GoogleStrategyController],
+  controllers: [AppController, GoogleStrategyController, LockerController],
   providers: [
     AppService,
     EmailService,
     PasswordResetService,
     GoogleStrategyService,
+    LockerService,
   ],
 })
 export class AppModule {}

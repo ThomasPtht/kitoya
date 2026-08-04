@@ -91,7 +91,6 @@ export class JerseysController {
         condition: createJerseyDto.condition,
         version: createJerseyDto.version,
         isOfficial: createJerseyDto.isOfficial,
-        isShareable: createJerseyDto.isShareable,
         brand: createJerseyDto.brand,
       });
 

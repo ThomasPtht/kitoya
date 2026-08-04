@@ -19,7 +19,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // findFirst is used instead of findUnique because we want to check both email and username for existing users
   async register(dto: RegisterDto) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
@@ -28,7 +27,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('User already exists'); // code 409
+      throw new ConflictException('User already exists');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -42,25 +41,28 @@ export class AuthService {
         },
       });
 
-      // Generate JWT token
-      const payload = { sub: user.id, email: user.email };
+      const payload = {
+        sub: user.id,
+        email: user.email,
+        username: user.username,
+      };
       return {
         access_token: await this.jwtService.signAsync(payload),
         user: {
           id: user.id,
           email: user.email,
           username: user.username,
-          planType: 'FREE', // default plan type for new users
+          isPublic: user.isPublic,
+          planType: 'FREE',
         },
       };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        // to handle unique constraint violation error, which is thrown when trying to create a user with an existing email or username
         if (error.code === 'P2002') {
           throw new ConflictException('User already exists');
         }
       }
-      throw error; // rethrow other errors
+      throw error;
     }
   }
 
@@ -69,22 +71,31 @@ export class AuthService {
       where: { email: dto.email },
     });
 
-    // The case of !password doesnt allow to login with OAuth email, because the password is null in database. A OAuth user has to login with his provider google..and not with email/password.
     if (!user || !user.password) {
       throw new UnauthorizedException('Invalid credentials');
-    } // code 401
+    }
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
 
     if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials'); // code 401
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    const paylod = { sub: user.id, email: user.email };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    };
 
+    console.log('🔍 [AuthService] Payload généré pour le token :', payload); // <-- ICI
     return {
-      access_token: await this.jwtService.signAsync(paylod),
-      user: { id: user.id, email: user.email, username: user.username },
+      access_token: await this.jwtService.signAsync(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        isPublic: user.isPublic,
+      },
     };
   }
 
@@ -146,11 +157,10 @@ export class AuthService {
   }
 
   async generateUniqueUsername(baseEmail: string) {
-    let baseUsername = baseEmail.split('@')[0].replace(/[^a-zA-Z0-9]/g, ''); // Remove special characters
+    let baseUsername = baseEmail.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
     let username = baseUsername;
     let counter = 1;
 
-    // loop until we find a unique username
     while (await this.prisma.user.findUnique({ where: { username } })) {
       username = `${baseUsername}${counter}`;
       counter++;
@@ -170,20 +180,24 @@ export class AuthService {
         data: {
           email: googleUser.email,
           username,
-          password: null, // No password for OAuth users
+          password: null,
         },
       });
     }
 
-    // generate JWT token for the user
-    const payload = { sub: user.id, email: user.email };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: {
         id: user.id,
         email: user.email,
         username: user.username,
-        planType: 'FREE', // default plan type for new users
+        isPublic: user.isPublic,
+        planType: 'FREE',
       },
     };
   }
@@ -204,8 +218,32 @@ export class AuthService {
 
     return {
       message: 'Username changed successfully',
-      user: { 
-id: updatedUser.id, email: updatedUser.email, username: updatedUser.username },
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        username: updatedUser.username,
+        isPublic: updatedUser.isPublic,
+      },
     };
+  }
+
+  async updateProfile(userId: string, dto: { isPublic?: boolean }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(dto.isPublic !== undefined && { isPublic: dto.isPublic }),
+      },
+    });
+
+    const { password, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
   }
 }

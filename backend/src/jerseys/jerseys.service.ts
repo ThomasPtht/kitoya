@@ -107,7 +107,6 @@ export class JerseysService {
       condition: dto.condition,
       version: dto.version,
       description: dto.description || null,
-      isShareable: dto.isShareable,
       isOfficial: dto.isOfficial,
       brand: dto.brand,
       purchasePrice: dto.purchasePrice ?? null,
@@ -149,7 +148,7 @@ export class JerseysService {
 
     return apiClubs;
   }
-  
+
   async getJerseysByUser(userId: string) {
     const jerseys = await this.prisma.jersey.findMany({
       where: { userId },

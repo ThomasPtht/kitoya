@@ -42,7 +42,10 @@ model User {
   username        String    @unique
   email           String    @unique
   password        String? // optionnal to allow for OAuth users, but mandatory for users registering with email/password thanks to class-validator in the DTOs
-  isPublic        Boolean   @default(false)
+  isPublic        Boolean   @default(true)
+  location        String?
+  bio             String?
+  rank            String? // optionnal, used for ranking users based on their activity and engagement
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   role            Role      @default(USER)
@@ -93,7 +96,6 @@ model Jersey {
   isOfficial    Boolean
   description   String? // e.g., any additional details about the jersey : buy at the stadium, signed by the player, etc.
   purchasePrice Float? // optionnal because some jerseys are gifts or free
-  isShareable   Boolean
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -6,6 +6,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategyService } from 'src/google-strategy/google-strategy.service';
+import { GoogleStrategyController } from 'src/google-strategy/google-strategy.controller';
 
 @Module({
   // import jwt module and configure it with a secret and expiration time
@@ -18,7 +19,8 @@ import { GoogleStrategyService } from 'src/google-strategy/google-strategy.servi
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleStrategyController],
   providers: [AuthService, JwtStrategy, GoogleStrategyService],
+  exports: [AuthService],
 })
 export class AuthModule {}
