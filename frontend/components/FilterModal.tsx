@@ -40,6 +40,10 @@ export default function FilterModal({
     toggleBrand,
   } = useFilterStore();
 
+  const formatLabel = (value: string) => {
+    return value.replace(/_/g, " ");
+  };
+
   // --- FILTRAGE CROISÉ (CROSS-FILTERING) ---
   // Chaque section est filtrée par rapport aux sélections des AUTRES sections
 
@@ -400,7 +404,7 @@ export default function FilterModal({
               >
                 <Text style={styles.itemText}>
                   {selectedConditions.includes(condition) ? "✅" : "⬜"}{" "}
-                  {condition}
+                  {formatLabel(condition)}
                 </Text>
               </TouchableOpacity>
             ))}
