@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -15,7 +16,7 @@ import KitOfTheDayModal from "./KitOfTheDayModal";
 
 export default function KitOfTheDayCard() {
   const router = useRouter();
-  const { data: jersey, isLoading } = useJerseyOfTheDay();
+  const { data: jersey, isLoading, isError } = useJerseyOfTheDay();
   const [imageFailed, setImageFailed] = useState(false);
   const { mutate: toggleLike, isPending: isLiking } = useToggleLikeJersey();
 
@@ -41,8 +42,31 @@ export default function KitOfTheDayCard() {
     );
   }
 
-  // If no jersey or no associated user data, render nothing
-  if (!jersey || !jersey.user) return null;
+  if (isError || !jersey || !jersey.user) {
+    return (
+      <View style={styles.wrapper}>
+        <View style={styles.header}>
+          <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
+          <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.placeholderContent}>
+            <Ionicons
+              name="shirt-outline"
+              size={28}
+              color={Colors.theme.primary}
+            />
+            <Text style={styles.placeholderTitle}>No featured kit today</Text>
+            <Text style={styles.placeholderText}>
+              Featured kits appear when the daily selection service returns a
+              jersey.
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   const generateTag = () => {
     const club = jersey.club.name.substring(0, 3).toUpperCase();
@@ -53,6 +77,12 @@ export default function KitOfTheDayCard() {
 
   const handleAuthorPress = (e: any) => {
     e.stopPropagation(); // Prevent card press / modal opening
+
+    // Keep the locker visibility check only for navigation, not for KOTD display.
+    if (jersey.user.isPublic === false) {
+      Alert.alert("Private Locker", "This collector's locker is private.");
+      return;
+    }
 
     router.push({
       pathname: "/locker/[username]",
@@ -212,6 +242,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 12,
     gap: 16,
+  },
+  placeholderContent: {
+    paddingVertical: 26,
+    paddingHorizontal: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  placeholderTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  placeholderText: {
+    color: Colors.theme.textMuted,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
   },
   imageContainer: {
     width: 100,

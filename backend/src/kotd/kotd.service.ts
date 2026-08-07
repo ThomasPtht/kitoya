@@ -13,11 +13,6 @@ export class KotdService {
   async getJerseyOfTheDay(currentUserId?: string) {
     // Fetch shareable jerseys whose owner has a public profile
     const shareableJerseys = await this.prisma.jersey.findMany({
-      where: {
-        user: {
-          isPublic: true,
-        },
-      },
       include: {
         club: true,
         user: {
