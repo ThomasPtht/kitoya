@@ -33,6 +33,9 @@ export default function TabDressingScreen() {
     selectedClubs,
     selectedSeasons,
     selectedKitTypes,
+    selectedVersions,
+    selectedConditions,
+    selectedBrands,
   } = useFilterStore();
 
   const updateSearch = (search: string) => {
@@ -60,9 +63,38 @@ export default function TabDressingScreen() {
       const matchesKitType =
         selectedKitTypes.length === 0 ||
         selectedKitTypes.includes(j.type ?? "");
-      return matchesSearch && matchesClub && matchesSeason && matchesKitType;
+
+      const matchesVersion =
+        selectedVersions.length === 0 ||
+        selectedVersions.includes(j.version ?? "");
+
+      const matchesCondition =
+        selectedConditions.length === 0 ||
+        selectedConditions.includes(j.condition ?? "");
+
+      const matchesBrand =
+        selectedBrands.length === 0 || selectedBrands.includes(j.brand ?? "");
+
+      return (
+        matchesSearch &&
+        matchesClub &&
+        matchesSeason &&
+        matchesKitType &&
+        matchesVersion &&
+        matchesCondition &&
+        matchesBrand
+      );
     });
-  }, [jerseys, search, selectedClubs, selectedSeasons, selectedKitTypes]);
+  }, [
+    jerseys,
+    search,
+    selectedClubs,
+    selectedSeasons,
+    selectedKitTypes,
+    selectedVersions,
+    selectedConditions,
+    selectedBrands,
+  ]);
 
   const hasJerseys = jerseys && jerseys.length > 0;
 

@@ -57,6 +57,7 @@ export default function TabOneScreen() {
           <View style={styles.cardsRow}>
             {jerseys.slice(0, 3).map((jersey) => (
               <CardCollection
+                onPress={() => router.push(`/(drawer)/(tabs)/dressing`)}
                 key={jersey.id}
                 jersey={jersey}
                 width="30%"

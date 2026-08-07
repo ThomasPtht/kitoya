@@ -26,6 +26,13 @@ export default function KitOfTheDayCard() {
     return jersey?.frontImageUrl?.trim() || jersey?.frontImage?.trim() || "";
   }, [jersey?.frontImageUrl, jersey?.frontImage]);
 
+  // Helper to format types/conditions cleanly (e.g. "HOME_KIT" -> "Home kit")
+  const formatText = (text: string | null | undefined) => {
+    if (!text) return "";
+    const clean = text.replace(/_/g, " ").toLowerCase();
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+  };
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -94,7 +101,7 @@ export default function KitOfTheDayCard() {
                   {jersey.club.name}
                 </Text>
                 <Text style={styles.seasonType}>
-                  {jersey.season} / {jersey.type?.toLowerCase()}
+                  {jersey.season} / {formatText(jersey.type)}
                 </Text>
 
                 <Text style={styles.story} numberOfLines={2}>
@@ -246,7 +253,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
     marginBottom: 8,
-    textTransform: "capitalize",
+    textTransform: "none",
   },
   story: {
     color: "#D1D5DB",

@@ -23,6 +23,13 @@ interface JerseyDetailProps {
   onClose: () => void;
 }
 
+  // Helper function to format strings nicely (e.g. "Very_Good" -> "Very good")
+ export const formatText = (text: string) => {
+    if (!text) return "";
+    const clean = text.replace(/_/g, " ").toLowerCase();
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+  };
+
 export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
   const [showBackImage, setShowBackImage] = useState(false);
   const activeImageUrl = showBackImage
@@ -101,12 +108,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
     }
   };
 
-  // Helper function to format strings nicely (e.g. "Very_Good" -> "Very good")
-  const formatText = (text: string) => {
-    if (!text) return "";
-    const clean = text.replace(/_/g, " ").toLowerCase();
-    return clean.charAt(0).toUpperCase() + clean.slice(1);
-  };
+
 
   return (
     <SafeAreaView style={styles.container}>
