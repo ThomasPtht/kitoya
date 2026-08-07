@@ -56,8 +56,6 @@ export class AuthController {
     return this.authService.changePassword(req.user.userId, dto);
   }
 
-  
-
   @Post('change-username')
   @UseGuards(JwtAuthGuard)
   async changeUsername(@Req() req: JwtRequest, @Body() dto: ChangeUsernameDto) {
@@ -68,5 +66,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async updateProfile(@Req() req: JwtRequest, @Body() dto: any) {
     return this.authService.updateProfile(req.user.userId, dto);
+  }
+
+  @Post('update-bio')
+  @UseGuards(JwtAuthGuard)
+  async updateBio(@Req() req: JwtRequest, @Body('bio') bio: string) {
+    const userId = req.user.userId;
+    return this.authService.updateBio(bio, userId);
   }
 }

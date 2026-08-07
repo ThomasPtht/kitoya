@@ -97,6 +97,7 @@ export class AuthService {
         isPublic: user.isPublic,
       },
     };
+    
   }
 
   async getProfile(userId: string) {
@@ -241,6 +242,16 @@ export class AuthService {
       data: {
         ...(dto.isPublic !== undefined && { isPublic: dto.isPublic }),
       },
+    });
+
+    const { password, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
+  }
+
+  async updateBio(bio: string, userId: string) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { bio },
     });
 
     const { password, ...userWithoutPassword } = updatedUser;

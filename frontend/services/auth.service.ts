@@ -149,4 +149,15 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+
+  updateBio: async (bio: string) => {
+    try {
+      const response = await apiClient.post("/auth/update-bio", { bio });
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred during bio update";
+      throw new Error(errorMessage);
+    }
+  },
 };

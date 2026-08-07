@@ -31,10 +31,21 @@ export default function SettingsScreen() {
   const [newUsernameInput, setNewUsernameInput] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Ouvrir la modale et pré-remplir avec le username actuel
+  // États pour la modale de modification de la Bio
+  const [isBioModalVisible, setIsBioModalVisible] = useState(false);
+  const [newBioInput, setNewBioInput] = useState<string>("");
+  const [isSubmittingBio, setIsSubmittingBio] = useState<boolean>(false);
+
+  // Ouvrir la modale username
   const handleOpenUsernameModal = () => {
     setNewUsernameInput(userInfo?.username || "");
     setIsUsernameModalVisible(true);
+  };
+
+  // Ouvrir la modale bio
+  const handleOpenBioModal = () => {
+    setNewBioInput(userInfo?.bio || "");
+    setIsBioModalVisible(true);
   };
 
   // Enregistrer le nouveau username
@@ -47,7 +58,6 @@ export default function SettingsScreen() {
     try {
       setIsSubmitting(true);
       await authService.changeUsername(newUsernameInput.trim());
-      // Rafraîchir les données de l'utilisateur (via React Query)
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
       setIsUsernameModalVisible(false);
       Alert.alert("Success", "Username changed successfully.");
@@ -55,6 +65,17 @@ export default function SettingsScreen() {
       Alert.alert("Error", error.message || "Failed to change username");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Enregistrer la nouvelle bio
+  const handleSaveBio = async () => {
+    try {
+      setIsSubmittingBio(true);
+      await authService.updateBio(newBioInput.trim());
+      queryClient.invalidateQueries({ queryKey: ["userMe"] });
+      setIsBioModalVisible(false);
+      Alert.alert("Success", "Bio updated successfully.");
     }
   };
 
@@ -114,6 +135,35 @@ export default function SettingsScreen() {
               <View style={styles.rowRight}>
                 <Text style={styles.value}>
                   {userInfo?.username || "Collector"}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color="#555"
+                  style={{ marginLeft: 6 }}
+                />
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.separator} />
+
+            {/* Bio modifiable */}
+            <TouchableOpacity style={styles.row} onPress={handleOpenBioModal}>
+              <View style={styles.rowLeft}>
+                <Feather name="file-text" size={18} color="#05C785" />
+                <Text style={styles.label}>Bio</Text>
+              </View>
+              <View
+                style={[
+                  styles.rowRight,
+                  { flex: 1, justifyContent: "flex-end", paddingLeft: 20 },
+                ]}
+              >
+                <Text
+                  style={[styles.value, { textAlign: "right" }]}
+                  numberOfLines={1}
+                >
+                  {userInfo?.bio || "No bio yet"}
                 </Text>
                 <Feather
                   name="chevron-right"
@@ -219,7 +269,7 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
 
-      {/* Modal de modification du Username (fonctionne sur iOS et Android) */}
+      {/* Modal de modification du Username */}
       <Modal
         visible={isUsernameModalVisible}
         transparent={true}
@@ -258,6 +308,58 @@ export default function SettingsScreen() {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
+                  <ActivityIndicator size="small" color="#050806" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de modification de la Bio */}
+      <Modal
+        visible={isBioModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsBioModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Bio</Text>
+            <Text style={styles.modalSubtitle}>
+              Write a short bio for your collector profile
+            </Text>
+
+            <TextInput
+              style={[
+                styles.modalInput,
+                { height: 90, textAlignVertical: "top" },
+              ]}
+              value={newBioInput}
+              onChangeText={(text: string) => setNewBioInput(text)}
+              placeholder="Tell us about your collection..."
+              placeholderTextColor="#555"
+              multiline={true}
+              autoFocus={true}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setIsBioModalVisible(false)}
+                disabled={isSubmittingBio}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, styles.saveButton]}
+                onPress={handleSaveBio}
+                disabled={isSubmittingBio}
+              >
+                {isSubmittingBio ? (
                   <ActivityIndicator size="small" color="#050806" />
                 ) : (
                   <Text style={styles.saveButtonText}>Save</Text>
