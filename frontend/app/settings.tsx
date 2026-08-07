@@ -22,40 +22,33 @@ export default function SettingsScreen() {
   const { data: userInfo } = useUserMe();
   const queryClient = useQueryClient();
 
-  // États pour les préférences de l'application
   const [pushNotifications, setPushNotifications] = useState(true);
   const [publicLocker, setPublicLocker] = useState(false);
 
-  // Synchroniser l'état initial avec l'API quand les données utilisateur arrivent
   useEffect(() => {
     if (userInfo?.isPublic !== undefined) {
       setPublicLocker(userInfo.isPublic);
     }
   }, [userInfo]);
 
-  // États pour la modale de modification du username
   const [isUsernameModalVisible, setIsUsernameModalVisible] = useState(false);
   const [newUsernameInput, setNewUsernameInput] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // États pour la modale de modification de la Bio
   const [isBioModalVisible, setIsBioModalVisible] = useState(false);
   const [newBioInput, setNewBioInput] = useState<string>("");
   const [isSubmittingBio, setIsSubmittingBio] = useState<boolean>(false);
 
-  // Ouvrir la modale username
   const handleOpenUsernameModal = () => {
     setNewUsernameInput(userInfo?.username || "");
     setIsUsernameModalVisible(true);
   };
 
-  // Ouvrir la modale bio
   const handleOpenBioModal = () => {
     setNewBioInput(userInfo?.bio || "");
     setIsBioModalVisible(true);
   };
 
-  // Enregistrer le nouveau username
   const handleSaveUsername = async () => {
     if (!newUsernameInput || newUsernameInput.trim().length < 3) {
       Alert.alert("Error", "Username must be at least 3 characters long.");
@@ -75,7 +68,6 @@ export default function SettingsScreen() {
     }
   };
 
-  // Enregistrer la nouvelle bio
   const handleSaveBio = async () => {
     try {
       setIsSubmittingBio(true);
@@ -122,7 +114,7 @@ export default function SettingsScreen() {
       await authService.updateProfile({ isPublic: newValue });
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
     } catch (error: any) {
-      setPublicLocker(!newValue); // Revert the toggle if there's an error
+      setPublicLocker(!newValue);
       Alert.alert(
         "Error",
         error.message || "An error occurred while updating the profile",
@@ -148,7 +140,6 @@ export default function SettingsScreen() {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Profile</Text>
           <View style={styles.card}>
-            {/* Username modifiable */}
             <TouchableOpacity
               style={styles.row}
               onPress={handleOpenUsernameModal}
@@ -172,7 +163,6 @@ export default function SettingsScreen() {
 
             <View style={styles.separator} />
 
-            {/* Bio modifiable */}
             <TouchableOpacity style={styles.row} onPress={handleOpenBioModal}>
               <View style={styles.rowLeft}>
                 <Feather name="file-text" size={18} color="#05C785" />
@@ -274,6 +264,38 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Public View / Preview Section */}
+        {publicLocker && (
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Public View</Text>
+            <TouchableOpacity
+              style={styles.previewCard}
+              onPress={() =>
+                router.push({
+                  pathname: "/locker/[username]",
+                  params: { username: userInfo?.username },
+                })
+              }
+              activeOpacity={0.8}
+            >
+              <View style={styles.previewLeft}>
+                <View style={styles.previewIconBox}>
+                  <Feather name="eye" size={18} color="#05C785" />
+                </View>
+                <View>
+                  <Text style={styles.previewTitle}>
+                    Preview Public Profile
+                  </Text>
+                  <Text style={styles.previewSubtitle}>
+                    See how other collectors view your locker
+                  </Text>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={18} color="#888" />
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Account Security & Actions */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Account Security</Text>
@@ -305,7 +327,7 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
 
-      {/* Modal de modification du Username */}
+      {/* Modals ... */}
       <Modal
         visible={isUsernameModalVisible}
         transparent={true}
@@ -354,7 +376,6 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
-      {/* Modal de modification de la Bio */}
       <Modal
         visible={isBioModalVisible}
         transparent={true}
@@ -520,6 +541,42 @@ const styles = StyleSheet.create({
     color: "#A66363",
     fontSize: 15,
     fontWeight: "500",
+  },
+  previewCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#151515",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 16,
+    padding: 16,
+  },
+  previewLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  previewIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "rgba(5, 199, 133, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(5, 199, 133, 0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  previewTitle: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  previewSubtitle: {
+    color: "#888888",
+    fontSize: 12,
+    marginTop: 2,
   },
   modalOverlay: {
     flex: 1,
