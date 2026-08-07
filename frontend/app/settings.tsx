@@ -2,7 +2,7 @@ import { useUserMe } from "@/hooks/useAuthHook";
 import { authService } from "@/services/auth.service";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Pressable,
@@ -25,6 +25,13 @@ export default function SettingsScreen() {
   // États pour les préférences de l'application
   const [pushNotifications, setPushNotifications] = useState(true);
   const [publicLocker, setPublicLocker] = useState(false);
+
+  // Synchroniser l'état initial avec l'API quand les données utilisateur arrivent
+  useEffect(() => {
+    if (userInfo?.isPublic !== undefined) {
+      setPublicLocker(userInfo.isPublic);
+    }
+  }, [userInfo]);
 
   // États pour la modale de modification du username
   const [isUsernameModalVisible, setIsUsernameModalVisible] = useState(false);
@@ -76,6 +83,10 @@ export default function SettingsScreen() {
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
       setIsBioModalVisible(false);
       Alert.alert("Success", "Bio updated successfully.");
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to update bio");
+    } finally {
+      setIsSubmittingBio(false);
     }
   };
 
@@ -103,6 +114,20 @@ export default function SettingsScreen() {
         },
       ],
     );
+  };
+
+  const handleTogglePublicLocker = async (newValue: boolean) => {
+    try {
+      setPublicLocker(newValue);
+      await authService.updateProfile({ isPublic: newValue });
+      queryClient.invalidateQueries({ queryKey: ["userMe"] });
+    } catch (error: any) {
+      setPublicLocker(!newValue); // Revert the toggle if there's an error
+      Alert.alert(
+        "Error",
+        error.message || "An error occurred while updating the profile",
+      );
+    }
   };
 
   return (
@@ -225,12 +250,23 @@ export default function SettingsScreen() {
 
             <View style={styles.row}>
               <View style={styles.rowLeft}>
-                <Feather name="globe" size={18} color="#05C785" />
-                <Text style={styles.label}>Public Locker by Default</Text>
+                <Feather
+                  name={publicLocker ? "globe" : "lock"}
+                  size={18}
+                  color={publicLocker ? "#05C785" : "#888"}
+                />
+                <View>
+                  <Text style={styles.label}>Public Locker by Default</Text>
+                  <Text style={styles.subLabel}>
+                    {publicLocker
+                      ? "Visible to everyone (Public)"
+                      : "Hidden from others (Private)"}
+                  </Text>
+                </View>
               </View>
               <Switch
                 value={publicLocker}
-                onValueChange={setPublicLocker}
+                onValueChange={handleTogglePublicLocker}
                 trackColor={{ false: "#222", true: "#05C785" }}
                 thumbColor="#FFFFFF"
               />
@@ -440,6 +476,11 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "500",
+  },
+  subLabel: {
+    color: "#888888",
+    fontSize: 12,
+    marginTop: 2,
   },
   value: {
     color: "#888888",

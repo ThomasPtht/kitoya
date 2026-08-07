@@ -150,6 +150,18 @@ export const authService = {
     }
   },
 
+  updateProfile: async (data: { isPublic?: boolean }) => {
+    try {
+      const response = await apiClient.post("/auth/update-profile", data);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred during profile update";
+      throw new Error(errorMessage);
+    }
+  },
+
   updateBio: async (bio: string) => {
     try {
       const response = await apiClient.post("/auth/update-bio", { bio });

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import { useJerseys } from "@/hooks/useJerseyHook";
+import { useUserMe } from "@/hooks/useAuthHook";
 import CardCollection from "@/components/CardCollection";
 import React, { useMemo, useState } from "react";
 import { JerseyData } from "@/services/jersey.service";
@@ -22,6 +23,7 @@ import FilterModal from "@/components/FilterModal";
 
 export default function TabDressingScreen() {
   const { data: jerseys, isLoading } = useJerseys();
+  const { data: userInfo } = useUserMe();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJersey, setSelectedJersey] = useState<JerseyData | null>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -97,10 +99,26 @@ export default function TabDressingScreen() {
   ]);
 
   const hasJerseys = jerseys && jerseys.length > 0;
+  const isPrivate = userInfo?.isPublic === false;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>My Locker</Text>
+
+      {/* Bannière Locker Privé */}
+      {isPrivate && (
+        <View style={styles.privateBanner}>
+          <View style={styles.privateBannerLeft}>
+            <Feather name="lock" size={16} color="#888888" />
+            <Text style={styles.privateBannerText}>
+              Your locker is private. Turn it public in settings.
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => router.push("/settings")}>
+            <Text style={styles.privateBannerButton}>SETTINGS</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* On n'affiche la barre de recherche que s'il y a des maillots */}
       {hasJerseys && (
@@ -229,8 +247,38 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "900",
-    marginBottom: 20,
+    marginBottom: 15,
     color: "white",
+  },
+  privateBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#151515",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 20,
+  },
+  privateBannerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+    marginRight: 10,
+  },
+  privateBannerText: {
+    color: "#888888",
+    fontSize: 13,
+    flexShrink: 1,
+  },
+  privateBannerButton: {
+    color: "#05C785",
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 0.5,
   },
   listContent: {
     paddingBottom: 20,
