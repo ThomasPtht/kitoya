@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Share,
 } from "react-native";
 
 import { useJerseys } from "@/hooks/useJerseyHook";
@@ -16,12 +17,14 @@ import JerseyModalWrapper from "@/components/JerseyModalWrapper";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CustomSearchBar } from "@/components/CustomSearchBar";
 import { router } from "expo-router";
+import { useUserMe } from "@/hooks/useAuthHook";
 
 import { useFilterStore } from "@/stores/useFilterStore";
 import FilterModal from "@/components/FilterModal";
 
 export default function TabDressingScreen() {
   const { data: jerseys, isLoading } = useJerseys();
+  const { data: userMe } = useUserMe();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJersey, setSelectedJersey] = useState<JerseyData | null>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -40,6 +43,13 @@ export default function TabDressingScreen() {
 
   const updateSearch = (search: string) => {
     setSearch(search);
+  };
+
+  const shareMyLocker = async () => {
+    if (!userMe?.username) return;
+    await Share.share({
+      message: `Check out my jersey collection on Kitroom! kitroom://u/${userMe.username}`,
+    });
   };
 
   const filteredJerseys = useMemo(() => {
@@ -100,7 +110,15 @@ export default function TabDressingScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Locker</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>My Locker</Text>
+
+        {hasJerseys && (
+          <TouchableOpacity onPress={shareMyLocker} style={styles.shareButton}>
+            <Feather name="share" size={20} color="#05C785" />
+          </TouchableOpacity>
+        )}
+      </View>
 
       {/* On n'affiche la barre de recherche que s'il y a des maillots */}
       {hasJerseys && (
@@ -226,11 +244,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
   },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
   title: {
     fontSize: 28,
     fontWeight: "900",
-    marginBottom: 20,
     color: "white",
+  },
+  shareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#161E1A",
+    borderWidth: 1,
+    borderColor: "#05C785",
+    alignItems: "center",
+    justifyContent: "center",
   },
   listContent: {
     paddingBottom: 20,
