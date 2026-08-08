@@ -51,6 +51,7 @@ model User {
   role            Role      @default(USER)
   resetCode       String? // optionnal, used for password reset
   resetCodeExpiry DateTime? // optionnal, used for password reset
+  expoPushToken   String? // optionnal, used for push notifications
 
   // Stripe integration
   stripeCustomerId String? // optionnal, used for Stripe integration

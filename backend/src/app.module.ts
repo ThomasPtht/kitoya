@@ -20,6 +20,7 @@ import { GoogleStrategyModule } from './google-strategy/google-strategy.module';
 import { LockerService } from './locker/locker.service';
 import { LockerController } from './locker/locker.controller';
 import { LockerModule } from './locker/locker.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { LockerModule } from './locker/locker.module';
     SubscriptionModule,
     GoogleStrategyModule,
     LockerModule,
+    NotificationsModule,
   ],
   controllers: [AppController, GoogleStrategyController, LockerController],
   providers: [
