@@ -17,6 +17,7 @@ import { useUserMe } from "@/hooks/useAuthHook";
 
 import { calculateRank } from "@/lib/ranks";
 import { useJerseys } from "@/hooks/useJerseyHook";
+import { handleInviteFriends } from "@/lib/invite-friends";
 
 export default function DrawerLayout() {
   const { data: userMe } = useUserMe();
@@ -128,10 +129,7 @@ export default function DrawerLayout() {
 
               <Pressable
                 style={styles.navItem}
-                onPress={() => {
-                  props.navigation.closeDrawer();
-                  router.push("/");
-                }}
+                onPress={() => handleInviteFriends(props.navigation)}
               >
                 <Feather name="user-plus" size={18} color="#9E9E9E" />
                 <Text style={styles.navText}>Invite friends</Text>
