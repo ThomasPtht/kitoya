@@ -18,10 +18,29 @@ import { useUserMe } from "@/hooks/useAuthHook";
 import { calculateRank } from "@/lib/ranks";
 import { useJerseys } from "@/hooks/useJerseyHook";
 import { handleInviteFriends } from "@/lib/invite-friends";
+import { apiClient } from "@/services/api";
+import { useEffect } from "react";
+import { registerForPushNotificationsAsync } from "@/services/notifications.service";
 
 export default function DrawerLayout() {
   const { data: userMe } = useUserMe();
   const { data: jerseys } = useJerseys();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(async (token) => {
+      if (token && userMe) {
+        try {
+          // Appel direct avec ton apiClient (le Bearer Token est ajouté automatiquement)
+          await apiClient.post("/notifications/save-token", {
+            expoPushToken: token,
+          });
+          console.log("Push token successfully saved to backend");
+        } catch (error) {
+          console.error("Failed to save push token on backend", error);
+        }
+      }
+    });
+  }, [userMe]);
 
   // Extract initials for the avatar if name exists
   const getInitials = (name?: string) => {
@@ -44,7 +63,8 @@ export default function DrawerLayout() {
   // Vérification des rôles et abonnements
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
-    userMe?.subscription?.planType === "ELITE" &&
+    (userMe?.subscription?.planType === "ELITE_MONTHLY" ||
+      userMe?.subscription?.planType === "ELITE_YEARLY") &&
     userMe?.subscription?.status === "active";
 
   // L'utilisateur a accès aux fonctionnalités ELITE s'il est Admin ou Elite
