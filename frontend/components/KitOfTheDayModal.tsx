@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { formatText } from "./KitOfTheDayCard";
 
 interface KitOfTheDayModalProps {
   visible: boolean;
@@ -146,7 +147,10 @@ export default function KitOfTheDayModal({
           {/* Story complète */}
           <View style={styles.storySection}>
             <Text style={styles.storyTitle}>THE STORY</Text>
-            <Text style={styles.storyFullText}>{jersey.story}</Text>
+            <Text style={styles.storyFullText}>
+              {" "}
+              {formatText(jersey.story)}
+            </Text>
           </View>
         </ScrollView>
       </SafeAreaView>
