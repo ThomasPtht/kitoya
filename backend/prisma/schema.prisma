@@ -63,6 +63,14 @@ model User {
   jerseyLikes JerseyLike[] // one-to-many relationship with JerseyLike
 }
 
+model DailyKitNotification {
+  id       String @id @default(uuid())
+  jerseyId String
+  date     String // format "YYYY-MM-DD"
+
+  @@unique([jerseyId, date])
+}
+
 model Subscription {
   id     String @id @default(uuid())
   userId String @unique

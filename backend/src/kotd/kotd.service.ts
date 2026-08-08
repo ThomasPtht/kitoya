@@ -51,12 +51,29 @@ export class KotdService {
     const selectedIndex = seed % allJerseys.length;
     const jerseyOfTheDay = allJerseys[selectedIndex];
 
-    if (jerseyOfTheDay.user.expoPushToken) {
-      await this.notificationsService.sendPushNotification(
-        jerseyOfTheDay.user.expoPushToken,
-        'Kit of the Community! 🌟',
-        `Your ${jerseyOfTheDay.club.name} jersey has been selected today!`,
-        { type: 'kotd', jerseyId: jerseyOfTheDay.id },
+    // Try to create a lock for today's jersey notification. This ensures that only one concurrent call will succeed, even in the case of a race condition
+    try {
+      await this.prisma.dailyKitNotification.create({
+        data: {
+          jerseyId: jerseyOfTheDay.id,
+          date: todayString,
+        },
+      });
+
+      // If we come here we are the first to notify for today, so just unique notification is sent.
+      if (jerseyOfTheDay.user.expoPushToken) {
+        await this.notificationsService.sendPushNotification(
+          jerseyOfTheDay.user.expoPushToken,
+          'Kit of the Community! 🌟',
+          `Your ${jerseyOfTheDay.club.name} jersey has been selected today!`,
+          { type: 'kotd', jerseyId: jerseyOfTheDay.id },
+        );
+      }
+    } catch (error) {
+      // Unique constraint violation means another process has already sent the notification for today, so we do nothing.
+      console.error(
+        'DailyKitNotification lock creation failed (likely already exists today):',
+        error,
       );
     }
 
