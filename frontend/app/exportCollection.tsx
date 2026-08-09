@@ -35,7 +35,8 @@ export default function ExportCollectionScreen() {
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
-    userMe?.subscription?.planType === "ELITE" &&
+    (userMe?.subscription?.planType === "ELITE_MONTHLY" ||
+      userMe?.subscription?.planType === "ELITE_YEARLY") &&
     userMe?.subscription?.status === "active";
   const hasEliteAccess = isAdmin || isElite;
 
