@@ -126,14 +126,12 @@ export default function DrawerLayout() {
 
                 <View style={styles.featureList}>
                   <Text style={styles.featureItem}>
-                    • Unlimited wishlist & price alerts
+                    • Unlimited jerseys storage
                   </Text>
                   <Text style={styles.featureItem}>
-                    • PDF export for insurance
+                    • Collection stats & insights
                   </Text>
-                  <Text style={styles.featureItem}>
-                    • Advanced tags & filters
-                  </Text>
+                  <Text style={styles.featureItem}>• Portfolio export</Text>
                 </View>
 
                 <View style={styles.subButton}>

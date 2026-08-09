@@ -266,10 +266,6 @@ export default function ExportCollectionScreen() {
             <View>
               <View style={styles.titleRow}>
                 <Text style={styles.optionTitle}>PDF portfolio</Text>
-                <View style={styles.proBadge}>
-                  <Feather name="zap" size={10} color="#05C785" />
-                  <Text style={styles.proText}>PRO</Text>
-                </View>
               </View>
               <Text style={styles.optionDesc}>
                 Printable, shareable summary
