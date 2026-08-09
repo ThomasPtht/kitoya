@@ -8,8 +8,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   SafeAreaView,
+  Share,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useToggleLikeJersey } from "@/hooks/useJerseyHook";
@@ -35,6 +36,16 @@ export default function PublicLockerScreen() {
       ...prev,
       [jerseyId]: !prev[jerseyId],
     }));
+  };
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `Check out my football shirt collection on Kitroom! kitroom://locker/${username}`,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (isLoading) {
@@ -68,7 +79,7 @@ export default function PublicLockerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Bar: Back Button & Public Locker Badge */}
+      {/* Top Bar: Back Button, Share Button + Public Locker Badge */}
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.iconButton}
@@ -77,13 +88,21 @@ export default function PublicLockerScreen() {
           <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
         </TouchableOpacity>
 
-        <View style={styles.publicBadge}>
-          <Ionicons
-            name="globe-outline"
-            size={14}
-            color={Colors.theme.primary}
-          />
-          <Text style={styles.publicBadgeText}>PUBLIC LOCKER</Text>
+        <View style={styles.rightGroup}>
+          <View style={styles.publicBadge}>
+            <Ionicons
+              name="globe-outline"
+              size={14}
+              color={Colors.theme.primary}
+            />
+            <Text style={styles.publicBadgeText}>PUBLIC LOCKER</Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleShare}
+            style={styles.shareIconButton}
+          >
+            <Feather name="share-2" size={16} color={Colors.theme.primary} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -300,6 +319,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  rightGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  shareIconButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 18,
+    backgroundColor: Colors.theme.surface,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: Colors.theme.primary,
   },
   publicBadge: {
     flexDirection: "row",
