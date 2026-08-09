@@ -16,6 +16,6 @@ export const calculateRank = (jersey: JerseyRankItem[] | null): string => {
   if (effectiveCount >= 150) return "Legend";
   if (effectiveCount >= 75) return "Purist";
   if (effectiveCount >= 30) return "Specialist";
-  if (effectiveCount >= 10) return "Collector";
+  if (effectiveCount >= 15) return "Collector";
   return "Rookie";
 };

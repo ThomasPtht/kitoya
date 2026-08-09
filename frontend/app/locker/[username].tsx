@@ -14,6 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useToggleLikeJersey } from "@/hooks/useJerseyHook";
 import { useLocker } from "@/hooks/useLocker";
+import { calculateRank } from "@/lib/ranks";
 
 export default function PublicLockerScreen() {
   const { username } = useLocalSearchParams<{ username: string }>();
@@ -26,6 +27,8 @@ export default function PublicLockerScreen() {
   const [showBackImage, setShowBackImage] = useState<{
     [key: string]: boolean;
   }>({});
+
+  const currentRank = calculateRank(profileData?.jerseys || null);
 
   const toggleImageSide = (jerseyId: string) => {
     setShowBackImage((prev) => ({
@@ -140,7 +143,7 @@ export default function PublicLockerScreen() {
           />
           <Text style={styles.rankText}>
             <Text style={styles.rankHighlight}>
-              {profileData.rank || "ENTHUSIAST"}
+              {currentRank.toUpperCase()}
             </Text>{" "}
             COLLECTOR
           </Text>

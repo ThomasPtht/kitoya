@@ -112,12 +112,6 @@ export default function TabDressingScreen() {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>My Locker</Text>
-
-        {hasJerseys && (
-          <TouchableOpacity onPress={shareMyLocker} style={styles.shareButton}>
-            <Feather name="share" size={20} color="#05C785" />
-          </TouchableOpacity>
-        )}
       </View>
 
       {/* On n'affiche la barre de recherche que s'il y a des maillots */}
