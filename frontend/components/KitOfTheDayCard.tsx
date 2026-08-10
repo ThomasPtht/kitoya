@@ -228,15 +228,15 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: Colors.theme.primary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "700",
-    letterSpacing: 1,
+    letterSpacing: 2.5,
   },
   card: {
-    backgroundColor: "rgba(10,12,11,0.6)", // surface/60, plus discret
+    backgroundColor: "rgba(10,12,11,0.6)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)", // hairline neutre au lieu du vert
-    borderRadius: 16, // 24 -> 16, moins "bulle"
+    borderColor: "rgba(255,255,255,0.08)",
+    borderRadius: 16,
     overflow: "hidden",
   },
   mainContent: {
@@ -287,9 +287,10 @@ const styles = StyleSheet.create({
   },
   tag: {
     color: Colors.theme.primary,
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "800",
-    letterSpacing: 0.5,
+    letterSpacing: 1.5,
+    opacity: 0.8,
     marginBottom: 4,
   },
   clubName: {
@@ -305,20 +306,20 @@ const styles = StyleSheet.create({
     textTransform: "none",
   },
   story: {
-    color: "#D1D5DB",
+    color: "#C9CDD1",
     fontSize: 12,
     lineHeight: 18,
   },
   readMore: {
     color: Colors.theme.primary,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "bold",
-    letterSpacing: 0.5,
+    letterSpacing: 2,
     marginTop: 8,
   },
   divider: {
     height: 1,
-    backgroundColor: "rgba(255,255,255,0.08)", // même hairline neutre
+    backgroundColor: "rgba(255,255,255,0.08)",
     opacity: 1,
   },
   footerContainer: {

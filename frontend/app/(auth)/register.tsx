@@ -104,7 +104,7 @@ export default function RegisterScreen() {
                 <View
                   style={[
                     styles.inputWrapper,
-                    errors.password && styles.inputErrorBorder,
+                    errors.username && styles.inputErrorBorder,
                   ]}
                 >
                   <TextInput

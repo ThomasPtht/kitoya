@@ -22,7 +22,10 @@ export class AuthService {
   async register(dto: RegisterDto) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        OR: [{ email: dto.email }, { username: dto.username }],
+        OR: [
+          { email: { equals: dto.email, mode: 'insensitive' } },
+          { username: { equals: dto.username, mode: 'insensitive' } },
+        ],
       },
     });
 
@@ -97,7 +100,6 @@ export class AuthService {
         isPublic: user.isPublic,
       },
     };
-    
   }
 
   async getProfile(userId: string) {
