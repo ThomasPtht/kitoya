@@ -23,6 +23,10 @@ import { googleAuthService } from "@/services/google.service";
 
 export default function RegisterScreen() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState<
+    boolean | null
+  >(null);
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
   const registerSchema = z.object({
     username: z
@@ -49,11 +53,44 @@ export default function RegisterScreen() {
     },
   });
 
+  const handleCheckUsername = async (username: string) => {
+    if (!username || username.length < 3) {
+      setIsUsernameAvailable(null);
+      return;
+    }
+
+    try {
+      setIsCheckingUsername(true);
+      // Supposons que tu as une méthode checkUsername dans ton authService front
+      const result = await authService.checkUsername(username);
+      setIsUsernameAvailable(result.available); // true ou false selon ton { available: boolean }
+    } catch (error) {
+      console.error("Error checking username:", error);
+    } finally {
+      setIsCheckingUsername(false);
+    }
+  };
+
   const onSubmit = async (data: RegisterFormValues) => {
     try {
+      setIsUsernameAvailable(null); // Reset l'indicateur avant de soumettre
       await authService.register(data.username, data.email, data.password);
       router.push("/(drawer)/(tabs)"); // Navigate to the home screen after successful registration
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        setIsUsernameAvailable(false);
+        Toast.show({
+          type: "error",
+          text1: "Username already taken",
+          text2: "Please choose a different username.",
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Registration failed",
+          text2: "Please try again later.",
+        });
+      }
       console.error("Login error:", error);
     }
   };
@@ -104,7 +141,8 @@ export default function RegisterScreen() {
                 <View
                   style={[
                     styles.inputWrapper,
-                    errors.username && styles.inputErrorBorder,
+                    (errors.username || isUsernameAvailable === false) &&
+                      styles.inputErrorBorder,
                   ]}
                 >
                   <TextInput
@@ -114,17 +152,60 @@ export default function RegisterScreen() {
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="done"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
+                    onBlur={() => {
+                      onBlur();
+                      if (value && value.length >= 3) {
+                        handleCheckUsername(value);
+                      }
+                    }}
+                    onChangeText={(text) => {
+                      onChange(text);
+                      if (isUsernameAvailable !== null)
+                        setIsUsernameAvailable(null); // Reset l'indicateur si on modifie le texte
+                    }}
                     value={value}
                     onSubmitEditing={handleSubmit(onSubmit)}
                     editable={!isSubmitting}
                   />
+                  {isCheckingUsername && (
+                    <ActivityIndicator
+                      size="small"
+                      color="#8E8E93"
+                      style={{ marginRight: 8 }}
+                    />
+                  )}
+                  {!isCheckingUsername && isUsernameAvailable === true && (
+                    <Text
+                      style={{
+                        color: "#30D158",
+                        fontWeight: "bold",
+                        marginRight: 8,
+                      }}
+                    >
+                      ✓
+                    </Text>
+                  )}
+                  {!isCheckingUsername && isUsernameAvailable === false && (
+                    <Text
+                      style={{
+                        color: "#E5484D",
+                        fontWeight: "bold",
+                        marginRight: 8,
+                      }}
+                    >
+                      ✕
+                    </Text>
+                  )}
                 </View>
               )}
             />
             {errors.username && (
               <Text style={styles.errorText}>{errors.username.message}</Text>
+            )}
+            {isUsernameAvailable === false && !errors.username && (
+              <Text style={styles.errorText}>
+                This username is already taken
+              </Text>
             )}
 
             {/* Email Input */}

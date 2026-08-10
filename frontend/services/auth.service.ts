@@ -1,58 +1,45 @@
-// services/auth.service.ts
-import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { apiClient } from "./api";
 
 export const authService = {
   register: async (username: string, email: string, password: string) => {
-    try {
-      const response = await apiClient.post("/auth/register", {
-        username,
-        email,
-        password,
-      });
+    const response = await apiClient.post("/auth/register", {
+      username,
+      email,
+      password,
+    });
 
-      const { access_token } = response.data;
+    const { access_token } = response.data;
 
-      if (access_token) {
-        // Store the token securely in the device's secure storage
-        await SecureStore.setItemAsync("user_token", access_token);
-      }
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during registration";
-      throw new Error(errorMessage);
+    if (access_token) {
+      // Store the token securely in the device's secure storage
+      await SecureStore.setItemAsync("user_token", access_token);
     }
+    return response.data;
+  },
+
+  checkUsername: async (username: string) => {
+    const response = await apiClient.get(`/auth/check-username/${username}`);
+    return response.data;
   },
 
   /**
    * Send identifiants to the backend and store the JWT token in the Keychain/KeyStore of the phone if authentication is successful.
    */
   login: async (email: string, password: string) => {
-    try {
-      const response = await apiClient.post("/auth/login", {
-        email,
-        password,
-      });
+    const response = await apiClient.post("/auth/login", {
+      email,
+      password,
+    });
 
-      const { access_token } = response.data;
+    const { access_token } = response.data;
 
-      if (access_token) {
-        // Store the token securely in the device's secure storage
-        await SecureStore.setItemAsync("user_token", access_token);
-      }
-
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during authentication";
-      throw new Error(errorMessage);
+    if (access_token) {
+      // Store the token securely in the device's secure storage
+      await SecureStore.setItemAsync("user_token", access_token);
     }
+
+    return response.data;
   },
 
   /**
@@ -75,31 +62,15 @@ export const authService = {
   },
 
   deleteAccount: async (): Promise<{ message: string }> => {
-    try {
-      const response = await apiClient.delete("/auth/delete-account");
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during account deletion";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.delete("/auth/delete-account");
+    return response.data;
   },
 
   forgotPassword: async (email: string) => {
-    try {
-      const response = await apiClient.post("/auth/forgot-password", {
-        email,
-      });
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during password reset request";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.post("/auth/forgot-password", {
+      email,
+    });
+    return response.data;
   },
 
   resetPassword: async (data: {
@@ -107,69 +78,32 @@ export const authService = {
     code: string;
     newPassword: string;
   }) => {
-    try {
-      const response = await apiClient.post("/auth/reset-password", data);
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during password reset";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.post("/auth/reset-password", data);
+    return response.data;
   },
 
   changePassword: async (data: {
     oldPassword: string;
     newPassword: string;
   }) => {
-    try {
-      const response = await apiClient.post("/auth/change-password", data);
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during password change";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.post("/auth/change-password", data);
+    return response.data;
   },
 
   changeUsername: async (newUsername: string) => {
-    try {
-      const response = await apiClient.post("/auth/change-username", {
-        newUsername,
-      });
-      return response.data;
-    } catch (error: any) {
-      // Extract the error message from the response if available, otherwise use a generic error message
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during username change";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.post("/auth/change-username", {
+      newUsername,
+    });
+    return response.data;
   },
 
   updateProfile: async (data: { isPublic?: boolean }) => {
-    try {
-      const response = await apiClient.post("/auth/update-profile", data);
-      return response.data;
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during profile update";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.post("/auth/update-profile", data);
+    return response.data;
   },
 
   updateBio: async (bio: string) => {
-    try {
-      const response = await apiClient.post("/auth/update-bio", { bio });
-      return response.data;
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "An error occurred during bio update";
-      throw new Error(errorMessage);
-    }
+    const response = await apiClient.post("/auth/update-bio", { bio });
+    return response.data;
   },
 };

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -31,6 +32,11 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
+  }
+
+  @Get('check-username/:username')
+  async checkUsername(@Param('username') username: string) {
+    return this.authService.checkUsername(username);
   }
 
   @Post('login')

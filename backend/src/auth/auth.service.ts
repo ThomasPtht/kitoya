@@ -69,6 +69,15 @@ export class AuthService {
     }
   }
 
+  async checkUsername(username: string) {
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        username: { equals: username, mode: 'insensitive' },
+      },
+    });
+    return { available: !existingUser };
+  }
+
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
