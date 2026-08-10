@@ -233,11 +233,10 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   card: {
-    backgroundColor: Colors.theme.surface,
+    backgroundColor: "rgba(10,12,11,0.6)", // surface/60, plus discret
     borderWidth: 1,
-    borderColor: Colors.theme.primary,
-    borderRadius: 20,
-    padding: 0,
+    borderColor: "rgba(255,255,255,0.08)", // hairline neutre au lieu du vert
+    borderRadius: 16, // 24 -> 16, moins "bulle"
     overflow: "hidden",
   },
   mainContent: {
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   imageContainer: {
-    width: 100,
+    width: 96,
     height: 120,
     borderRadius: 12,
     backgroundColor: "#000",
@@ -319,8 +318,8 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.theme.primary,
-    opacity: 0.3,
+    backgroundColor: "rgba(255,255,255,0.08)", // même hairline neutre
+    opacity: 1,
   },
   footerContainer: {
     flexDirection: "row",
@@ -328,7 +327,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: "rgba(5, 199, 133, 0.05)",
+    backgroundColor: "transparent",
   },
   authorContainer: {
     flexDirection: "row",
