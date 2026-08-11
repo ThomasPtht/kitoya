@@ -147,10 +147,7 @@ export default function KitOfTheDayModal({
           {/* Story complète */}
           <View style={styles.storySection}>
             <Text style={styles.storyTitle}>THE STORY</Text>
-            <Text style={styles.storyFullText}>
-              {" "}
-              {formatText(jersey.story)}
-            </Text>
+            <Text style={styles.storyFullText}>{formatText(jersey.story)}</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

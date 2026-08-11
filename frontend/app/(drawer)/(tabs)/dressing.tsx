@@ -30,6 +30,13 @@ export default function TabDressingScreen() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const { width } = useWindowDimensions();
 
+  const isAdmin = userMe?.role === "ADMIN";
+  const isElite =
+    (userMe?.subscription?.planType === "ELITE_MONTHLY" ||
+      userMe?.subscription?.planType === "ELITE_YEARLY") &&
+    userMe?.subscription?.status === "active";
+  const hasEliteAccess = isAdmin || isElite;
+
   const {
     search,
     setSearch,
@@ -121,13 +128,19 @@ export default function TabDressingScreen() {
             <View style={{ flex: 1 }}>
               <CustomSearchBar value={search} onChangeText={updateSearch} />
             </View>
-            <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
-              <Feather
-                name="filter"
-                size={24}
-                color={selectedClubs.length > 0 ? "#05C785" : "white"}
-              />
-            </TouchableOpacity>
+            {hasEliteAccess ? (
+              <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
+                <Feather
+                  name="filter"
+                  size={24}
+                  color={selectedClubs.length > 0 ? "#05C785" : "white"}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => router.push("/subscription")}>
+                <Feather name="filter" size={24} color="#555555" />
+              </TouchableOpacity>
+            )}
 
             <FilterModal
               jerseys={jerseys || []}
