@@ -249,16 +249,6 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "white",
   },
-  shareButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#161E1A",
-    borderWidth: 1,
-    borderColor: "#05C785",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   listContent: {
     paddingBottom: 20,
   },

@@ -43,7 +43,7 @@ const jerseySchema = z.object({
   description: z.string().optional(),
   version: z.string().min(1, { message: "Please select a version" }),
   condition: z.string().min(1, { message: "Please select a condition" }),
-  isShareable: z.boolean().default(false),
+
   brand: z.string().min(1, { message: "Please select a brand" }),
 });
 
@@ -214,7 +214,6 @@ export default function TabAddScreen() {
       description: "",
       condition: "",
       version: "",
-      isShareable: false,
       brand: "",
     },
   });
@@ -310,19 +309,12 @@ export default function TabAddScreen() {
       "clubId",
     ];
 
-    console.log("[JerseyForm] selectedSportId:", selectedSportId);
-    console.log("[JerseyForm] selectedClubId:", selectedClubId);
-    console.log("[JerseyForm] form values:", data);
-    console.log("[JerseyForm] has frontImage:", !!frontImage);
-    console.log("[JerseyForm] has backImage:", !!backImage);
-
     Object.entries(data).forEach(([key, value]) => {
       if (
         !fieldsToIgnore.includes(key) &&
         value !== undefined &&
         value !== null
       ) {
-        console.log("[JerseyForm] append", key, value);
         formData.append(key, String(value));
       }
     });
@@ -359,10 +351,6 @@ export default function TabAddScreen() {
       router.navigate("/(drawer)/(tabs)/dressing");
     } catch (error) {
       const err = error as any;
-      console.log(
-        "❌ DÉTAIL ERREUR 400 :",
-        JSON.stringify(err.response?.data, null, 2),
-      );
       Toast.show({
         type: "error",
         text1: "Error adding jersey",
@@ -383,7 +371,7 @@ export default function TabAddScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.heading}>ADD NEW JERSEY</Text>
+        <Text style={styles.heading}>Add New Jersey</Text>
 
         {/* Image Pickers */}
         <View style={styles.imagePickerRow}>
@@ -757,28 +745,6 @@ export default function TabAddScreen() {
           />
         </View>
 
-        <View style={styles.switchRow}>
-          <View style={styles.switchTextContainer}>
-            <Text style={styles.labelInline}>Shareable ?</Text>
-            <Text style={styles.subLabel}>
-              Your jersey will be visible to the community and get likes if you
-              enable this option. You can always change it later in your locker.
-            </Text>
-          </View>
-          <Controller
-            control={control}
-            name="isShareable"
-            render={({ field: { onChange, value } }) => (
-              <Switch
-                value={value ?? false}
-                onValueChange={onChange}
-                trackColor={{ false: "#2C2C2E", true: Colors.theme.primary }}
-                thumbColor="#FFFFFF"
-              />
-            )}
-          />
-        </View>
-
         {/* Description */}
         <Text style={styles.label}>Description</Text>
         <Controller
@@ -838,8 +804,8 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   heading: {
-    color: Colors.theme.text,
-    fontSize: 24,
+    color: "#FFFFFF",
+    fontSize: 28,
     fontWeight: "900",
     marginBottom: 25,
     letterSpacing: 1,
@@ -896,8 +862,8 @@ const styles = StyleSheet.create({
     borderColor: "#1A1A1A",
   },
   chipSelected: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#FFFFFF",
+    backgroundColor: Colors.theme.primary,
+    borderColor: Colors.theme.primary,
   },
   chipText: {
     color: "#8E8E93",
@@ -925,7 +891,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   submitButton: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.theme.primary,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: "center",

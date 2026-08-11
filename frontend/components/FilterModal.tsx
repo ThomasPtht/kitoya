@@ -291,17 +291,23 @@ export default function FilterModal({
               setOpenSection(openSection === "Team" ? null : "Team")
             }
           >
-            {allClubs.map((club) => (
-              <TouchableOpacity
-                key={club}
-                onPress={() => toggleClub(club)}
-                style={styles.item}
-              >
-                <Text style={styles.itemText}>
-                  {selectedClubs.includes(club) ? "✅" : "⬜"} {club}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {allClubs.map((club) => {
+              const isSelected = selectedClubs.includes(club);
+              return (
+                <TouchableOpacity
+                  key={club}
+                  onPress={() => toggleClub(club)}
+                  style={styles.item}
+                >
+                  <Feather
+                    name={isSelected ? "check-square" : "square"}
+                    size={16}
+                    color={isSelected ? "#05C785" : "#555"}
+                  />
+                  <Text style={styles.itemText}>{club}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </FilterSection>
 
           {/* SEASON */}
@@ -312,17 +318,23 @@ export default function FilterModal({
               setOpenSection(openSection === "Season" ? null : "Season")
             }
           >
-            {allSeasons.map((season) => (
-              <TouchableOpacity
-                key={season}
-                onPress={() => toggleSeason(season)}
-                style={styles.item}
-              >
-                <Text style={styles.itemText}>
-                  {selectedSeasons.includes(season) ? "✅" : "⬜"} {season}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {allSeasons.map((season) => {
+              const isSelected = selectedSeasons.includes(season);
+              return (
+                <TouchableOpacity
+                  key={season}
+                  onPress={() => toggleSeason(season)}
+                  style={styles.item}
+                >
+                  <Feather
+                    name={isSelected ? "check-square" : "square"}
+                    size={16}
+                    color={isSelected ? "#05C785" : "#555"}
+                  />
+                  <Text style={styles.itemText}>{season}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </FilterSection>
 
           {/* BRAND */}
@@ -333,17 +345,23 @@ export default function FilterModal({
               setOpenSection(openSection === "Brand" ? null : "Brand")
             }
           >
-            {allBrands.map((brand) => (
-              <TouchableOpacity
-                key={brand}
-                onPress={() => toggleBrand(brand)}
-                style={styles.item}
-              >
-                <Text style={styles.itemText}>
-                  {selectedBrands.includes(brand) ? "✅" : "⬜"} {brand}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {allBrands.map((brand) => {
+              const isSelected = selectedBrands.includes(brand);
+              return (
+                <TouchableOpacity
+                  key={brand}
+                  onPress={() => toggleBrand(brand)}
+                  style={styles.item}
+                >
+                  <Feather
+                    name={isSelected ? "check-square" : "square"}
+                    size={16}
+                    color={isSelected ? "#05C785" : "#555"}
+                  />
+                  <Text style={styles.itemText}>{brand}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </FilterSection>
 
           {/* KIT TYPE */}
@@ -354,17 +372,23 @@ export default function FilterModal({
               setOpenSection(openSection === "Kit Type" ? null : "Kit Type")
             }
           >
-            {allKitTypes.map((kitType) => (
-              <TouchableOpacity
-                key={kitType}
-                onPress={() => toggleKitType(kitType)}
-                style={styles.item}
-              >
-                <Text style={styles.itemText}>
-                  {selectedKitTypes.includes(kitType) ? "✅" : "⬜"} {kitType}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {allKitTypes.map((kitType) => {
+              const isSelected = selectedKitTypes.includes(kitType);
+              return (
+                <TouchableOpacity
+                  key={kitType}
+                  onPress={() => toggleKitType(kitType)}
+                  style={styles.item}
+                >
+                  <Feather
+                    name={isSelected ? "check-square" : "square"}
+                    size={16}
+                    color={isSelected ? "#05C785" : "#555"}
+                  />
+                  <Text style={styles.itemText}>{kitType}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </FilterSection>
 
           {/* VERSION */}
@@ -375,17 +399,23 @@ export default function FilterModal({
               setOpenSection(openSection === "Version" ? null : "Version")
             }
           >
-            {allVersions.map((version) => (
-              <TouchableOpacity
-                key={version}
-                onPress={() => toggleVersion(version)}
-                style={styles.item}
-              >
-                <Text style={styles.itemText}>
-                  {selectedVersions.includes(version) ? "✅" : "⬜"} {version}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {allVersions.map((version) => {
+              const isSelected = selectedVersions.includes(version);
+              return (
+                <TouchableOpacity
+                  key={version}
+                  onPress={() => toggleVersion(version)}
+                  style={styles.item}
+                >
+                  <Feather
+                    name={isSelected ? "check-square" : "square"}
+                    size={16}
+                    color={isSelected ? "#05C785" : "#555"}
+                  />
+                  <Text style={styles.itemText}>{version}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </FilterSection>
 
           {/* CONDITION */}
@@ -396,23 +426,28 @@ export default function FilterModal({
               setOpenSection(openSection === "Condition" ? null : "Condition")
             }
           >
-            {allConditions.map((condition) => (
-              <TouchableOpacity
-                key={condition}
-                onPress={() => toggleCondition(condition)}
-                style={styles.item}
-              >
-                <Text style={styles.itemText}>
-                  {selectedConditions.includes(condition) ? "✅" : "⬜"}{" "}
-                  {formatLabel(condition)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {allConditions.map((condition) => {
+              const isSelected = selectedConditions.includes(condition);
+              return (
+                <TouchableOpacity
+                  key={condition}
+                  onPress={() => toggleCondition(condition)}
+                  style={styles.item}
+                >
+                  <Feather
+                    name={isSelected ? "check-square" : "square"}
+                    size={16}
+                    color={isSelected ? "#05C785" : "#555"}
+                  />
+                  <Text style={styles.itemText}>{formatLabel(condition)}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </FilterSection>
         </ScrollView>
 
         <TouchableOpacity style={styles.applyButton} onPress={onClose}>
-          <Text style={styles.applyButtonText}>See results</Text>
+          <Text style={styles.applyButtonText}>See Results</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -434,9 +469,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "white",
     fontSize: 20,
+    fontWeight: "700",
     alignSelf: "center",
   },
   item: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#333",
@@ -449,7 +488,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
   },
-  applyButtonText: { color: "white", fontWeight: "bold" },
+  applyButtonText: { color: "black", fontWeight: "bold", fontSize: 16 },
   closeButton: {
     backgroundColor: "#333",
     width: 32,
