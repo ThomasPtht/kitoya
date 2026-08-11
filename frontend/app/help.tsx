@@ -37,12 +37,12 @@ export default function HelpScreen() {
     {
       question: "How do I add a new kit?",
       answer:
-        "Tap the central + button in the tab bar, then choose Scan, Upload or Manual entry. Scan is the fastest way to digitise a jersey.",
+        "Tap the central + button in the tab bar, then fill in the kit's details and add a photo — either from your gallery or straight from your camera.",
     },
     {
-      question: "What is the collector score?",
+      question: "What is the collector rank ?",
       answer:
-        "Your collector score represents the overall value, rarity, and completeness of your documented sports jersey archive based on verified version details.",
+        "Your collector rank (from Rookie to Hall of Famer) reflects the number of kits in your collection — the more kits you add, the higher you climb.",
     },
     {
       question: "Can I export my collection?",
@@ -50,14 +50,9 @@ export default function HelpScreen() {
         "Yes! You can export your collection data anytime in CSV, JSON, or as a printable PDF portfolio directly from your archive settings.",
     },
     {
-      question: "How does the affiliate link work?",
-      answer:
-        "Share your customized locker or collection links with fellow collectors. When they join or interact through your link, you unlock exclusive tracking badges.",
-    },
-    {
       question: "Is my locker public?",
       answer:
-        "By default, your locker privacy settings are flexible. You can choose to keep your entire collection private or share specific items publicly.",
+        "By default, your locker is public — this lets you share your profile and get likes on your kits. You can make it private anytime from Settings, though a kit selected for Kit of the Community may still be seen by others that day.",
     },
   ];
 
