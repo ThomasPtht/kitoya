@@ -21,6 +21,8 @@ import { LockerService } from './locker/locker.service';
 import { LockerController } from './locker/locker.controller';
 import { LockerModule } from './locker/locker.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { FeedbackService } from './feedback/feedback.service';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     GoogleStrategyModule,
     LockerModule,
     NotificationsModule,
+    FeedbackModule,
   ],
   controllers: [AppController, GoogleStrategyController, LockerController],
   providers: [
@@ -45,6 +48,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     PasswordResetService,
     GoogleStrategyService,
     LockerService,
+    FeedbackService,
   ],
 })
 export class AppModule {}

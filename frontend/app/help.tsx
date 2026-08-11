@@ -13,6 +13,7 @@ import {
   Alert,
 } from "react-native";
 import { useState } from "react";
+import { feedbackService } from "@/services/feedback.service";
 
 interface FaqItem {
   question: string;
@@ -64,7 +65,7 @@ export default function HelpScreen() {
     Linking.openURL("mailto:hello@kitroom.app");
   };
 
-  const handleSendFeedback = () => {
+  const handleSendFeedback = async () => {
     if (!message.trim()) {
       Alert.alert(
         "Error",
@@ -72,12 +73,27 @@ export default function HelpScreen() {
       );
       return;
     }
-    Alert.alert(
-      "Success",
-      "Thank you! Your feedback has been sent successfully.",
-    );
-    setMessage("");
-    setEmail("");
+
+    try {
+      await feedbackService.sendFeedback({
+        type: feedbackType,
+        message: message.trim(),
+        email: email.trim() || undefined,
+      });
+
+      Alert.alert(
+        "Success",
+        "Thank you! Your feedback has been sent successfully.",
+      );
+      setMessage("");
+      setEmail("");
+    } catch (error) {
+      console.error("Error sending feedback:", error);
+      Alert.alert(
+        "Error",
+        "There was an error sending your feedback. Please try again later.",
+      );
+    }
   };
 
   return (
