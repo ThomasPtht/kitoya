@@ -23,7 +23,6 @@ export default function TabOneScreen() {
   const { data: jerseys, isLoading } = useJerseys();
   const { data: count } = useJerseyCount();
   const { data: club, isLoading: isClubLoading } = useMostRepresentedClub();
-  console.log("Donnée reçue par le composant :", club);
 
   return (
     <View style={styles.container}>
@@ -39,12 +38,12 @@ export default function TabOneScreen() {
         >
           <Text style={styles.archiveTitle}>Archive a new acquisition</Text>
           <Text style={styles.archiveSubtitle}>
-            Document match details and preserve the story of every kit that
-            lands in your locker.
+            Every kit tells a story, yours. Add all the details and watch your
+            locker grow !
           </Text>
           <View style={styles.scanButton}>
             <FontAwesome name="camera" size={14} color="#000000" />
-            <Text style={styles.scanButtonText}>Scan a kit</Text>
+            <Text style={styles.scanButtonText}>Add a kit</Text>
           </View>
         </TouchableOpacity>
 
@@ -91,7 +90,7 @@ export default function TabOneScreen() {
 
         <KitOfTheDayCard />
 
-        <Text style={styles.collectionTitle}>YOUR COLLECTION AT A GLANCE</Text>
+        <Text style={styles.collectionTitle}>AT A GLANCE</Text>
         <View style={styles.containerStats}>
           <View style={styles.statCard}>
             <Text style={styles.statLabel}>Total Kits</Text>
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 15,
-    marginTop: 20,
+    marginTop: 10,
     paddingHorizontal: 0,
   },
   statCard: {
