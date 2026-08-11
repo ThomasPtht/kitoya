@@ -2,8 +2,39 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 
+const KIT_CONDITIONS_MAP: Record<string, string> = {
+  NEW_WITH_TAGS: "New with Tags",
+  EXCELLENT: "Excellent",
+  VERY_GOOD: "Very Good",
+  GOOD: "Good",
+  FAIR: "Fair",
+};
+
+const KIT_VERSIONS_MAP: Record<string, string> = {
+  REPLICA: "Replica",
+  AUTHENTIC: "Authentic",
+  PLAYER_ISSUE: "Player Issue",
+  MATCH_WORN: "Match Worn",
+};
+
+const JERSEY_TYPES_MAP: Record<string, string> = {
+  HOME: "Home",
+  AWAY: "Away",
+  THIRD: "Third",
+  FOURTH: "Fourth",
+  SPECIAL: "Special",
+  GOALKEEPER: "Goalkeeper",
+  TRAINING: "Training",
+};
+
 export const exportCollectionToPdf = async (jerseyData: any[]) => {
   try {
+    const generatedDate = new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
     const htmlContent = `
       <html>
         <head>
@@ -97,10 +128,10 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
           <div class="header-container">
             <div>
               <h1>Kitroom <span class="accent">Portfolio</span></h1>
-              <div class="subtitle">Collection Archive Générée le ${new Date().toLocaleDateString()}</div>
+              <div class="subtitle">Collection Archive Generated on ${generatedDate}</div>
             </div>
             <div style="text-align: right; font-weight: bold; font-size: 14px; color: #05C785;">
-              Total : ${jerseyData.length} ${jerseyData.length > 1 ? "kits" : "kit"}
+              Total: ${jerseyData.length} ${jerseyData.length > 1 ? "kits" : "kit"}
             </div>
           </div>
           
@@ -121,16 +152,16 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
                   }
                   <div class="jersey-info">
                     <div class="info-row">
-                      <span class="info-label">Joueur</span>
-                      <strong>${jersey.playerName || "Vierge / Sans nom"} ${jersey.number ? `(${jersey.number})` : ""}</strong>
+                      <span class="info-label">Player</span>
+                      <strong>${jersey.playerName || "Unnamed"} ${jersey.number ? `(#${jersey.number})` : ""}</strong>
                     </div>
                     <div class="info-row">
-                      <span class="info-label">Type & Taille</span>
-                      ${jersey.type || "-"} • <span style="font-weight:bold;">${jersey.size || "-"}</span>
+                      <span class="info-label">Type & Size</span>
+                      ${JERSEY_TYPES_MAP[jersey.type] || jersey.type || "-"} • <span style="font-weight:bold;">${jersey.size || "-"}</span>
                     </div>
                     <div class="info-row">
-                      <span class="info-label">État & Version</span>
-                      ${jersey.condition || "-"} (${jersey.version || "Standard"})
+                      <span class="info-label">Condition & Version</span>
+                      ${KIT_CONDITIONS_MAP[jersey.condition] || jersey.condition || "-"} (${KIT_VERSIONS_MAP[jersey.version] || jersey.version || "Standard"})
                     </div>
                   </div>
                 </div>
