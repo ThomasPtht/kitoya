@@ -43,7 +43,7 @@ export default function TabOneScreen() {
           </Text>
           <View style={styles.scanButton}>
             <FontAwesome name="camera" size={14} color="#000000" />
-            <Text style={styles.scanButtonText}>Add a kit</Text>
+            <Text style={styles.scanButtonText}>Add a Kit</Text>
           </View>
         </TouchableOpacity>
 

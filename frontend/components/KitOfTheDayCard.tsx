@@ -141,7 +141,7 @@ export default function KitOfTheDayCard() {
                 </Text>
               </View>
 
-              <Text style={styles.readMore}>READ THE STORY →</Text>
+              <Text style={styles.readMore}>VIEW DETAILS →</Text>
             </View>
           </View>
 

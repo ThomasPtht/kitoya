@@ -21,6 +21,7 @@ import { handleInviteFriends } from "@/lib/invite-friends";
 import { apiClient } from "@/services/api";
 import { useEffect } from "react";
 import { registerForPushNotificationsAsync } from "@/services/notifications.service";
+import { UserAvatar } from "@/components/UserAvatar";
 
 export default function DrawerLayout() {
   const { data: userMe } = useUserMe();
@@ -42,20 +43,8 @@ export default function DrawerLayout() {
     });
   }, [userMe]);
 
-  // Extract initials for the avatar if name exists
-  const getInitials = (name?: string) => {
-    if (!name) return "U";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   const displayName = userMe?.name || userMe?.username || "Collector";
   const displayEmail = userMe?.email || "user@kitroom.app";
-  const userInitials = getInitials(displayName);
 
   // Dynamic rank and collection count
   const currentRank = calculateRank(jerseys);
@@ -82,7 +71,7 @@ export default function DrawerLayout() {
             {/* User Profile Header Section - Centered */}
             <View style={styles.userProfileSection}>
               <View style={styles.avatarContainer}>
-                <Text style={styles.avatarText}>{userInitials}</Text>
+                <UserAvatar name={userMe?.username} size={64} />
               </View>
 
               <Text style={styles.userName} numberOfLines={1}>

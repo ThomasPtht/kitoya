@@ -4,9 +4,12 @@ import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { UserAvatar } from "./UserAvatar";
+import { useUserMe } from "@/hooks/useAuthHook";
 
 export default function Header() {
   const navigation = useNavigation();
+  const { data: userMe } = useUserMe();
 
   const handleOpenMenu = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -27,9 +30,8 @@ export default function Header() {
             accessibilityRole="button"
             accessibilityLabel="Account"
           >
-            <Feather name="user" size={20} color={Colors.light.text} />
+            <UserAvatar variant="icon" size={34} />
           </Pressable>
-          {/* <Feather name="bell" size={24} color="#FFFFFFBF" /> */}
         </View>
       </View>
     </View>
