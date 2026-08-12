@@ -41,7 +41,6 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
   const { data: userMe, isLoading: isUserLoading } = useUserMe();
   const { data, isLoading, error } = useCollectionAnalytics();
 
-
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
     (userMe?.subscription?.planType === "ELITE_MONTHLY" ||
@@ -245,7 +244,7 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        <Text style={styles.sectionHeader}>VARIANTS</Text>
+        <Text style={styles.sectionHeader}>KIT TYPES</Text>
         <View style={styles.sectionCard}>
           {(data?.variants ?? []).map((variant, index, array) => (
             <View
@@ -269,6 +268,40 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
                       width: `${
                         variant.maxCount
                           ? (variant.count / variant.maxCount) * 100
+                          : 0
+                      }%`,
+                    },
+                  ]}
+                />
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <Text style={styles.sectionHeader}>EDITION MIX</Text>
+        <View style={styles.sectionCard}>
+          {(data?.versions ?? []).map((version, index, array) => (
+            <View
+              key={index}
+              style={[
+                styles.barItemContainer,
+                index !== array.length - 1 && styles.itemSeparator,
+              ]}
+            >
+              <View style={styles.barItemHeader}>
+                <Text style={styles.barItemName}>
+                  {formatLabel(version.name)}
+                </Text>
+                <Text style={styles.barItemCount}>{version.count}</Text>
+              </View>
+              <View style={styles.statBarTrack}>
+                <View
+                  style={[
+                    styles.statBarFill,
+                    {
+                      width: `${
+                        version.maxCount
+                          ? (version.count / version.maxCount) * 100
                           : 0
                       }%`,
                     },

@@ -65,7 +65,6 @@ export class JerseysService {
 
     // if the club doesn't exist, search for it using the FootballService and create it in the database
     if (!club) {
-      
       const teams = await this.FootballService.searchTeams(clubData.name);
 
       // search for the team with the exact name (case-insensitive), if not found, take the first one
@@ -257,6 +256,7 @@ export class JerseysService {
         eras: [],
         brands: [],
         variants: [],
+        versions: [],
         conditions: [],
       };
     }
@@ -366,6 +366,24 @@ export class JerseysService {
       maxCount: maxVariantCount,
     }));
 
+    // --- VERSION MIX ---
+    const versionCounts: Record<string, number> = {};
+    jerseys.forEach((j) => {
+      const version = j.version || 'Unknown';
+      versionCounts[version] = (versionCounts[version] || 0) + 1;
+    });
+    const sortedVersions = Object.entries(versionCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count);
+    const maxVersionCount = sortedVersions[0]?.count || 1;
+    const versions = sortedVersions.map((v) => ({
+      ...v,
+      maxCount: maxVersionCount,
+    }));
+
     // --- CONDITION MIX ---
     const conditionCounts: Record<string, number> = {};
     jerseys.forEach((j) => {
@@ -397,6 +415,7 @@ export class JerseysService {
       brands,
       variants,
       conditions,
+      versions,
     };
   }
 }
