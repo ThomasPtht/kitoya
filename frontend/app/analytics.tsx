@@ -48,6 +48,14 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
     userMe?.subscription?.status === "active";
   const hasEliteAccess = isAdmin || isElite;
 
+  const CURRENCY_SYMBOLS: Record<string, string> = {
+    EUR: "€",
+    USD: "$",
+    GBP: "£",
+  };
+
+  const currencySymbol = CURRENCY_SYMBOLS[userMe?.currency ?? "EUR"] ?? "€";
+
   const handleBack = () => {
     if (onClose) {
       onClose();
@@ -160,7 +168,7 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
               <Text style={styles.cardLabel}>TOTAL INVESTED</Text>
             </View>
             <Text style={styles.cardValueMoney}>
-              {data?.totalInvested ?? 0} €
+              {data?.totalInvested ?? 0} {currencySymbol}
             </Text>
           </View>
 
@@ -169,7 +177,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
               <Feather name="trending-up" size={13} color="#05C785" />
               <Text style={styles.cardLabel}>AVG. PRICE</Text>
             </View>
-            <Text style={styles.cardValueMoney}>{data?.avgPrice ?? 0} €</Text>
+            <Text style={styles.cardValueMoney}>
+              {data?.avgPrice ?? 0} {currencySymbol}
+            </Text>
           </View>
         </View>
 
