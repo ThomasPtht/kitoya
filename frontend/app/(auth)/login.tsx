@@ -90,8 +90,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             <Text style={styles.title}>KITROOM</Text>
             <Text style={styles.subtitle}>
-              Welcome back ! Please login to your account to add your kits and
-              manage your locker.
+              Welcome back! Log in to access your locker.
             </Text>
           </View>
 
@@ -228,9 +227,10 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: Colors.theme.primary,
     letterSpacing: 3,
+    fontFamily: "Outfit_800ExtraBold",
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: Colors.theme.textMuted,
     textAlign: "center",
     marginTop: 12,

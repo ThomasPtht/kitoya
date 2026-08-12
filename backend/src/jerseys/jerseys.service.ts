@@ -65,7 +65,7 @@ export class JerseysService {
 
     // if the club doesn't exist, search for it using the FootballService and create it in the database
     if (!club) {
-      console.log(`Club ${clubData.name} inconnu. Recherche API...`);
+      
       const teams = await this.FootballService.searchTeams(clubData.name);
 
       // search for the team with the exact name (case-insensitive), if not found, take the first one

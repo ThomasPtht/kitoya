@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: Colors.light.text,
-    letterSpacing: 1.5,
+    letterSpacing: 2.5,
+    fontFamily: "Outfit_800ExtraBold",
   },
 });

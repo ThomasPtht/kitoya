@@ -330,9 +330,10 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: Colors.theme.primary,
     letterSpacing: 3,
+    fontFamily: "Outfit_800ExtraBold",
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: Colors.theme.textMuted,
     textAlign: "center",
     marginTop: 12,

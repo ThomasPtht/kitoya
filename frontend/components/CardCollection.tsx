@@ -36,7 +36,7 @@ export default function CardCollection({
   }, [jersey.frontImageUrl, jersey.frontImage]);
 
   const cardHeight = size === "small" ? 100 : 180;
-  const textSize = size === "small" ? 12 : 16;
+  const textSize = size === "small" ? 12 : 14;
 
   return (
     <Pressable style={[styles.cardContainer, { width }]} onPress={onPress}>

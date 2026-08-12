@@ -40,7 +40,7 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
   const router = useRouter();
   const { data: userMe, isLoading: isUserLoading } = useUserMe();
   const { data, isLoading, error } = useCollectionAnalytics();
-  console.log("Collection Analytics Data:", data);
+
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =

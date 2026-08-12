@@ -52,20 +52,17 @@ export default function TabDressingScreen() {
     setSearch(search);
   };
 
-  const shareMyLocker = async () => {
-    if (!userMe?.username) return;
-    await Share.share({
-      message: `Check out my jersey collection on Kitroom! kitroom://u/${userMe.username}`,
-    });
-  };
-
   const filteredJerseys = useMemo(() => {
     if (!jerseys) return [];
     return jerseys.filter((j: JerseyData) => {
-      // Filter by search
-      const matchesSearch = j.club?.name
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
+      // Filter by search (club name, season, brand)
+      const query = search.toLowerCase();
+
+      const matchesSearch =
+        search === "" ||
+        j.club?.name?.toLowerCase().includes(query) ||
+        j.season?.toLowerCase().includes(query);
+
       // Filter by club
       const matchesClub =
         selectedClubs.length === 0 ||

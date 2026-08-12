@@ -99,7 +99,7 @@ export class AuthService {
       username: user.username,
     };
 
-    console.log('🔍 [AuthService] Payload généré pour le token :', payload); // <-- ICI
+
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: {

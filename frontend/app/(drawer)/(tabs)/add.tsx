@@ -49,7 +49,7 @@ const jerseySchema = z.object({
 
 type JerseyFormValues = z.infer<typeof jerseySchema>;
 
-const SIZES = ["S", "M", "L", "XL", "XXL"];
+const SIZES = ["S", "M", "L", "XL", "XXL", "XXXL"];
 export const JERSEY_TYPES_MAP: Record<string, string> = {
   HOME: "Home",
   AWAY: "Away",

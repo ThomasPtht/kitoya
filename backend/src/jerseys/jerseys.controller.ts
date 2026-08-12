@@ -53,10 +53,7 @@ export class JerseysController {
       throw new BadRequestException('Authenticated user id is missing');
     }
 
-    console.log('--- DEBUG CONTROLLER ---');
-    console.log('Body reçu :', createJerseyDto);
-    console.log('req.body :', req.body);
-    console.log('Files reçus :', files ? Object.keys(files) : 'Aucun');
+
 
     if (!createJerseyDto.sportId) {
       console.log('ATTENTION : sportId est vide dans le DTO');
