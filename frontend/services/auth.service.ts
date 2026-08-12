@@ -97,7 +97,11 @@ export const authService = {
     return response.data;
   },
 
-  updateProfile: async (data: { isPublic?: boolean }) => {
+  updateProfile: async (data: {
+    isPublic?: boolean;
+    location?: string;
+    currency?: string;
+  }) => {
     const response = await apiClient.post("/auth/update-profile", data);
     return response.data;
   },

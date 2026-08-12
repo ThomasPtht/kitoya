@@ -99,7 +99,6 @@ export class AuthService {
       username: user.username,
     };
 
-
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: {
@@ -239,7 +238,10 @@ export class AuthService {
     };
   }
 
-  async updateProfile(userId: string, dto: { isPublic?: boolean }) {
+  async updateProfile(
+    userId: string,
+    dto: { isPublic?: boolean; currency?: string; location?: string },
+  ) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -252,6 +254,8 @@ export class AuthService {
       where: { id: userId },
       data: {
         ...(dto.isPublic !== undefined && { isPublic: dto.isPublic }),
+        ...(dto.currency !== undefined && { currency: dto.currency }),
+        ...(dto.location !== undefined && { location: dto.location }),
       },
     });
 

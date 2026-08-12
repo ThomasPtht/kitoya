@@ -39,6 +39,21 @@ export default function SettingsScreen() {
   const [newBioInput, setNewBioInput] = useState<string>("");
   const [isSubmittingBio, setIsSubmittingBio] = useState<boolean>(false);
 
+  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+  const [newLocationInput, setNewLocationInput] = useState<string>("");
+  const [isSubmittingLocation, setIsSubmittingLocation] =
+    useState<boolean>(false);
+
+  const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
+  const [isSubmittingCurrency, setIsSubmittingCurrency] =
+    useState<boolean>(false);
+
+  const CURRENCY_OPTIONS = [
+    { code: "EUR", symbol: "€" },
+    { code: "USD", symbol: "$" },
+    { code: "GBP", symbol: "£" },
+  ];
+
   const handleOpenUsernameModal = () => {
     setNewUsernameInput(userInfo?.username || "");
     setIsUsernameModalVisible(true);
@@ -47,6 +62,11 @@ export default function SettingsScreen() {
   const handleOpenBioModal = () => {
     setNewBioInput(userInfo?.bio || "");
     setIsBioModalVisible(true);
+  };
+
+  const handleOpenLocationModal = () => {
+    setNewLocationInput(userInfo?.location || "");
+    setIsLocationModalVisible(true);
   };
 
   const handleSaveUsername = async () => {
@@ -79,6 +99,33 @@ export default function SettingsScreen() {
       Alert.alert("Error", error.message || "Failed to update bio");
     } finally {
       setIsSubmittingBio(false);
+    }
+  };
+
+  const handleSaveLocation = async () => {
+    try {
+      setIsSubmittingLocation(true);
+      await authService.updateProfile({ location: newLocationInput.trim() });
+      queryClient.invalidateQueries({ queryKey: ["userMe"] });
+      setIsLocationModalVisible(false);
+      Alert.alert("Success", "Location updated successfully.");
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to update location");
+    } finally {
+      setIsSubmittingLocation(false);
+    }
+  };
+
+  const handleChangeCurrency = async (code: string) => {
+    try {
+      setIsSubmittingCurrency(true);
+      await authService.updateProfile({ currency: code });
+      queryClient.invalidateQueries({ queryKey: ["userMe"] });
+      setIsCurrencyModalVisible(false);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to update currency");
+    } finally {
+      setIsSubmittingCurrency(false);
     }
   };
 
@@ -160,9 +207,7 @@ export default function SettingsScreen() {
                 />
               </View>
             </TouchableOpacity>
-
             <View style={styles.separator} />
-
             <TouchableOpacity style={styles.row} onPress={handleOpenBioModal}>
               <View style={styles.rowLeft}>
                 <Feather name="file-text" size={18} color="#05C785" />
@@ -191,6 +236,28 @@ export default function SettingsScreen() {
 
             <View style={styles.separator} />
 
+            <TouchableOpacity
+              style={styles.row}
+              onPress={handleOpenLocationModal}
+            >
+              <View style={styles.rowLeft}>
+                <Feather name="map-pin" size={18} color="#05C785" />
+                <Text style={styles.label}>Location</Text>
+              </View>
+              <View style={styles.rowRight}>
+                <Text style={styles.value}>
+                  {userInfo?.location || "Not set"}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color="#555"
+                  style={{ marginLeft: 6 }}
+                />
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.separator} />
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="mail" size={18} color="#05C785" />
@@ -200,9 +267,7 @@ export default function SettingsScreen() {
                 {userInfo?.email || "user@kitroom.app"}
               </Text>
             </View>
-
             <View style={styles.separator} />
-
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="award" size={18} color="#05C785" />
@@ -261,6 +326,30 @@ export default function SettingsScreen() {
                 thumbColor="#FFFFFF"
               />
             </View>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => setIsCurrencyModalVisible(true)}
+            >
+              <View style={styles.rowLeft}>
+                <Feather name="dollar-sign" size={18} color="#05C785" />
+                <Text style={styles.label}>Currency</Text>
+              </View>
+              <View style={styles.rowRight}>
+                <Text style={styles.value}>
+                  {CURRENCY_OPTIONS.find((c) => c.code === userInfo?.currency)
+                    ?.symbol ?? "€"}
+                  {" — "}
+                  {userInfo?.currency ?? "EUR"}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color="#555"
+                  style={{ marginLeft: 6 }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -423,6 +512,94 @@ export default function SettingsScreen() {
                 )}
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isLocationModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsLocationModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Location</Text>
+            <Text style={styles.modalSubtitle}>
+              Enter your location (city, country) to let others know where
+              you're based
+            </Text>
+
+            <TextInput
+              style={styles.modalInput}
+              value={newLocationInput}
+              onChangeText={(text: string) => setNewLocationInput(text)}
+              placeholder="Location (e.g., Paris, France)"
+              placeholderTextColor="#555"
+              autoCapitalize="none"
+              autoFocus={true}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setIsLocationModalVisible(false)}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, styles.saveButton]}
+                onPress={handleSaveLocation}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <ActivityIndicator size="small" color="#050806" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={isCurrencyModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsCurrencyModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Currency</Text>
+            <Text style={styles.modalSubtitle}>
+              Choose the currency used to display your collection prices
+            </Text>
+
+            {CURRENCY_OPTIONS.map((c) => (
+              <TouchableOpacity
+                key={c.code}
+                style={styles.row}
+                onPress={() => handleChangeCurrency(c.code)}
+                disabled={isSubmittingCurrency}
+              >
+                <Text style={styles.label}>
+                  {c.symbol} {c.code}
+                </Text>
+                {userInfo?.currency === c.code && (
+                  <Feather name="check" size={18} color="#05C785" />
+                )}
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity
+              style={[styles.cancelButton, styles.closeButtonStandalone]}
+              onPress={() => setIsCurrencyModalVisible(false)}
+              disabled={isSubmittingCurrency}
+            >
+              <Text style={styles.cancelButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -641,5 +818,11 @@ const styles = StyleSheet.create({
     color: "#050806",
     fontWeight: "bold",
     fontSize: 14,
+  },
+  closeButtonStandalone: {
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 12,
   },
 });
