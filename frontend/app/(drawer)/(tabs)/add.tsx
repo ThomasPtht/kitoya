@@ -373,6 +373,10 @@ export default function TabAddScreen() {
       >
         <Text style={styles.heading}>Add New Jersey</Text>
 
+        <Text style={styles.imageHint}>
+          Tip: lay the jersey flat on a bed or floor for the best photo.
+        </Text>
+
         {/* Image Pickers */}
         <View style={styles.imagePickerRow}>
           <TouchableOpacity
@@ -809,6 +813,12 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     marginBottom: 25,
     letterSpacing: 1,
+  },
+  imageHint: {
+    color: "#8E8E93",
+    fontSize: 12,
+    marginBottom: 10,
+    fontStyle: "italic",
   },
   label: {
     color: "#FFFFFF",
