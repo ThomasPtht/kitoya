@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -57,24 +58,24 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('change-password')
+  @Put('change-password')
   changePassword(@Req() req: JwtRequest, @Body() dto: ChangePasswordDto) {
     return this.authService.changePassword(req.user.userId, dto);
   }
 
-  @Post('change-username')
+  @Put('change-username')
   @UseGuards(JwtAuthGuard)
   async changeUsername(@Req() req: JwtRequest, @Body() dto: ChangeUsernameDto) {
     return this.authService.changeUsername(req.user.userId, dto.newUsername);
   }
 
-  @Post('update-profile')
+  @Put('update-profile')
   @UseGuards(JwtAuthGuard)
   async updateProfile(@Req() req: JwtRequest, @Body() dto: any) {
     return this.authService.updateProfile(req.user.userId, dto);
   }
 
-  @Post('update-bio')
+  @Put('update-bio')
   @UseGuards(JwtAuthGuard)
   async updateBio(@Req() req: JwtRequest, @Body('bio') bio: string) {
     const userId = req.user.userId;
