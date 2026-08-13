@@ -18,6 +18,7 @@ describe('AuthService', () => {
       findUnique: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      delete: jest.fn(),
     },
   };
 
@@ -189,6 +190,38 @@ describe('AuthService', () => {
       const result = await service.login(loginDto);
 
       expect(result.user.planType).toBe('FREE');
+    });
+  });
+
+  describe('deleteAccount', () => {
+    const userFromDb = {
+      id: 'user-id',
+      email: 'thomas@example.fr',
+    };
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.deleteAccount(userFromDb.id)).rejects.toThrow(
+        'User not found',
+      );
+    });
+
+    it('should delete the user account if the user exists', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+      mockPrismaService.user.delete.mockResolvedValue(userFromDb);
+
+      const result = await service.deleteAccount(userFromDb.id);
+
+      expect(result).toEqual({
+        message: 'User account deleted successfully',
+        user: userFromDb.id,
+      });
+
+      // Verify that the PrismaService's delete method was called with the correct parameters
+      expect(mockPrismaService.user.delete).toHaveBeenCalledWith({
+        where: { id: userFromDb.id },
+      });
     });
   });
 
