@@ -234,7 +234,7 @@ describe('AuthService', () => {
       expect(result).toEqual({ message: 'Password changed successfully' });
 
       // Verify that the new password is hashed before being stored in the database
-      const updateCallArgs = mockPrismaService.user.update.mock.calls[0][0]; 
+      const updateCallArgs = mockPrismaService.user.update.mock.calls[0][0];
       const isNewPasswordHashed = await bcrypt.compare(
         changePasswordDto.newPassword,
         updateCallArgs.data.password,
@@ -253,6 +253,55 @@ describe('AuthService', () => {
       await expect(
         service.changePassword(userFromDb.id, changePasswordDto),
       ).rejects.toThrow('Invalid credentials');
-    })
+    });
+  });
+
+  describe('changeUsername', () => {
+    it('should throw ConflictException if the new username is already taken', async () => {
+      const userId = 'user-id';
+      const newUsername = 'existingUsername';
+
+      // Mock the PrismaService to simulate an existing user with the new username
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        id: 'another-user-id',
+        username: newUsername,
+      });
+
+      await expect(service.changeUsername(userId, newUsername)).rejects.toThrow(
+        ConflictException,
+      );
+    });
+
+    it('should successfully change the username if it is unique', async () => {
+      const userId = 'user-id';
+      const newUsername = 'uniqueUsername';
+
+      // Mock the PrismaService to simulate no existing user with the new username
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+      mockPrismaService.user.update.mockResolvedValue({
+        id: userId,
+        email: 'thomas@example.com',
+        username: newUsername,
+        isPublic: true,
+      });
+
+      const result = await service.changeUsername(userId, newUsername);
+
+      expect(result).toEqual({
+        message: 'Username changed successfully',
+        user: {
+          id: userId,
+          email: 'thomas@example.com',
+          username: newUsername,
+          isPublic: true,
+        },
+      });
+
+      // Verify that the PrismaService's update method was called with the correct parameters
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { username: newUsername },
+      });
+    });
   });
 });
