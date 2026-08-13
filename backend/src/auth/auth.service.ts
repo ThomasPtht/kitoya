@@ -122,7 +122,8 @@ export class AuthService {
     }
 
     const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+
+    return { ...userWithoutPassword, hasPassword: !!password }; // Return a boolean indicating if the user has a password set
   }
 
   async deleteAccount(userId: string) {

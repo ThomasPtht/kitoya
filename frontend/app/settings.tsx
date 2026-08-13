@@ -423,16 +423,19 @@ export default function SettingsScreen() {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Account Security</Text>
           <View style={styles.card}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => router.push("/(auth)/change-password")}
-            >
-              <View style={styles.rowLeft}>
-                <Feather name="key" size={18} color="#FFFFFF" />
-                <Text style={styles.text}>Change Password</Text>
-              </View>
-              <Feather name="chevron-right" size={16} color="#555" />
-            </TouchableOpacity>
+            {userInfo?.hasPassword && (
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => router.push("/(auth)/change-password")}
+              >
+                <View style={styles.rowLeft}>
+                  <Feather name="key" size={18} color="#FFFFFF" />
+                  <Text style={styles.text}>Change Password</Text>
+                </View>
+
+                <Feather name="chevron-right" size={16} color="#555" />
+              </TouchableOpacity>
+            )}
 
             <View style={styles.separator} />
 
