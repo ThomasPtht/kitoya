@@ -17,6 +17,7 @@ describe('AuthService', () => {
       findFirst: jest.fn(),
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   };
 
@@ -189,5 +190,69 @@ describe('AuthService', () => {
 
       expect(result.user.planType).toBe('FREE');
     });
+  });
+
+  describe('changePassword', () => {
+    const changePasswordDto = {
+      oldPassword: 'currentPassword123',
+      newPassword: 'newSecurePassword456',
+    };
+
+    it('should throw UnauthorizedException if oldpassword does not match', async () => {
+      const userFromDb = {
+        id: 'user-id',
+        password: await bcrypt.hash(changePasswordDto.oldPassword, 10),
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+
+      // Provide a wrong old password to simulate the mismatch
+      const wrongOldPasswordDto = {
+        ...changePasswordDto,
+        oldPassword: 'wrongOldPassword',
+      };
+
+      await expect(
+        service.changePassword(userFromDb.id, wrongOldPasswordDto),
+      ).rejects.toThrow('Invalid credentials');
+    });
+
+    it('should successfully change the password if old password matches', async () => {
+      const userFromDb = {
+        id: 'user-id',
+        password: await bcrypt.hash(changePasswordDto.oldPassword, 10),
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+      mockPrismaService.user.update.mockResolvedValue({}); // Mock the update method to simulate successful password change
+
+      const result = await service.changePassword(
+        userFromDb.id,
+        changePasswordDto,
+      );
+
+      expect(result).toEqual({ message: 'Password changed successfully' });
+
+      // Verify that the new password is hashed before being stored in the database
+      const updateCallArgs = mockPrismaService.user.update.mock.calls[0][0]; 
+      const isNewPasswordHashed = await bcrypt.compare(
+        changePasswordDto.newPassword,
+        updateCallArgs.data.password,
+      );
+      expect(isNewPasswordHashed).toBe(true);
+    });
+
+    it('should throw unauthorized exception if user doesnt have a password (log with google)', async () => {
+      const userFromDb = {
+        id: 'user-id',
+        password: null, // user has no password set
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+
+      await expect(
+        service.changePassword(userFromDb.id, changePasswordDto),
+      ).rejects.toThrow('Invalid credentials');
+    })
   });
 });
