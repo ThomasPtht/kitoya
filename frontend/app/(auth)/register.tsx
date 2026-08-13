@@ -28,14 +28,18 @@ export default function RegisterScreen() {
   >(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
+
   const registerSchema = z.object({
     username: z
       .string()
       .min(3, { message: "Username must be at least 3 characters" }),
-    email: z.email({ message: "Invalid email address" }),
+    email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),
+    acceptPrivacy: z.boolean().refine((val) => val === true, {
+      message: "You must accept the Privacy Policy to register",
+    }),
   });
 
   type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -50,6 +54,7 @@ export default function RegisterScreen() {
       username: "",
       email: "",
       password: "",
+      acceptPrivacy: false, 
     },
   });
 
@@ -61,9 +66,8 @@ export default function RegisterScreen() {
 
     try {
       setIsCheckingUsername(true);
-      // Supposons que tu as une méthode checkUsername dans ton authService front
       const result = await authService.checkUsername(username);
-      setIsUsernameAvailable(result.available); // true ou false selon ton { available: boolean }
+      setIsUsernameAvailable(result.available);
     } catch (error) {
       console.error("Error checking username:", error);
     } finally {
@@ -73,9 +77,9 @@ export default function RegisterScreen() {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      setIsUsernameAvailable(null); // Reset l'indicateur avant de soumettre
+      setIsUsernameAvailable(null);
       await authService.register(data.username, data.email, data.password);
-      router.push("/(drawer)/(tabs)"); // Navigate to the home screen after successful registration
+      router.push("/(drawer)/(tabs)");
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setIsUsernameAvailable(false);
@@ -161,7 +165,7 @@ export default function RegisterScreen() {
                     onChangeText={(text) => {
                       onChange(text);
                       if (isUsernameAvailable !== null)
-                        setIsUsernameAvailable(null); // Reset l'indicateur si on modifie le texte
+                        setIsUsernameAvailable(null);
                     }}
                     value={value}
                     onSubmitEditing={handleSubmit(onSubmit)}
@@ -252,7 +256,7 @@ export default function RegisterScreen() {
                   ]}
                 >
                   <TextInput
-                    ref={passwordRef} // Allowing the password input to be focused when the user presses "next" on the email input
+                    ref={passwordRef}
                     style={styles.input}
                     placeholder="Password"
                     placeholderTextColor="#8E8E93"
@@ -271,6 +275,47 @@ export default function RegisterScreen() {
             />
             {errors.password && (
               <Text style={styles.errorText}>{errors.password.message}</Text>
+            )}
+
+            {/* 2. Checkbox Privacy Policy */}
+            <Controller
+              control={control}
+              name="acceptPrivacy"
+              render={({ field: { onChange, value } }) => (
+                <TouchableOpacity
+                  style={styles.checkboxContainer}
+                  activeOpacity={0.8}
+                  onPress={() => onChange(!value)}
+                >
+                  <View
+                    style={[
+                      styles.checkbox,
+                      value && styles.checkboxChecked,
+                      errors.acceptPrivacy && styles.inputErrorBorder,
+                    ]}
+                  >
+                    {value && <Text style={styles.checkmark}>✓</Text>}
+                  </View>
+                  <Text style={styles.privacyText}>
+                    I accept the{" "}
+                    <Text
+                      style={styles.privacyLink}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                      
+                        router.push("/(auth)/privacy-policy");
+                      }}
+                    >
+                      Privacy Policy
+                    </Text>
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+            {errors.acceptPrivacy && (
+              <Text style={styles.errorText}>
+                {errors.acceptPrivacy.message}
+              </Text>
             )}
 
             {/* Submit button */}
@@ -367,6 +412,41 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 6,
     marginLeft: 4,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 16,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: Colors.theme.surfaceBorder,
+    backgroundColor: Colors.theme.surface,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: Colors.theme.primary,
+    borderColor: Colors.theme.primary,
+  },
+  checkmark: {
+    color: Colors.theme.background,
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  privacyText: {
+    color: Colors.theme.textMuted,
+    fontSize: 14,
+    flex: 1,
+  },
+  privacyLink: {
+    color: Colors.theme.primary,
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
   button: {
     backgroundColor: Colors.theme.primary,
