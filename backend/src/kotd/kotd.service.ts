@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { generateJerseyStory } from './kotd-helper';
 import { R2Service } from 'src/r2/r2.service';
 import { NotificationsService } from 'src/notifications/notifications.service';

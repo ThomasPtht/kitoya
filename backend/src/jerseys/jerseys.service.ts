@@ -6,7 +6,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJerseyDto } from './dto/createJersey.dto';
 import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';

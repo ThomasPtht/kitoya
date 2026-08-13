@@ -76,6 +76,14 @@ export default function RegisterScreen() {
   };
 
   const onSubmit = async (data: RegisterFormValues) => {
+    if (isUsernameAvailable === false) {
+      Toast.show({
+        type: "error",
+        text1: "Username already taken",
+        text2: "Please choose a different username.",
+      });
+      return;
+    }
     try {
       setIsUsernameAvailable(null);
       await authService.register(data.username, data.email, data.password);

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { ConflictException } from '@nestjs/common';
@@ -425,19 +425,18 @@ describe('AuthService', () => {
   });
 
   describe('generateUniqueUsername', () => {
-     it('should strip special characters from the email to build the base username', async () => {
-    const baseEmail = 'thomas.dupont+test@example.fr';
-    mockPrismaService.user.findUnique.mockResolvedValue(null);
+    it('should strip special characters from the email to build the base username', async () => {
+      const baseEmail = 'thomas.dupont+test@example.fr';
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-    const uniqueUsername = await service.generateUniqueUsername(baseEmail);
+      const uniqueUsername = await service.generateUniqueUsername(baseEmail);
 
-    expect(uniqueUsername).toBe('thomasduponttest');
-  });
+      expect(uniqueUsername).toBe('thomasduponttest');
+    });
 
     it('should generate a unique username based on the base email', async () => {
       const baseEmail = 'thomas@example.fr';
       const baseUsername = 'thomas';
-
 
       // Simulate that the first two usernames are taken, and the third one is available
       mockPrismaService.user.findUnique

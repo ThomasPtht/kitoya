@@ -7,7 +7,7 @@ import {
 import { RegisterDto } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { Prisma } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -70,9 +70,9 @@ export class AuthService {
   }
 
   async checkUsername(username: string) {
-    const existingUser = await this.prisma.user.findFirst({
+    const existingUser = await this.prisma.user.findUnique({
       where: {
-        username: { equals: username, mode: 'insensitive' },
+        username,
       },
     });
     return { available: !existingUser };
@@ -216,10 +216,12 @@ export class AuthService {
   }
 
   async changeUsername(userId: string, newUsername: string) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: newUsername },
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        username: { equals: newUsername, mode: 'insensitive' },
+        NOT: { id: userId }, // ignore the current user when checking for existing usernames
+      },
     });
-
     if (existingUser) {
       throw new ConflictException('Username already taken');
     }

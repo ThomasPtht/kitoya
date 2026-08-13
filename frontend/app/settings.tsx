@@ -1,6 +1,6 @@
 import { useUserMe } from "@/hooks/useAuthHook";
 import { authService } from "@/services/auth.service";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState, useEffect } from "react";
 import {
@@ -35,6 +35,11 @@ export default function SettingsScreen() {
   const [newUsernameInput, setNewUsernameInput] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState<
+    boolean | null
+  >(null);
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+
   const [isBioModalVisible, setIsBioModalVisible] = useState(false);
   const [newBioInput, setNewBioInput] = useState<string>("");
   const [isSubmittingBio, setIsSubmittingBio] = useState<boolean>(false);
@@ -53,6 +58,35 @@ export default function SettingsScreen() {
     { code: "USD", symbol: "$" },
     { code: "GBP", symbol: "£" },
   ];
+
+  const verifyUsername = async (username: string) => {
+    console.log("Vérification API pour :", username);
+    if (!username || username.length < 3) {
+      setIsUsernameAvailable(null);
+      return;
+    }
+
+    try {
+      setIsCheckingUsername(true);
+      const result = await authService.checkUsername(username);
+      setIsUsernameAvailable(result.available);
+    } catch (error) {
+      console.error("Error checking username:", error);
+      setIsUsernameAvailable(false);
+    } finally {
+      setIsCheckingUsername(false);
+    }
+  };
+
+  // Effet déclenché lors de la modification de l'input (avec debounce)
+  useEffect(() => {
+    const trimmed = newUsernameInput.trim();
+    const timer = setTimeout(() => {
+      verifyUsername(trimmed);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [newUsernameInput]);
 
   const handleOpenUsernameModal = () => {
     setNewUsernameInput(userInfo?.username || "");
@@ -416,7 +450,7 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
 
-      {/* Modals ... */}
+      {/* Username Modal */}
       <Modal
         visible={isUsernameModalVisible}
         transparent={true}
@@ -430,15 +464,39 @@ export default function SettingsScreen() {
               Enter your new unique username (min. 3 characters)
             </Text>
 
-            <TextInput
-              style={styles.modalInput}
-              value={newUsernameInput}
-              onChangeText={(text: string) => setNewUsernameInput(text)}
-              placeholder="New username"
-              placeholderTextColor="#555"
-              autoCapitalize="none"
-              autoFocus={true}
-            />
+            {/* Conteneur Input + Indicateur visuel */}
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[
+                  styles.modalInputWithIcon,
+                  isUsernameAvailable === true && styles.inputValid,
+                  isUsernameAvailable === false && styles.inputInvalid,
+                ]}
+                value={newUsernameInput}
+                onChangeText={(text: string) => setNewUsernameInput(text)}
+                placeholder="New username"
+                placeholderTextColor="#555"
+                autoCapitalize="none"
+                autoFocus={true}
+              />
+
+              <View style={styles.iconContainer}>
+                {isCheckingUsername ? (
+                  <ActivityIndicator size="small" color="#888" />
+                ) : newUsernameInput.trim().length >= 3 &&
+                  isUsernameAvailable !== null ? (
+                  isUsernameAvailable ? (
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color="#4ade80"
+                    />
+                  ) : (
+                    <Ionicons name="close-circle" size={24} color="#f87171" />
+                  )
+                ) : null}
+              </View>
+            </View>
 
             <View style={styles.modalActions}>
               <TouchableOpacity
@@ -450,9 +508,20 @@ export default function SettingsScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.modalButton, styles.saveButton]}
+                style={[
+                  styles.modalButton,
+                  styles.saveButton,
+                  (!newUsernameInput ||
+                    newUsernameInput.trim().length < 3 ||
+                    !isUsernameAvailable) && { opacity: 0.5 },
+                ]}
                 onPress={handleSaveUsername}
-                disabled={isSubmitting}
+                disabled={
+                  isSubmitting ||
+                  !newUsernameInput ||
+                  newUsernameInput.trim().length < 3 ||
+                  !isUsernameAvailable
+                }
               >
                 {isSubmitting ? (
                   <ActivityIndicator size="small" color="#050806" />
@@ -465,6 +534,7 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
+      {/* Bio Modal */}
       <Modal
         visible={isBioModalVisible}
         transparent={true}
@@ -516,6 +586,7 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
+      {/* Location Modal */}
       <Modal
         visible={isLocationModalVisible}
         transparent={true}
@@ -564,6 +635,8 @@ export default function SettingsScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Currency Modal */}
       <Modal
         visible={isCurrencyModalVisible}
         transparent={true}
@@ -782,6 +855,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 20,
   },
+  inputContainer: {
+    position: "relative",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
   modalInput: {
     backgroundColor: "#0A0E0C",
     borderWidth: 1,
@@ -792,6 +870,29 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 15,
     marginBottom: 20,
+  },
+  modalInputWithIcon: {
+    backgroundColor: "#0A0E0C",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingRight: 50,
+    color: "#FFFFFF",
+    fontSize: 15,
+  },
+  inputValid: {
+    borderColor: "#4ade80",
+  },
+  inputInvalid: {
+    borderColor: "#f87171",
+  },
+  iconContainer: {
+    position: "absolute",
+    right: 15,
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalActions: {
     flexDirection: "row",
