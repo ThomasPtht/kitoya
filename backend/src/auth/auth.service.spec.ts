@@ -15,6 +15,7 @@ describe('AuthService', () => {
   const mockPrismaService = {
     user: {
       findFirst: jest.fn(),
+      findUnique: jest.fn(),
       create: jest.fn(),
     },
   };
@@ -115,6 +116,78 @@ describe('AuthService', () => {
       await expect(service.register(registerDto)).rejects.toThrow(
         ConflictException,
       );
+    });
+  });
+
+  describe('login', () => {
+    const loginDto = {
+      email: 'thomas@example.com',
+      password: 'securePassword123',
+    };
+
+    it('should throw UnauthorizedException if the user does not exist', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.login(loginDto)).rejects.toThrow(
+        'Invalid credentials',
+      );
+    });
+
+    it('should throw UnauthorizedException if the password doesnt match', async () => {
+      const userFromDb = {
+        id: 'user-id',
+        email: loginDto.email,
+        password: await bcrypt.hash('differentPassword', 10), // hashed password that doesn't match the loginDto password
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+
+      await expect(service.login(loginDto)).rejects.toThrow(
+        'Invalid credentials',
+      );
+    });
+
+    it('should return a JWT token and user info on successful login', async () => {
+      const hashedPassword = await bcrypt.hash(loginDto.password, 10);
+      const userFromDb = {
+        id: 'user-id',
+        email: loginDto.email,
+        username: 'thomas',
+        password: hashedPassword,
+        isPublic: true,
+        subscription: { planType: 'ELITE_MONTHLY' },
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+
+      const result = await service.login(loginDto);
+
+      expect(result.access_token).toBe('fake-jwt-token');
+      expect(result.user).toEqual({
+        id: userFromDb.id,
+        email: userFromDb.email,
+        username: userFromDb.username,
+        isPublic: userFromDb.isPublic,
+        planType: 'ELITE_MONTHLY',
+      });
+    });
+
+    it('should return planType as FREE if subscription is null', async () => {
+      const hashedPassword = await bcrypt.hash(loginDto.password, 10);
+      const userFromDb = {
+        id: 'user-id',
+        email: loginDto.email,
+        username: 'thomas',
+        password: hashedPassword,
+        isPublic: true,
+        subscription: null, // no subscription
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+
+      const result = await service.login(loginDto);
+
+      expect(result.user.planType).toBe('FREE');
     });
   });
 });

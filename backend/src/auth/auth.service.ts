@@ -81,6 +81,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
+      include: { subscription: true },
     });
 
     if (!user || !user.password) {
@@ -106,6 +107,7 @@ export class AuthService {
         email: user.email,
         username: user.username,
         isPublic: user.isPublic,
+        planType: user.subscription?.planType ?? 'FREE',
       },
     };
   }
