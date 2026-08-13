@@ -304,4 +304,90 @@ describe('AuthService', () => {
       });
     });
   });
+
+  describe('updateProfile', () => {
+    it('should update the user profile with provided fields', async () => {
+      const userId = 'user-id';
+      const updateDto = {
+        isPublic: false,
+        currency: 'USD',
+        location: 'New York',
+      };
+
+      // Mock the PrismaService to simulate finding the user and updating the profile
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        id: userId,
+        email: 'thomas@example.com',
+        username: 'thomas',
+        isPublic: true,
+        currency: 'EUR',
+        location: 'Paris',
+      });
+
+      mockPrismaService.user.update.mockResolvedValue({
+        id: userId,
+        email: 'thomas@example.com',
+        username: 'thomas',
+        isPublic: updateDto.isPublic,
+        currency: updateDto.currency,
+        location: updateDto.location,
+      });
+
+      const result = await service.updateProfile(userId, updateDto);
+
+      expect(result).toEqual({
+        id: userId,
+        email: 'thomas@example.com',
+        username: 'thomas',
+        isPublic: updateDto.isPublic,
+        currency: updateDto.currency,
+        location: updateDto.location,
+      });
+
+      // Verify that the PrismaService's update method was called with the correct parameters
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: {
+          isPublic: updateDto.isPublic,
+          currency: updateDto.currency,
+          location: updateDto.location,
+        },
+      });
+    });
+
+    it('should only update the fileds provided, leaving others unchanged', async () => {
+      const userId = 'user-id';
+      const updateDto = {
+        currency: 'USD', // only updating currency
+      };
+
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        id: userId,
+        email: 'thomas@example.com',
+        username: 'thomas',
+        isPublic: true,
+        currency: 'EUR',
+        location: 'Paris',
+      });
+
+      mockPrismaService.user.update.mockResolvedValue({
+        id: userId,
+        email: 'thomas@example.com',
+        username: 'thomas',
+        isPublic: true, // unchanged
+        currency: updateDto.currency, // updated
+        location: 'Paris', // unchanged
+      });
+
+      await service.updateProfile(userId, updateDto);
+
+      // check that only the currency field was updated and other fields remain unchanged
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: {
+          currency: updateDto.currency,
+        }, // no isPublic or location in data, they should remain unchanged
+      });
+    });
+  });
 });
