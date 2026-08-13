@@ -423,4 +423,31 @@ describe('AuthService', () => {
       });
     });
   });
+
+  describe('generateUniqueUsername', () => {
+     it('should strip special characters from the email to build the base username', async () => {
+    const baseEmail = 'thomas.dupont+test@example.fr';
+    mockPrismaService.user.findUnique.mockResolvedValue(null);
+
+    const uniqueUsername = await service.generateUniqueUsername(baseEmail);
+
+    expect(uniqueUsername).toBe('thomasduponttest');
+  });
+
+    it('should generate a unique username based on the base email', async () => {
+      const baseEmail = 'thomas@example.fr';
+      const baseUsername = 'thomas';
+
+
+      // Simulate that the first two usernames are taken, and the third one is available
+      mockPrismaService.user.findUnique
+        .mockResolvedValueOnce({ id: 'user1', username: baseUsername }) // thomas is taken
+        .mockResolvedValueOnce({ id: 'user2', username: `${baseUsername}1` }) // thomas1 is taken
+        .mockResolvedValueOnce(null); // thomas2 is available
+
+      const uniqueUsername = await service.generateUniqueUsername(baseEmail);
+
+      expect(uniqueUsername).toBe(`${baseUsername}2`); // the next available username should be thomas2
+    });
+  });
 });
