@@ -1,6 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FeedbackService } from './feedback.service';
 
+jest.mock('resend', () => ({
+  Resend: jest.fn().mockImplementation(() => ({
+    emails: { send: jest.fn() },
+  })),
+}));
+
 describe('FeedbackService', () => {
   let service: FeedbackService;
 

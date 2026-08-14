@@ -14,7 +14,7 @@ import {
 } from "@react-navigation/drawer";
 import { authService } from "@/services/auth.service";
 import { useUserMe } from "@/hooks/useAuthHook";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { calculateRank } from "@/lib/ranks";
 import { useJerseys } from "@/hooks/useJerseyHook";
 import { handleInviteFriends } from "@/lib/invite-friends";
@@ -26,6 +26,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 export default function DrawerLayout() {
   const { data: userMe } = useUserMe();
   const { data: jerseys } = useJerseys();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(async (token) => {
@@ -239,6 +240,7 @@ export default function DrawerLayout() {
                   try {
                     props.navigation.closeDrawer();
                     await authService.logout();
+                    queryClient.clear(); // Clear the cache after logout and avoid to log with old data
                     router.replace("/(auth)/login");
                   } catch (error) {
                     console.error("Logout failed:", error);

@@ -175,6 +175,7 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await authService.deleteAccount();
+              queryClient.clear(); // Clear the cache after logout and avoid to log with old data
               await authService.logout();
               router.replace("/(auth)/login");
             } catch (error: any) {
