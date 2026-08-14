@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { JerseysService } from './jerseys.service';
 import { R2Service } from '../r2/r2.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateJerseyDto } from './dto/createJersey.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ImageProcessingService } from '../image-processing/image-processing.service';

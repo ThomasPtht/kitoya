@@ -3,10 +3,10 @@ import { KotdService } from './kotd.service';
 import { KotdController } from './kotd.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { R2Service } from '../r2/r2.service';
-import { NotificationsModule } from 'src/notifications/notifications.module';
+import * as notificationsModule from '../notifications/notifications.module';
 
 @Module({
-  imports: [NotificationsModule],
+  imports: [notificationsModule.NotificationsModule],
   providers: [KotdService, PrismaService, R2Service],
   controllers: [KotdController],
 })
