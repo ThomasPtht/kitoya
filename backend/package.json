@@ -90,7 +90,7 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
       "transformIgnorePatterns": [
-    "node_modules/(?!(uuid)/)"
+    "node_modules/(?!(uuid|expo-server-sdk)/)"
   ],
       "moduleNameMapper": {
     "^prisma/(.*)$": "<rootDir>/../prisma/$1"
