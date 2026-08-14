@@ -3,11 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateJerseyDto } from './dto/createJersey.dto';
 import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 type CreateJerseyWithUrls = CreateJerseyDto & {
   frontImageUrl: string;
@@ -197,6 +196,8 @@ export class JerseysService {
     await this.prisma.jersey.delete({
       where: { id },
     });
+
+    return { message: 'Jersey deleted successfully' };
   }
 
   async getTotalJerseysCount(userId?: string): Promise<number> {
