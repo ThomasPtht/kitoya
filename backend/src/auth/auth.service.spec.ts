@@ -295,7 +295,7 @@ describe('AuthService', () => {
       const newUsername = 'existingUsername';
 
       // Mock the PrismaService to simulate an existing user with the new username
-      mockPrismaService.user.findUnique.mockResolvedValue({
+      mockPrismaService.user.findFirst.mockResolvedValue({
         id: 'another-user-id',
         username: newUsername,
       });
@@ -310,7 +310,7 @@ describe('AuthService', () => {
       const newUsername = 'uniqueUsername';
 
       // Mock the PrismaService to simulate no existing user with the new username
-      mockPrismaService.user.findUnique.mockResolvedValue(null);
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
       mockPrismaService.user.update.mockResolvedValue({
         id: userId,
         email: 'thomas@example.com',
