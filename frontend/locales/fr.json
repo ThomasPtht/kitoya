@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "register": {
+      "subtitle": "Bienvenue ! Inscrivez-vous pour ajouter vos maillots et gérer votre vestiaire.",
+      "usernamePlaceholder": "Nom d'utilisateur",
+      "emailPlaceholder": "E-mail",
+      "passwordPlaceholder": "Mot de passe",
+      "acceptPrivacy": "J'accepte la",
+      "privacyPolicyLink": "Politique de confidentialité",
+      "submit": "S'inscrire",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter",
+      "errors": {
+        "usernameTaken": "Ce nom d'utilisateur est déjà pris"
+      },
+      "validation": {
+        "usernameMin": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+        "invalidEmail": "Adresse e-mail invalide",
+        "passwordMin": "Le mot de passe doit contenir au moins 6 caractères",
+        "acceptPrivacy": "Vous devez accepter la politique de confidentialité pour vous inscrire"
+      }
+    },
+    "login": {
+      "subtitle": "Bon retour ! Connectez-vous pour accéder à votre vestiaire.",
+      "emailPlaceholder": "E-mail",
+      "passwordPlaceholder": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "connecting": "Connexion...",
+      "submit": "Se connecter",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signUpLink": "S'inscrire"
+    },
+    "validation": {
+        "invalidEmail": "Adresse e-mail invalide",
+        "passwordMin": "Le mot de passe doit contenir au moins 6 caractères"
+      }
+  }
+}

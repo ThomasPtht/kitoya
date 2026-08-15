@@ -20,16 +20,21 @@ import {
 import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
 import Toast from "react-native-toast-message";
 import z from "zod";
+import { useTranslation } from "react-i18next";
 
 export default function LoginScreen() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
+  const { t } = useTranslation();
+
   const loginSchema = z.object({
-    email: z.email({ message: "Invalid email address" }),
+    email: z
+      .string()
+      .email({ message: t("auth.login.validation.invalidEmail") }),
     password: z
       .string()
-      .min(6, { message: "Password must be at least 6 characters" }),
+      .min(6, { message: t("auth.login.validation.passwordMin") }),
   });
 
   type LoginFormValues = z.infer<typeof loginSchema>;
@@ -89,9 +94,7 @@ export default function LoginScreen() {
           {/* Header */}
           <View style={styles.logoContainer}>
             <Text style={styles.title}>KITROOM</Text>
-            <Text style={styles.subtitle}>
-              Welcome back! Log in to access your locker.
-            </Text>
+            <Text style={styles.subtitle}>{t("auth.login.subtitle")}</Text>
           </View>
 
           {/* FORM */}
@@ -109,7 +112,7 @@ export default function LoginScreen() {
                 >
                   <TextInput
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder={t("auth.login.emailPlaceholder")}
                     placeholderTextColor="#8E8E93"
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -140,9 +143,9 @@ export default function LoginScreen() {
                   ]}
                 >
                   <TextInput
-                    ref={passwordRef} // Allows the password input to be focused when the user presses "next" on the email input
+                    ref={passwordRef}
                     style={[styles.input, { letterSpacing: 0 }]}
-                    placeholder="Password"
+                    placeholder={t("auth.login.passwordPlaceholder")}
                     placeholderTextColor="#8E8E93"
                     secureTextEntry
                     autoCapitalize="none"
@@ -165,19 +168,23 @@ export default function LoginScreen() {
               style={styles.forgotPasswordContainer}
               onPress={() => router.push("/(auth)/forgot-password")}
             >
-              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+              <Text style={styles.forgotPasswordText}>
+                {t("auth.login.forgotPassword")}
+              </Text>
             </TouchableOpacity>
 
-            {/* Bouton de soumission ajouté pour pouvoir déclencher le formulaire */}
+            {/* Bouton de soumission */}
             <TouchableOpacity
               style={[styles.button, isSubmitting && styles.buttonDisabled]}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <Text style={styles.buttonText}>Connecting ...</Text>
+                <Text style={styles.buttonText}>
+                  {t("auth.login.connecting")}
+                </Text>
               ) : (
-                <Text style={styles.buttonText}>Login</Text>
+                <Text style={styles.buttonText}>{t("auth.login.submit")}</Text>
               )}
             </TouchableOpacity>
 
@@ -188,15 +195,15 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* Footer inclus dans le flux principal */}
+          {/* Footer */}
           <View style={styles.footerContainer}>
-            <Text style={styles.footerText}>Don't you have an account? </Text>
+            <Text style={styles.footerText}>{t("auth.login.noAccount")} </Text>
             <TouchableOpacity>
               <Text
                 onPress={() => router.push("/(auth)/register")}
                 style={styles.footerLink}
               >
-                Sign up
+                {t("auth.login.signUpLink")}
               </Text>
             </TouchableOpacity>
           </View>

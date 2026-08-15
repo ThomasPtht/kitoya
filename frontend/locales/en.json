@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "register": {
+      "subtitle": "Welcome ! Please sign up to add your kits and manage your locker.",
+      "usernamePlaceholder": "Username",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "acceptPrivacy": "I accept the",
+      "privacyPolicyLink": "Privacy Policy",
+      "submit": "Sign Up",
+      "hasAccount": "You have an account ?",
+      "signInLink": "Sign in",
+      "errors": {
+        "usernameTaken": "This username is already taken"
+      },
+      "validation": {
+        "usernameMin": "Username must be at least 3 characters",
+        "invalidEmail": "Invalid email address",
+        "passwordMin": "Password must be at least 6 characters",
+        "acceptPrivacy": "You must accept the Privacy Policy to register"
+      }
+    },
+    "login": {
+      "subtitle": "Welcome back! Log in to access your locker.",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "forgotPassword": "Forgot password?",
+      "connecting": "Connecting...",
+      "submit": "Login",
+      "noAccount": "Don't you have an account?",
+      "signUpLink": "Sign up"
+    },
+    "validation": {
+        "invalidEmail": "Invalid email address",
+        "passwordMin": "Password must be at least 6 characters"
+      }
+  }
+}

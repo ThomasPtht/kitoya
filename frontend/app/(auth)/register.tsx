@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
 import z from "zod";
-
+import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
 import { googleAuthService } from "@/services/google.service";
 
@@ -28,17 +28,20 @@ export default function RegisterScreen() {
   >(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
+  const { t } = useTranslation();
 
   const registerSchema = z.object({
     username: z
       .string()
-      .min(3, { message: "Username must be at least 3 characters" }),
-    email: z.string().email({ message: "Invalid email address" }),
+      .min(3, { message: t("auth.register.validation.usernameMin") }),
+    email: z
+      .string()
+      .email({ message: t("auth.register.validation.invalidEmail") }),
     password: z
       .string()
-      .min(6, { message: "Password must be at least 6 characters" }),
+      .min(6, { message: t("auth.register.validation.passwordMin") }),
     acceptPrivacy: z.boolean().refine((val) => val === true, {
-      message: "You must accept the Privacy Policy to register",
+      message: t("auth.register.validation.acceptPrivacy"),
     }),
   });
 
@@ -54,7 +57,7 @@ export default function RegisterScreen() {
       username: "",
       email: "",
       password: "",
-      acceptPrivacy: false, 
+      acceptPrivacy: false,
     },
   });
 
@@ -138,9 +141,7 @@ export default function RegisterScreen() {
           {/* Header */}
           <View style={styles.logoContainer}>
             <Text style={styles.title}>KITROOM</Text>
-            <Text style={styles.subtitle}>
-              Welcome ! Please sign up to add your kits and manage your locker.
-            </Text>
+            <Text style={styles.subtitle}>{t("auth.register.subtitle")}</Text>
           </View>
 
           {/* FORM */}
@@ -159,7 +160,7 @@ export default function RegisterScreen() {
                 >
                   <TextInput
                     style={styles.input}
-                    placeholder="Username"
+                    placeholder={t("auth.register.usernamePlaceholder")}
                     placeholderTextColor="#8E8E93"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -216,7 +217,7 @@ export default function RegisterScreen() {
             )}
             {isUsernameAvailable === false && !errors.username && (
               <Text style={styles.errorText}>
-                This username is already taken
+                {t("auth.register.errors.usernameTaken")}
               </Text>
             )}
 
@@ -233,7 +234,7 @@ export default function RegisterScreen() {
                 >
                   <TextInput
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder={t("auth.register.emailPlaceholder")}
                     placeholderTextColor="#8E8E93"
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -266,7 +267,7 @@ export default function RegisterScreen() {
                   <TextInput
                     ref={passwordRef}
                     style={styles.input}
-                    placeholder="Password"
+                    placeholder={t("auth.register.passwordPlaceholder")}
                     placeholderTextColor="#8E8E93"
                     secureTextEntry
                     autoCapitalize="none"
@@ -305,16 +306,15 @@ export default function RegisterScreen() {
                     {value && <Text style={styles.checkmark}>✓</Text>}
                   </View>
                   <Text style={styles.privacyText}>
-                    I accept the{" "}
+                    {t("auth.register.acceptPrivacy")}{" "}
                     <Text
                       style={styles.privacyLink}
                       onPress={(e) => {
                         e.stopPropagation();
-                      
                         router.push("/(auth)/privacy-policy");
                       }}
                     >
-                      Privacy Policy
+                      {t("auth.register.privacyPolicyLink")}
                     </Text>
                   </Text>
                 </TouchableOpacity>
@@ -335,7 +335,9 @@ export default function RegisterScreen() {
               {isSubmitting ? (
                 <ActivityIndicator color="#121214" />
               ) : (
-                <Text style={styles.buttonText}>Sign Up</Text>
+                <Text style={styles.buttonText}>
+                  {t("auth.register.submit")}
+                </Text>
               )}
             </TouchableOpacity>
             <GoogleButton
@@ -346,13 +348,15 @@ export default function RegisterScreen() {
 
           {/* Footer */}
           <View style={styles.footerContainer}>
-            <Text style={styles.footerText}>You have an account ? </Text>
+            <Text style={styles.footerText}>
+              {t("auth.register.hasAccount")}{" "}
+            </Text>
             <TouchableOpacity>
               <Text
                 onPress={() => router.push("/(auth)/login")}
                 style={styles.footerLink}
               >
-                Sign in
+                {t("auth.register.signInLink")}
               </Text>
             </TouchableOpacity>
           </View>
