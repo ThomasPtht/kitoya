@@ -182,5 +182,43 @@
       "levelUp": "Montez en grade à mesure que votre collection grandit",
       "export": "Exportez et présentez votre vestiaire ultime"
     }
+  },
+  "home": {
+    "archiveCard": {
+      "title": "Archiver une nouvelle acquisition",
+      "subtitle": "Chaque maillot raconte une histoire, la vôtre. Ajoutez tous les détails et regardez votre vestiaire grandir !",
+      "button": "Ajouter un maillot"
+    },
+    "lastAdded": "DERNIERS AJOUTS AU VESTIAIRE",
+    "empty": {
+      "title": "Votre vestiaire est vide",
+      "subtitle": "Commencez par ajouter votre premier maillot, avec ses photos, ses histoires personnelles et tous les détails.",
+      "button": "Mettre en ligne un maillot"
+    },
+    "stats": {
+      "title": "EN UN COUP D'ŒIL",
+      "totalKits": "Total Maillots",
+      "topTeam": "Équipe phare",
+      "addFirstKit": "Ajouter votre premier maillot"
+    }
+  },
+  "drawer": {
+    "pro": {
+      "badge": "KITROOM ELITE",
+      "title": "Débloquez l'archive complète",
+      "feature1": "• Stockage de maillots illimité",
+      "feature2": "• Stats et analyses de collection",
+      "feature3": "• Export de portfolio",
+      "button": "Mettre à niveau"
+    },
+    "nav": {
+      "invite": "Inviter des amis",
+      "export": "Exporter la collection",
+      "stats": "Stats de collection",
+      "settings": "Paramètres",
+      "help": "Aide & feedback"
+    },
+    "eliteBadge": "ELITE",
+    "logout": "Se déconnecter"
   }
 }

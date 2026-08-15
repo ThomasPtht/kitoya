@@ -8,6 +8,7 @@ import {
 } from "@/hooks/useJerseyHook";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   ScrollView,
@@ -19,6 +20,7 @@ import {
 } from "react-native";
 
 export default function TabOneScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: jerseys, isLoading } = useJerseys();
   const { data: count } = useJerseyCount();
@@ -36,19 +38,20 @@ export default function TabOneScreen() {
           activeOpacity={0.8}
           onPress={() => router.push("/add")}
         >
-          <Text style={styles.archiveTitle}>Archive a new acquisition</Text>
+          <Text style={styles.archiveTitle}>{t("home.archiveCard.title")}</Text>
           <Text style={styles.archiveSubtitle}>
-            Every kit tells a story, yours. Add all the details and watch your
-            locker grow !
+            {t("home.archiveCard.subtitle")}
           </Text>
           <View style={styles.scanButton}>
             <FontAwesome name="camera" size={14} color="#000000" />
-            <Text style={styles.scanButtonText}>Add a Kit</Text>
+            <Text style={styles.scanButtonText}>
+              {t("home.archiveCard.button")}
+            </Text>
           </View>
         </TouchableOpacity>
 
         {/* Last added to Locker section */}
-        <Text style={styles.lastAdded}>LAST ADDED TO LOCKER</Text>
+        <Text style={styles.lastAdded}>{t("home.lastAdded")}</Text>
 
         {isLoading ? (
           <ActivityIndicator color={Colors.theme.primary} />
@@ -70,11 +73,8 @@ export default function TabOneScreen() {
             <View style={styles.emptyIconContainer}>
               <Ionicons name="shirt-outline" size={28} color="#05C785" />
             </View>
-            <Text style={styles.emptyTitle}>Your locker is empty</Text>
-            <Text style={styles.emptySubtitle}>
-              Start by adding your first jersey, complete with its photos,
-              personal stories, and all the details.
-            </Text>
+            <Text style={styles.emptyTitle}>{t("home.empty.title")}</Text>
+            <Text style={styles.emptySubtitle}>{t("home.empty.subtitle")}</Text>
             <TouchableOpacity
               style={styles.uploadButton}
               activeOpacity={0.8}
@@ -83,17 +83,19 @@ export default function TabOneScreen() {
               }}
             >
               <Feather name="upload" size={16} color="#05C785" />
-              <Text style={styles.uploadButtonText}>Upload a kit</Text>
+              <Text style={styles.uploadButtonText}>
+                {t("home.empty.button")}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
         <KitOfTheDayCard />
 
-        <Text style={styles.collectionTitle}>AT A GLANCE</Text>
+        <Text style={styles.collectionTitle}>{t("home.stats.title")}</Text>
         <View style={styles.containerStats}>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Total Kits</Text>
+            <Text style={styles.statLabel}>{t("home.stats.totalKits")}</Text>
             <View style={styles.statValueContainer}>
               <Ionicons
                 name="shirt-outline"
@@ -114,7 +116,7 @@ export default function TabOneScreen() {
               />
             )}
 
-            <Text style={styles.statLabel}>Top Team</Text>
+            <Text style={styles.statLabel}>{t("home.stats.topTeam")}</Text>
 
             {isClubLoading ? (
               <ActivityIndicator size="small" color={Colors.theme.primary} />
@@ -132,7 +134,7 @@ export default function TabOneScreen() {
                     },
                   ]}
                 >
-                  Add your first kit
+                  {t("home.stats.addFirstKit")}
                 </Text>
               </TouchableOpacity>
             ) : (

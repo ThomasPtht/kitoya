@@ -183,6 +183,46 @@
       "levelUp": "Level up your rank as your collection grows",
       "export": "Export and showcase your ultimate locker"
     }
+  },
+  {
+  "home": {
+    "archiveCard": {
+      "title": "Archive a new acquisition",
+      "subtitle": "Every kit tells a story, yours. Add all the details and watch your locker grow !",
+      "button": "Add a Kit"
+    },
+    "lastAdded": "LAST ADDED TO LOCKER",
+    "empty": {
+      "title": "Your locker is empty",
+      "subtitle": "Start by adding your first jersey, complete with its photos, personal stories, and all the details.",
+      "button": "Upload a kit"
+    },
+    "stats": {
+      "title": "AT A GLANCE",
+      "totalKits": "Total Kits",
+      "topTeam": "Top Team",
+      "addFirstKit": "Add your first kit"
+    }
+  }
+},
+"drawer": {
+    "pro": {
+      "badge": "KITROOM PRO",
+      "title": "Unlock the full archive",
+      "feature1": "• Unlimited jerseys storage",
+      "feature2": "• Collection stats & insights",
+      "feature3": "• Portfolio export",
+      "button": "Upgrade"
+    },
+    "nav": {
+      "invite": "Invite friends",
+      "export": "Export collection",
+      "stats": "Collection stats",
+      "settings": "Settings",
+      "help": "Help & feedback"
+    },
+    "eliteBadge": "ELITE",
+    "logout": "Log out"
   }
 }
   

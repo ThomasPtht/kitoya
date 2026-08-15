@@ -22,8 +22,10 @@ import { apiClient } from "@/services/api";
 import { useEffect } from "react";
 import { registerForPushNotificationsAsync } from "@/services/notifications.service";
 import { UserAvatar } from "@/components/UserAvatar";
+import { useTranslation } from "react-i18next";
 
 export default function DrawerLayout() {
+  const { t } = useTranslation();
   const { data: userMe } = useUserMe();
   const { data: jerseys } = useJerseys();
   const queryClient = useQueryClient();
@@ -32,7 +34,6 @@ export default function DrawerLayout() {
     registerForPushNotificationsAsync().then(async (token) => {
       if (token && userMe) {
         try {
-          // Appel direct avec ton apiClient (le Bearer Token est ajouté automatiquement)
           await apiClient.post("/notifications/save-token", {
             expoPushToken: token,
           });
@@ -109,23 +110,27 @@ export default function DrawerLayout() {
               >
                 <View style={styles.upgradeHeader}>
                   <Feather name="zap" size={14} color="#05C785" />
-                  <Text style={styles.upgradeBadge}>KITROOM PRO</Text>
+                  <Text style={styles.upgradeBadge}>
+                    {t("drawer.pro.badge")}
+                  </Text>
                 </View>
 
-                <Text style={styles.upgradeTitle}>Unlock the full archive</Text>
+                <Text style={styles.upgradeTitle}>{t("drawer.pro.title")}</Text>
 
                 <View style={styles.featureList}>
                   <Text style={styles.featureItem}>
-                    • Unlimited jerseys storage
+                    {t("drawer.pro.feature1")}
                   </Text>
                   <Text style={styles.featureItem}>
-                    • Collection stats & insights
+                    {t("drawer.pro.feature2")}
                   </Text>
-                  <Text style={styles.featureItem}>• Portfolio export</Text>
+                  <Text style={styles.featureItem}>
+                    {t("drawer.pro.feature3")}
+                  </Text>
                 </View>
 
                 <View style={styles.subButton}>
-                  <Text style={styles.subText}>Upgrade</Text>
+                  <Text style={styles.subText}>{t("drawer.pro.button")}</Text>
                   <Feather name="arrow-right" size={14} color="#121212" />
                 </View>
               </Pressable>
@@ -140,7 +145,7 @@ export default function DrawerLayout() {
                 onPress={() => handleInviteFriends(props.navigation)}
               >
                 <Feather name="user-plus" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Invite friends</Text>
+                <Text style={styles.navText}>{t("drawer.nav.invite")}</Text>
               </Pressable>
 
               {/* Export Collection (Réservé ELITE / ADMIN) */}
@@ -166,12 +171,14 @@ export default function DrawerLayout() {
                     !hasEliteAccess && { color: "#555555" },
                   ]}
                 >
-                  Export collection
+                  {t("drawer.nav.export")}
                 </Text>
                 {!hasEliteAccess && (
                   <View style={styles.lockBadge}>
                     <Feather name="lock" size={10} color="#05C785" />
-                    <Text style={styles.lockBadgeText}>ELITE</Text>
+                    <Text style={styles.lockBadgeText}>
+                      {t("drawer.eliteBadge")}
+                    </Text>
                   </View>
                 )}
               </Pressable>
@@ -199,12 +206,14 @@ export default function DrawerLayout() {
                     !hasEliteAccess && { color: "#555555" },
                   ]}
                 >
-                  Collection stats
+                  {t("drawer.nav.stats")}
                 </Text>
                 {!hasEliteAccess && (
                   <View style={styles.lockBadge}>
                     <Feather name="lock" size={10} color="#05C785" />
-                    <Text style={styles.lockBadgeText}>ELITE</Text>
+                    <Text style={styles.lockBadgeText}>
+                      {t("drawer.eliteBadge")}
+                    </Text>
                   </View>
                 )}
               </Pressable>
@@ -217,7 +226,7 @@ export default function DrawerLayout() {
                 }}
               >
                 <Feather name="settings" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Settings</Text>
+                <Text style={styles.navText}>{t("drawer.nav.settings")}</Text>
               </Pressable>
 
               <Pressable
@@ -228,7 +237,7 @@ export default function DrawerLayout() {
                 }}
               >
                 <AntDesign name="question-circle" size={18} color="#9E9E9E" />
-                <Text style={styles.navText}>Help & feedback</Text>
+                <Text style={styles.navText}>{t("drawer.nav.help")}</Text>
               </Pressable>
             </View>
 
@@ -240,7 +249,7 @@ export default function DrawerLayout() {
                   try {
                     props.navigation.closeDrawer();
                     await authService.logout();
-                    queryClient.clear(); // Clear the cache after logout and avoid to log with old data
+                    queryClient.clear();
                     router.replace("/(auth)/login");
                   } catch (error) {
                     console.error("Logout failed:", error);
@@ -249,7 +258,7 @@ export default function DrawerLayout() {
                 }}
               >
                 <Feather name="log-out" size={18} color="#ffffff" />
-                <Text style={styles.logoutText}>Log out</Text>
+                <Text style={styles.logoutText}>{t("drawer.logout")}</Text>
               </Pressable>
             </View>
           </DrawerContentScrollView>
@@ -302,11 +311,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
-  },
-  avatarText: {
-    color: "#05C785",
-    fontSize: 20,
-    fontWeight: "bold",
   },
   userName: {
     color: "#FFFFFF",
@@ -409,7 +413,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "500",
-    flex: 1, // Permet de pousser le badge ELITE à droite si besoin
+    flex: 1,
   },
   lockBadge: {
     flexDirection: "row",
