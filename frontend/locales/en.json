@@ -28,12 +28,12 @@
       "connecting": "Connecting...",
       "submit": "Login",
       "noAccount": "Don't you have an account?",
-      "signUpLink": "Sign up"
-    },
-    "validation": {
+      "signUpLink": "Sign up",
+      "validation": {
         "invalidEmail": "Invalid email address",
         "passwordMin": "Password must be at least 6 characters"
-      },
+      }
+    },
     "changePassword": {
       "title": "Change Password",
       "subtitle": "Enter your current password and choose a new one.",
@@ -87,5 +87,102 @@
         "login": "Login"
       }
     }
+  },
+  "tabs": {
+    "home": "Home",
+    "locker": "My Locker"
+  },
+  
+  "addJersey": {
+    "title": "Add New Jersey",
+    "imageHint": "Tip: lay the jersey flat on a bed or floor for the best photo.",
+    "frontView": "Front View *",
+    "backView": "Back View",
+    "optional": "(Optional)",
+    "change": "Change",
+    "clubLabel": "Club / National Team *",
+    "clubPlaceholder": "e.g., France, Real Madrid, Arsenal",
+    "seasonLabel": "Season *",
+    "seasonPlaceholder": "e.g., 1998, 2004-2005",
+    "brandLabel": "Brand *",
+    "brandPlaceholder": "e.g., Nike, Adidas",
+    "sizeLabel": "Size *",
+    "kitTypeLabel": "Kit Type *",
+    "priceLabel": "Purchase Price (Optional)",
+    "pricePlaceholder": "e.g., 89.99",
+    "playerLabel": "Player Name (Optional)",
+    "playerPlaceholder": "e.g., Ronaldo, Henry",
+    "numberLabel": "Number (Optional)",
+    "numberPlaceholder": "e.g., 10, 14",
+    "conditionLabel": "Condition *",
+    "versionLabel": "Version *",
+    "officialLabel": "Official Product",
+    "officialSubLabel": "Toggle off if it's a remake/copy",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Add your memories, stories, or any details about this jersey...",
+    "submit": "Add to Locker",
+    "submitting": "Submitting...",
+    "alerts": {
+      "addImageTitle": "Add image",
+      "addImageMessage": "Choose an image source",
+      "takePhoto": "Take photo",
+      "chooseGallery": "Choose from gallery",
+      "cancel": "Cancel",
+      "cameraPermissionTitle": "Camera permission required",
+      "cameraPermissionMessage": "Please allow camera access to take a photo.",
+      "galleryPermissionTitle": "Gallery permission required",
+      "galleryPermissionMessage": "Please allow photo access to choose an image."
+    },
+    "toasts": {
+      "successTitle": "Jersey added",
+      "successMessage": "The jersey has been added to your collection.",
+      "errorTitle": "Error adding jersey",
+      "errorMessage": "There was an error adding the jersey. Please try again."
+    },
+    "validation": {
+      "clubRequired": "Club or Country name is required",
+      "seasonRequired": "Season is required (e.g., 2004)",
+      "sizeRequired": "Please select a size",
+      "typeRequired": "Please select a kit type",
+      "frontImageRequired": "Front image is required",
+      "versionRequired": "Please select a version",
+      "conditionRequired": "Please select a condition",
+      "brandRequired": "Please select a brand"
+    },
+    "types": {
+      "HOME": "Home",
+      "AWAY": "Away",
+      "THIRD": "Third",
+      "FOURTH": "Fourth",
+      "SPECIAL": "Special",
+      "GOALKEEPER": "Goalkeeper",
+      "TRAINING": "Training"
+    },
+    "conditions": {
+      "NEW_WITH_TAGS": "New with Tags",
+      "EXCELLENT": "Excellent",
+      "VERY_GOOD": "Very Good",
+      "GOOD": "Good",
+      "FAIR": "Fair"
+    },
+    "versions": {
+      "REPLICA": "Replica",
+      "AUTHENTIC": "Authentic",
+      "PLAYER_ISSUE": "Player Issue",
+      "MATCH_WORN": "Match Worn"
+    }
+  },
+  "tabDressing": {
+    "myLocker": "My Locker",
+    "emptyTitle": "Your locker is empty",
+    "emptySubtitle": "Start building your archive. Add your first shirt and unlock your collector rank.",
+    "addFirstKit": "Add your first kit",
+    "whyArchive": {
+      "title": "WHY ARCHIVE?",
+      "track": "Track all your kits and gems",
+      "levelUp": "Level up your rank as your collection grows",
+      "export": "Export and showcase your ultimate locker"
+    }
   }
 }
+  

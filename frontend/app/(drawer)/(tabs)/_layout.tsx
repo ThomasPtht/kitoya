@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import { useColorScheme } from "@/components/useColorScheme";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const KITROOM_EMERALD = "#0DFFAA";
 const KITROOM_INACTIVE = "#6B7280";
@@ -43,6 +44,7 @@ function StyledTabBarIcon({
 }
 
 export default function TabLayout() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
 
   return (
@@ -70,7 +72,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Home",
+            title: t("tabs.home"),
             tabBarIcon: ({ color, focused }) => (
               <StyledTabBarIcon
                 Component={FontAwesome}
@@ -105,7 +107,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="dressing"
           options={{
-            title: "My Locker",
+            title: t("tabs.locker"),
             tabBarIcon: ({ color, focused }) => (
               <StyledTabBarIcon
                 Component={Ionicons}
@@ -131,18 +133,17 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 10,
   },
-  // Ces styles doivent être au même niveau que iconBase
   floatingButtonWrapper: {
     top: -20,
     justifyContent: "center",
     alignItems: "center",
-    flex: 1, // Ajouté pour aider au centrage dans la TabBar
+    flex: 1,
   },
   addButtonContainer: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: KITROOM_EMERALD, // Bulle en couleur primary
+    backgroundColor: KITROOM_EMERALD,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: KITROOM_EMERALD,

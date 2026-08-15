@@ -87,5 +87,100 @@
         "login": "Connexion"
       }
     }
+  },
+  "tabs": {
+    "home": "Accueil",
+    "locker": "Mon Vestiaire"
+  },
+  "addJersey": {
+    "title": "Ajouter un maillot",
+    "imageHint": "Conseil : étalez le maillot à plat sur un lit ou le sol pour la meilleure photo.",
+    "frontView": "Vue de face *",
+    "backView": "Vue de dos",
+    "optional": "(Optionnel)",
+    "change": "Changer",
+    "clubLabel": "Club / Équipe nationale *",
+    "clubPlaceholder": "ex: France, Real Madrid, Arsenal",
+    "seasonLabel": "Saison *",
+    "seasonPlaceholder": "ex: 1998, 2004-2005",
+    "brandLabel": "Marque *",
+    "brandPlaceholder": "ex: Nike, Adidas",
+    "sizeLabel": "Taille *",
+    "kitTypeLabel": "Type de maillot *",
+    "priceLabel": "Prix d'achat (Optionnel)",
+    "pricePlaceholder": "ex: 89.99",
+    "playerLabel": "Nom du joueur (Optionnel)",
+    "playerPlaceholder": "ex: Ronaldo, Henry",
+    "numberLabel": "Numéro (Optionnel)",
+    "numberPlaceholder": "ex: 10, 14",
+    "conditionLabel": "État *",
+    "versionLabel": "Version *",
+    "officialLabel": "Produit Officiel",
+    "officialSubLabel": "Désactivez s'il s'agit d'une réédition/copie",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Ajoutez vos souvenirs, anecdotes ou détails sur ce maillot...",
+    "submit": "Ajouter au vestiaire",
+    "submitting": "Envoi en cours...",
+    "alerts": {
+      "addImageTitle": "Ajouter une image",
+      "addImageMessage": "Choisissez une source d'image",
+      "takePhoto": "Prendre une photo",
+      "chooseGallery": "Choisir depuis la galerie",
+      "cancel": "Annuler",
+      "cameraPermissionTitle": "Permission caméra requise",
+      "cameraPermissionMessage": "Veuillez autoriser l'accès à la caméra pour prendre une photo.",
+      "galleryPermissionTitle": "Permission galerie requise",
+      "galleryPermissionMessage": "Veuillez autoriser l'accès aux photos pour choisir une image."
+    },
+    "toasts": {
+      "successTitle": "Maillot ajouté",
+      "successMessage": "Le maillot a été ajouté à votre collection.",
+      "errorTitle": "Erreur lors de l'ajout",
+      "errorMessage": "Une erreur est survenue lors de l'ajout du maillot. Veuillez réessayer."
+    },
+    "validation": {
+      "clubRequired": "Le nom du club ou pays est requis",
+      "seasonRequired": "La saison est requise (ex: 2004)",
+      "sizeRequired": "Veuillez sélectionner une taille",
+      "typeRequired": "Veuillez sélectionner un type de maillot",
+      "frontImageRequired": "L'image de face est requise",
+      "versionRequired": "Veuillez sélectionner une version",
+      "conditionRequired": "Veuillez sélectionner un état",
+      "brandRequired": "Veuillez sélectionner une marque"
+    },
+    "types": {
+      "HOME": "Domicile",
+      "AWAY": "Extérieur",
+      "THIRD": "Third",
+      "FOURTH": "Fourth",
+      "SPECIAL": "Spécial",
+      "GOALKEEPER": "Gardien",
+      "TRAINING": "Entraînement"
+    },
+    "conditions": {
+      "NEW_WITH_TAGS": "Neuf avec étiquette",
+      "EXCELLENT": "Excellent",
+      "VERY_GOOD": "Très bon état",
+      "GOOD": "Bon état",
+      "FAIR": "État moyen"
+    },
+    "versions": {
+      "REPLICA": "Replica",
+      "AUTHENTIC": "Authentique",
+      "PLAYER_ISSUE": "Préparé pour le joueur",
+      "MATCH_WORN": "Porté en match"
+    }
+  },
+  "tabDressing": {
+    "myLocker": "Mon vestiaire",
+    "emptyTitle": "Votre vestiaire est vide",
+    "emptySubtitle": "Commencez à constituer votre archive. Ajoutez votre premier maillot et débloquez votre rang de collectionneur.",
+    "addFirstKit": "Ajouter votre premier maillot",
+    "whyArchive": {
+      "title": "POURQUOI ARCHIVER ?",
+      "track": "Suivez tous vos maillots et pépites",
+      "levelUp": "Montez en grade à mesure que votre collection grandit",
+      "export": "Exportez et présentez votre vestiaire ultime"
+    }
   }
 }

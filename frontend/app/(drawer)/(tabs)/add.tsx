@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   StyleSheet,
   Text,
@@ -26,67 +26,76 @@ import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { BRANDS } from "@/constants/Jerseys";
 import { useDebounce } from "@/hooks/useDebounce";
-
-// 1. 📜 SCHÉMA DE VALIDATION ZOD
-const jerseySchema = z.object({
-  clubId: z.string().optional().nullable(),
-  clubName: z.string().min(2, { message: "Club or Country name is required" }),
-  season: z.string().min(4, { message: "Season is required (e.g., 2004)" }),
-  size: z.string().min(1, { message: "Please select a size" }),
-  type: z.string().min(1, { message: "Please select a kit type" }),
-  purchasePrice: z.number().optional().nullable(),
-  isOfficial: z.boolean().default(true),
-  playerName: z.string().optional(),
-  number: z.string().optional(),
-  frontImageUri: z.string().min(1, { message: "Front image is required" }),
-  backImageUri: z.string().optional().nullable(),
-  description: z.string().optional(),
-  version: z.string().min(1, { message: "Please select a version" }),
-  condition: z.string().min(1, { message: "Please select a condition" }),
-
-  brand: z.string().min(1, { message: "Please select a brand" }),
-});
-
-type JerseyFormValues = z.infer<typeof jerseySchema>;
+import { useTranslation } from "react-i18next";
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "XXXL"];
-export const JERSEY_TYPES_MAP: Record<string, string> = {
-  HOME: "Home",
-  AWAY: "Away",
-  THIRD: "Third",
-  FOURTH: "Fourth",
-  SPECIAL: "Special",
-  GOALKEEPER: "Goalkeeper",
-  TRAINING: "Training",
-};
 
-export const KIT_CONDITIONS_MAP: Record<string, string> = {
-  NEW_WITH_TAGS: "New with Tags",
-  EXCELLENT: "Excellent",
-  VERY_GOOD: "Very Good",
-  GOOD: "Good",
-  FAIR: "Fair",
-};
+const JERSEY_TYPE_KEYS = [
+  "HOME",
+  "AWAY",
+  "THIRD",
+  "FOURTH",
+  "SPECIAL",
+  "GOALKEEPER",
+  "TRAINING",
+] as const;
 
-export const KIT_VERSIONS_MAP: Record<string, string> = {
-  REPLICA: "Replica",
-  AUTHENTIC: "Authentic",
-  PLAYER_ISSUE: "Player Issue",
-  MATCH_WORN: "Match Worn",
-};
+const KIT_CONDITION_KEYS = [
+  "NEW_WITH_TAGS",
+  "EXCELLENT",
+  "VERY_GOOD",
+  "GOOD",
+  "FAIR",
+] as const;
 
-// On génère les listes automatiquement à partir des clés du mapping
-const JERSEY_TYPES = Object.keys(JERSEY_TYPES_MAP) as Array<
-  keyof typeof JERSEY_TYPES_MAP
->;
-const KIT_CONDITIONS = Object.keys(KIT_CONDITIONS_MAP) as Array<
-  keyof typeof KIT_CONDITIONS_MAP
->;
-const KIT_VERSIONS = Object.keys(KIT_VERSIONS_MAP) as Array<
-  keyof typeof KIT_VERSIONS_MAP
->;
+const KIT_VERSION_KEYS = [
+  "REPLICA",
+  "AUTHENTIC",
+  "PLAYER_ISSUE",
+  "MATCH_WORN",
+] as const;
+
+// Création dynamique du schéma Zod avec i18n
+const getJerseySchema = (t: (key: string) => string) =>
+  z.object({
+    clubId: z.string().optional().nullable(),
+    clubName: z
+      .string()
+      .min(2, { message: t("addJersey.validation.clubRequired") }),
+    season: z
+      .string()
+      .min(4, { message: t("addJersey.validation.seasonRequired") }),
+    size: z
+      .string()
+      .min(1, { message: t("addJersey.validation.sizeRequired") }),
+    type: z
+      .string()
+      .min(1, { message: t("addJersey.validation.typeRequired") }),
+    purchasePrice: z.number().optional().nullable(),
+    isOfficial: z.boolean().default(true),
+    playerName: z.string().optional(),
+    number: z.string().optional(),
+    frontImageUri: z
+      .string()
+      .min(1, { message: t("addJersey.validation.frontImageRequired") }),
+    backImageUri: z.string().optional().nullable(),
+    description: z.string().optional(),
+    version: z
+      .string()
+      .min(1, { message: t("addJersey.validation.versionRequired") }),
+    condition: z
+      .string()
+      .min(1, { message: t("addJersey.validation.conditionRequired") }),
+    brand: z
+      .string()
+      .min(1, { message: t("addJersey.validation.brandRequired") }),
+  });
+
+type JerseyFormValues = z.infer<ReturnType<typeof getJerseySchema>>;
 
 export default function TabAddScreen() {
+  const { t } = useTranslation();
+
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [, setIsLoading] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -109,8 +118,6 @@ export default function TabAddScreen() {
 
   const { data: sports } = useSports();
 
-  // Un seul sport disponible dans l'app pour l'instant : Football.
-  // Assigné automatiquement, aucune sélection requise de l'utilisateur.
   const footballSportId = sports?.find(
     (s: { name: string }) => s.name.toLowerCase() === "football",
   )?.id;
@@ -124,11 +131,9 @@ export default function TabAddScreen() {
   const [clubSearchInput, setClubSearchInput] = useState<string>("");
   const debouncedClubSearch = useDebounce(clubSearchInput, 500);
 
-  // Ce useEffect s'exécute automatiquement 500ms après la dernière frappe
   useFocusEffect(
     useCallback(() => {
       const fetchClubs = async () => {
-        // SÉCURITÉ : On bloque si le sport n'est pas prêt ou si la recherche est trop courte
         if (
           !selectedSportId ||
           !debouncedClubSearch ||
@@ -144,7 +149,7 @@ export default function TabAddScreen() {
         try {
           const results = await searchClubs(
             debouncedClubSearch,
-            selectedSportId, // Garanti non vide ici
+            selectedSportId,
           );
           setSuggestions(results);
           setIsDropdownVisible(results.length > 0);
@@ -181,14 +186,15 @@ export default function TabAddScreen() {
         setFrontImage("");
         setBackImage(null);
         setSelectedClubId("");
-        // On NE reset PAS selectedSportId : il est réassigné automatiquement
-        // par le useEffect dès que l'écran reprend le focus et que `sports` est chargé.
         setSuggestions([]);
         setIsDropdownVisible(false);
         setIsBrandDropdownVisible(false);
       };
     }, []),
   );
+
+  // Schema de validation réactif
+  const schema = useMemo(() => getJerseySchema(t), [t]);
 
   // React Hook Form setup
   const {
@@ -197,8 +203,8 @@ export default function TabAddScreen() {
     reset,
     setValue,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(jerseySchema),
+  } = useForm<JerseyFormValues>({
+    resolver: zodResolver(schema),
     defaultValues: {
       clubId: "",
       clubName: "",
@@ -229,63 +235,68 @@ export default function TabAddScreen() {
   };
 
   const pickImage = async (target: "front" | "back") => {
-    Alert.alert("Add image", "Choose an image source", [
-      {
-        text: "Take photo",
-        onPress: async () => {
-          const { status } = await ImagePicker.requestCameraPermissionsAsync();
-          if (status !== "granted") {
-            Toast.show({
-              type: "error",
-              text1: "Camera permission required",
-              text2: "Please allow camera access to take a photo.",
+    Alert.alert(
+      t("addJersey.alerts.addImageTitle"),
+      t("addJersey.alerts.addImageMessage"),
+      [
+        {
+          text: t("addJersey.alerts.takePhoto"),
+          onPress: async () => {
+            const { status } =
+              await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== "granted") {
+              Toast.show({
+                type: "error",
+                text1: t("addJersey.alerts.cameraPermissionTitle"),
+                text2: t("addJersey.alerts.cameraPermissionMessage"),
+              });
+              return;
+            }
+
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ["images"],
+              allowsEditing: true,
+              aspect: [4, 3],
+              quality: 0.8,
             });
-            return;
-          }
 
-          const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ["images"],
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 0.8,
-          });
-
-          if (!result.canceled) {
-            applySelectedImage(result.assets[0].uri, target);
-          }
+            if (!result.canceled) {
+              applySelectedImage(result.assets[0].uri, target);
+            }
+          },
         },
-      },
-      {
-        text: "Choose from gallery",
-        onPress: async () => {
-          const { status } =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== "granted") {
-            Toast.show({
-              type: "error",
-              text1: "Gallery permission required",
-              text2: "Please allow photo access to choose an image.",
+        {
+          text: t("addJersey.alerts.chooseGallery"),
+          onPress: async () => {
+            const { status } =
+              await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+              Toast.show({
+                type: "error",
+                text1: t("addJersey.alerts.galleryPermissionTitle"),
+                text2: t("addJersey.alerts.galleryPermissionMessage"),
+              });
+              return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ["images"],
+              allowsEditing: true,
+              aspect: [4, 3],
+              quality: 0.8,
             });
-            return;
-          }
 
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 0.8,
-          });
-
-          if (!result.canceled) {
-            applySelectedImage(result.assets[0].uri, target);
-          }
+            if (!result.canceled) {
+              applySelectedImage(result.assets[0].uri, target);
+            }
+          },
         },
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
+        {
+          text: t("addJersey.alerts.cancel"),
+          style: "cancel",
+        },
+      ],
+    );
   };
 
   const handlePickFrontImage = () => pickImage("front");
@@ -293,7 +304,6 @@ export default function TabAddScreen() {
 
   const { mutate: createJersey, isPending } = useCreateJersey();
 
-  // Form Submission handler
   const onSubmit = async (data: JerseyFormValues) => {
     const formData = new FormData();
 
@@ -339,8 +349,8 @@ export default function TabAddScreen() {
       await createJersey(formData);
       Toast.show({
         type: "success",
-        text1: "Jersey added",
-        text2: "The jersey has been added to your collection.",
+        text1: t("addJersey.toasts.successTitle"),
+        text2: t("addJersey.toasts.successMessage"),
         position: "bottom",
       });
 
@@ -350,11 +360,10 @@ export default function TabAddScreen() {
       setSelectedClubId("");
       router.navigate("/(drawer)/(tabs)/dressing");
     } catch (error) {
-      const err = error as any;
       Toast.show({
         type: "error",
-        text1: "Error adding jersey",
-        text2: "There was an error adding the jersey. Please try again.",
+        text1: t("addJersey.toasts.errorTitle"),
+        text2: t("addJersey.toasts.errorMessage"),
         position: "bottom",
       });
       console.error("Error creating jersey:", error);
@@ -371,11 +380,9 @@ export default function TabAddScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.heading}>Add New Jersey</Text>
+        <Text style={styles.heading}>{t("addJersey.title")}</Text>
 
-        <Text style={styles.imageHint}>
-          Tip: lay the jersey flat on a bed or floor for the best photo.
-        </Text>
+        <Text style={styles.imageHint}>{t("addJersey.imageHint")}</Text>
 
         {/* Image Pickers */}
         <View style={styles.imagePickerRow}>
@@ -398,13 +405,15 @@ export default function TabAddScreen() {
                     size={24}
                     color={Colors.theme.primary}
                   />
-                  <Text style={styles.changeText}>Change</Text>
+                  <Text style={styles.changeText}>{t("addJersey.change")}</Text>
                 </View>
               </View>
             ) : (
               <>
                 <FontAwesome name="camera" size={20} color="#8E8E93" />
-                <Text style={styles.imagePickerText}>Front View *</Text>
+                <Text style={styles.imagePickerText}>
+                  {t("addJersey.frontView")}
+                </Text>
               </>
             )}
           </TouchableOpacity>
@@ -428,33 +437,37 @@ export default function TabAddScreen() {
                     size={24}
                     color={Colors.theme.primary}
                   />
-                  <Text style={styles.changeText}>Change</Text>
+                  <Text style={styles.changeText}>{t("addJersey.change")}</Text>
                 </View>
               </View>
             ) : (
               <>
                 <FontAwesome name="camera" size={20} color="#8E8E93" />
-                <Text style={styles.imagePickerText}>Back View</Text>
-                <Text style={styles.imagePickerSubtext}>(Optional)</Text>
+                <Text style={styles.imagePickerText}>
+                  {t("addJersey.backView")}
+                </Text>
+                <Text style={styles.imagePickerSubtext}>
+                  {t("addJersey.optional")}
+                </Text>
               </>
             )}
           </TouchableOpacity>
         </View>
 
         {/* Club input */}
-        <Text style={styles.label}>Club / National Team *</Text>
+        <Text style={styles.label}>{t("addJersey.clubLabel")}</Text>
         <Controller
           control={control}
           name="clubName"
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={[styles.input, errors.clubName && styles.inputError]}
-              placeholder="e.g., France, Real Madrid, Arsenal"
+              placeholder={t("addJersey.clubPlaceholder")}
               placeholderTextColor="#8E8E93"
               value={value}
               onChangeText={(text) => {
-                onChange(text); // update the form value
-                setClubSearchInput(text); // Trigger the debounced search
+                onChange(text);
+                setClubSearchInput(text);
               }}
             />
           )}
@@ -484,14 +497,14 @@ export default function TabAddScreen() {
         )}
 
         {/* Season input */}
-        <Text style={styles.label}>Season *</Text>
+        <Text style={styles.label}>{t("addJersey.seasonLabel")}</Text>
         <Controller
           control={control}
           name="season"
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={[styles.input, errors.season && styles.inputError]}
-              placeholder="e.g., 1998, 2004-2005"
+              placeholder={t("addJersey.seasonPlaceholder")}
               placeholderTextColor="#8E8E93"
               onChangeText={onChange}
               value={value}
@@ -504,7 +517,7 @@ export default function TabAddScreen() {
 
         {/* Brand selector */}
         <View style={{ position: "relative", zIndex: 50 }}>
-          <Text style={styles.label}>Brand *</Text>
+          <Text style={styles.label}>{t("addJersey.brandLabel")}</Text>
           <Controller
             control={control}
             name="brand"
@@ -512,7 +525,7 @@ export default function TabAddScreen() {
               <View style={{ position: "relative" }}>
                 <TextInput
                   style={[styles.input, errors.brand && styles.inputError]}
-                  placeholder="e.g., Nike, Adidas"
+                  placeholder={t("addJersey.brandPlaceholder")}
                   placeholderTextColor="#8E8E93"
                   value={value}
                   onChangeText={(text) => {
@@ -554,7 +567,7 @@ export default function TabAddScreen() {
         </View>
 
         {/* Size selector */}
-        <Text style={styles.label}>Size *</Text>
+        <Text style={styles.label}>{t("addJersey.sizeLabel")}</Text>
         <Controller
           control={control}
           name="size"
@@ -584,25 +597,25 @@ export default function TabAddScreen() {
         )}
 
         {/* Type selector */}
-        <Text style={styles.label}>Kit Type *</Text>
+        <Text style={styles.label}>{t("addJersey.kitTypeLabel")}</Text>
         <Controller
           control={control}
           name="type"
           render={({ field: { onChange, value } }) => (
             <View style={styles.chipRow}>
-              {JERSEY_TYPES.map((t) => (
+              {JERSEY_TYPE_KEYS.map((tKey) => (
                 <TouchableOpacity
-                  key={t}
-                  style={[styles.chip, value === t && styles.chipSelected]}
-                  onPress={() => onChange(t)}
+                  key={tKey}
+                  style={[styles.chip, value === tKey && styles.chipSelected]}
+                  onPress={() => onChange(tKey)}
                 >
                   <Text
                     style={[
                       styles.chipText,
-                      value === t && styles.chipTextSelected,
+                      value === tKey && styles.chipTextSelected,
                     ]}
                   >
-                    {JERSEY_TYPES_MAP[t]}
+                    {t(`addJersey.types.${tKey}`)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -613,15 +626,15 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.type.message}</Text>
         )}
 
-        {/* Prix d'achat (Purchase Price) */}
-        <Text style={styles.label}>Purchase Price (Optional)</Text>
+        {/* Purchase Price */}
+        <Text style={styles.label}>{t("addJersey.priceLabel")}</Text>
         <Controller
           control={control}
           name="purchasePrice"
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={styles.input}
-              placeholder="e.g., 89.99"
+              placeholder={t("addJersey.pricePlaceholder")}
               placeholderTextColor="#8E8E93"
               keyboardType="numeric"
               onChangeText={(text) =>
@@ -635,14 +648,14 @@ export default function TabAddScreen() {
         <View style={styles.separator} />
 
         {/* Player */}
-        <Text style={styles.label}>Player Name (Optional)</Text>
+        <Text style={styles.label}>{t("addJersey.playerLabel")}</Text>
         <Controller
           control={control}
           name="playerName"
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={styles.input}
-              placeholder="e.g., Zidane, Henry"
+              placeholder={t("addJersey.playerPlaceholder")}
               placeholderTextColor="#8E8E93"
               onChangeText={onChange}
               value={value}
@@ -651,14 +664,14 @@ export default function TabAddScreen() {
         />
 
         {/* Jersey Number */}
-        <Text style={styles.label}>Number (Optional)</Text>
+        <Text style={styles.label}>{t("addJersey.numberLabel")}</Text>
         <Controller
           control={control}
           name="number"
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={styles.input}
-              placeholder="e.g., 10, 14"
+              placeholder={t("addJersey.numberPlaceholder")}
               placeholderTextColor="#8E8E93"
               keyboardType="number-pad"
               onChangeText={(text) => onChange(text === "" ? undefined : text)}
@@ -668,25 +681,25 @@ export default function TabAddScreen() {
         />
 
         {/* Condition */}
-        <Text style={styles.label}>Condition *</Text>
+        <Text style={styles.label}>{t("addJersey.conditionLabel")}</Text>
         <Controller
           control={control}
           name="condition"
           render={({ field: { onChange, value } }) => (
             <View style={styles.chipRow}>
-              {KIT_CONDITIONS.map((t) => (
+              {KIT_CONDITION_KEYS.map((cKey) => (
                 <TouchableOpacity
-                  key={t}
-                  style={[styles.chip, value === t && styles.chipSelected]}
-                  onPress={() => onChange(t)}
+                  key={cKey}
+                  style={[styles.chip, value === cKey && styles.chipSelected]}
+                  onPress={() => onChange(cKey)}
                 >
                   <Text
                     style={[
                       styles.chipText,
-                      value === t && styles.chipTextSelected,
+                      value === cKey && styles.chipTextSelected,
                     ]}
                   >
-                    {KIT_CONDITIONS_MAP[t]}
+                    {t(`addJersey.conditions.${cKey}`)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -698,25 +711,25 @@ export default function TabAddScreen() {
         )}
 
         {/* Version */}
-        <Text style={styles.label}>Version *</Text>
+        <Text style={styles.label}>{t("addJersey.versionLabel")}</Text>
         <Controller
           control={control}
           name="version"
           render={({ field: { onChange, value } }) => (
             <View style={styles.chipRow}>
-              {KIT_VERSIONS.map((t) => (
+              {KIT_VERSION_KEYS.map((vKey) => (
                 <TouchableOpacity
-                  key={t}
-                  style={[styles.chip, value === t && styles.chipSelected]}
-                  onPress={() => onChange(t)}
+                  key={vKey}
+                  style={[styles.chip, value === vKey && styles.chipSelected]}
+                  onPress={() => onChange(vKey)}
                 >
                   <Text
                     style={[
                       styles.chipText,
-                      value === t && styles.chipTextSelected,
+                      value === vKey && styles.chipTextSelected,
                     ]}
                   >
-                    {KIT_VERSIONS_MAP[t]}
+                    {t(`addJersey.versions.${vKey}`)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -727,12 +740,14 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.version.message}</Text>
         )}
 
-        {/* Produit officiel (Is Official) */}
+        {/* Official Product Switch */}
         <View style={styles.switchRow}>
           <View style={styles.switchTextContainer}>
-            <Text style={styles.labelInline}>Official Product</Text>
+            <Text style={styles.labelInline}>
+              {t("addJersey.officialLabel")}
+            </Text>
             <Text style={styles.subLabel}>
-              Toggle off if it's a remake/copy
+              {t("addJersey.officialSubLabel")}
             </Text>
           </View>
           <Controller
@@ -750,14 +765,14 @@ export default function TabAddScreen() {
         </View>
 
         {/* Description */}
-        <Text style={styles.label}>Description</Text>
+        <Text style={styles.label}>{t("addJersey.descriptionLabel")}</Text>
         <Controller
           control={control}
           name="description"
           render={({ field: { onChange, value } }) => (
             <TextInput
               style={[styles.input, { height: 100, textAlignVertical: "top" }]}
-              placeholder="Add your memories, stories, or any details about this jersey..."
+              placeholder={t("addJersey.descriptionPlaceholder")}
               placeholderTextColor="#8E8E93"
               multiline
               onChangeText={onChange}
@@ -785,11 +800,9 @@ export default function TabAddScreen() {
             },
           )}
         >
-          {isPending ? (
-            <Text style={styles.submitButtonText}>Submitting...</Text>
-          ) : (
-            <Text style={styles.submitButtonText}>Add to Locker</Text>
-          )}
+          <Text style={styles.submitButtonText}>
+            {isPending ? t("addJersey.submitting") : t("addJersey.submit")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

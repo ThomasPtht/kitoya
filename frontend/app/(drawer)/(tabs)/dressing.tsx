@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
   Text,
-  Share,
 } from "react-native";
 
 import { useJerseys } from "@/hooks/useJerseyHook";
@@ -18,11 +17,13 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CustomSearchBar } from "@/components/CustomSearchBar";
 import { router } from "expo-router";
 import { useUserMe } from "@/hooks/useAuthHook";
+import { useTranslation } from "react-i18next";
 
 import { useFilterStore } from "@/stores/useFilterStore";
 import FilterModal from "@/components/FilterModal";
 
 export default function TabDressingScreen() {
+  const { t } = useTranslation();
   const { data: jerseys, isLoading } = useJerseys();
   const { data: userMe } = useUserMe();
   const [modalVisible, setModalVisible] = useState(false);
@@ -115,7 +116,7 @@ export default function TabDressingScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>My Locker</Text>
+        <Text style={styles.title}>{t("dressing.myLocker")}</Text>
       </View>
 
       {/* On n'affiche la barre de recherche que s'il y a des maillots */}
@@ -185,10 +186,9 @@ export default function TabDressingScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>Your locker is empty</Text>
+            <Text style={styles.emptyTitle}>{t("dressing.empty.title")}</Text>
             <Text style={styles.emptySubtitle}>
-              Start building your archive. Add your first shirt and unlock your
-              collector rank.
+              {t("dressing.empty.subtitle")}
             </Text>
 
             <TouchableOpacity
@@ -199,16 +199,22 @@ export default function TabDressingScreen() {
               }}
             >
               <Feather name="plus" size={18} color="#121212" />
-              <Text style={styles.addButtonText}>Add your first kit</Text>
+              <Text style={styles.addButtonText}>
+                {t("dressing.empty.addButton")}
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Why Archive Card */}
           <View style={styles.whyBox}>
-            <Text style={styles.whyTitle}>WHY ARCHIVE?</Text>
+            <Text style={styles.whyTitle}>
+              {t("dressing.whyArchive.title")}
+            </Text>
             <View style={styles.whyItem}>
               <Feather name="zap" size={14} color="#05C785" />
-              <Text style={styles.whyText}>Track all your kits and gems</Text>
+              <Text style={styles.whyText}>
+                {t("dressing.whyArchive.item1")}
+              </Text>
             </View>
             <View style={styles.whyItem}>
               <MaterialCommunityIcons
@@ -217,13 +223,13 @@ export default function TabDressingScreen() {
                 color="#05C785"
               />
               <Text style={styles.whyText}>
-                Level up your rank as your collection grows
+                {t("dressing.whyArchive.item2")}
               </Text>
             </View>
             <View style={styles.whyItem}>
               <Feather name="arrow-up-right" size={14} color="#05C785" />
               <Text style={styles.whyText}>
-                Export and showcase your ultimate locker
+                {t("dressing.whyArchive.item3")}
               </Text>
             </View>
           </View>
