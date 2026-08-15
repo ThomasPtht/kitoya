@@ -11,8 +11,10 @@ import { useRouter } from "expo-router";
 import { authService } from "@/services/auth.service";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { useTranslation } from "react-i18next";
 
 export default function ChangePasswordScreen() {
+  const { t } = useTranslation();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,19 +24,25 @@ export default function ChangePasswordScreen() {
 
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert(
+        t("auth.changePassword.alerts.errorTitle"),
+        t("auth.changePassword.alerts.fillAllFields"),
+      );
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "New passwords do not match");
+      Alert.alert(
+        t("auth.changePassword.alerts.errorTitle"),
+        t("auth.changePassword.alerts.passwordsMismatch"),
+      );
       return;
     }
 
     if (newPassword.length < 6) {
       Alert.alert(
-        "Error",
-        "The new password must be at least 6 characters long",
+        t("auth.changePassword.alerts.errorTitle"),
+        t("auth.changePassword.alerts.passwordMinLength"),
       );
       return;
     }
@@ -43,15 +51,22 @@ export default function ChangePasswordScreen() {
       setIsLoading(true);
       await authService.changePassword({ oldPassword, newPassword });
 
-      Alert.alert("Success", "Your password has been changed successfully.", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
+      Alert.alert(
+        t("auth.changePassword.alerts.successTitle"),
+        t("auth.changePassword.alerts.successMessage"),
+        [
+          {
+            text: t("auth.changePassword.alerts.ok"),
+            onPress: () => router.back(),
+          },
+        ],
+      );
     } catch (error: any) {
       Alert.alert(
-        "Error",
+        t("auth.changePassword.alerts.errorTitle"),
         error.response?.data?.message ||
           error.message ||
-          "Failed to change password.",
+          t("auth.changePassword.alerts.defaultError"),
       );
     } finally {
       setIsLoading(false);
@@ -69,14 +84,12 @@ export default function ChangePasswordScreen() {
         <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Change Password</Text>
-      <Text style={styles.subtitle}>
-        Enter your current password and choose a new one.
-      </Text>
+      <Text style={styles.title}>{t("auth.changePassword.title")}</Text>
+      <Text style={styles.subtitle}>{t("auth.changePassword.subtitle")}</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Current password"
+        placeholder={t("auth.changePassword.currentPasswordPlaceholder")}
         placeholderTextColor="#666"
         secureTextEntry
         autoCapitalize="none"
@@ -86,7 +99,7 @@ export default function ChangePasswordScreen() {
 
       <TextInput
         style={[styles.input, { letterSpacing: 0 }]}
-        placeholder="New password"
+        placeholder={t("auth.changePassword.newPasswordPlaceholder")}
         placeholderTextColor="#666"
         secureTextEntry
         autoCapitalize="none"
@@ -96,7 +109,7 @@ export default function ChangePasswordScreen() {
 
       <TextInput
         style={[styles.input, { letterSpacing: 0 }]}
-        placeholder="Confirm new password"
+        placeholder={t("auth.changePassword.confirmPasswordPlaceholder")}
         placeholderTextColor="#666"
         secureTextEntry
         autoCapitalize="none"
@@ -110,7 +123,9 @@ export default function ChangePasswordScreen() {
         disabled={isLoading}
       >
         <Text style={styles.buttonText}>
-          {isLoading ? "Updating..." : "Update Password"}
+          {isLoading
+            ? t("auth.changePassword.updating")
+            : t("auth.changePassword.updateButton")}
         </Text>
       </TouchableOpacity>
     </View>

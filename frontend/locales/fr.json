@@ -33,6 +33,59 @@
     "validation": {
         "invalidEmail": "Adresse e-mail invalide",
         "passwordMin": "Le mot de passe doit contenir au moins 6 caractères"
+      },
+    "changePassword": {
+      "title": "Changer le mot de passe",
+      "subtitle": "Entrez votre mot de passe actuel et choisissez-en un nouveau.",
+      "currentPasswordPlaceholder": "Mot de passe actuel",
+      "newPasswordPlaceholder": "Nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmer le nouveau mot de passe",
+      "updating": "Mise à jour...",
+      "updateButton": "Mettre à jour le mot de passe",
+      "alerts": {
+        "errorTitle": "Erreur",
+        "successTitle": "Succès",
+        "fillAllFields": "Veuillez remplir tous les champs",
+        "passwordsMismatch": "Les nouveaux mots de passe ne correspondent pas",
+        "passwordMinLength": "Le nouveau mot de passe doit contenir au moins 6 caractères",
+        "successMessage": "Votre mot de passe a été modifié avec succès.",
+        "defaultError": "Échec de la modification du mot de passe.",
+        "ok": "OK"
       }
+    },
+    "forgotPassword": {
+      "title": "RÉINITIALISER",
+      "subtitle": "Entrez votre adresse e-mail et nous vous enverrons les instructions pour réinitialiser votre mot de passe.",
+      "emailPlaceholder": "E-mail",
+      "sending": "Envoi en cours...",
+      "sendButton": "Envoyer les instructions",
+      "alerts": {
+        "errorTitle": "Erreur",
+        "enterEmail": "Veuillez entrer votre adresse e-mail",
+        "emailSentTitle": "E-mail envoyé",
+        "emailSentMessage": "Vérifiez votre boîte de réception pour les instructions de réinitialisation.",
+        "sendError": "Impossible d'envoyer l'e-mail de réinitialisation. Veuillez réessayer."
+      }
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez le code à 6 chiffres reçu par e-mail et votre nouveau mot de passe.",
+      "emailPlaceholder": "Adresse e-mail",
+      "codePlaceholder": "123456",
+      "newPasswordPlaceholder": "Nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmer le nouveau mot de passe",
+      "updating": "Mise à jour...",
+      "updateButton": "Réinitialiser le mot de passe",
+      "alerts": {
+        "errorTitle": "Erreur",
+        "successTitle": "Succès",
+        "fillAllFields": "Veuillez remplir tous les champs",
+        "codeLength": "Le code de réinitialisation doit comporter 6 chiffres",
+        "passwordsMismatch": "Les mots de passe ne correspondent pas",
+        "successMessage": "Votre mot de passe a été réinitialisé avec succès.",
+        "defaultError": "Échec de la réinitialisation du mot de passe. Le code a peut-être expiré.",
+        "login": "Connexion"
+      }
+    }
   }
 }

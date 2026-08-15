@@ -33,6 +33,59 @@
     "validation": {
         "invalidEmail": "Invalid email address",
         "passwordMin": "Password must be at least 6 characters"
+      },
+    "changePassword": {
+      "title": "Change Password",
+      "subtitle": "Enter your current password and choose a new one.",
+      "currentPasswordPlaceholder": "Current password",
+      "newPasswordPlaceholder": "New password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "updating": "Updating...",
+      "updateButton": "Update Password",
+      "alerts": {
+        "errorTitle": "Error",
+        "successTitle": "Success",
+        "fillAllFields": "Please fill in all fields",
+        "passwordsMismatch": "New passwords do not match",
+        "passwordMinLength": "The new password must be at least 6 characters long",
+        "successMessage": "Your password has been changed successfully.",
+        "defaultError": "Failed to change password.",
+        "ok": "OK"
       }
+    },
+    "forgotPassword": {
+      "title": "RESET PASSWORD",
+      "subtitle": "Enter your email address and we'll send you instructions to reset your password.",
+      "emailPlaceholder": "Email",
+      "sending": "Sending...",
+      "sendButton": "Send Reset Instructions",
+      "alerts": {
+        "errorTitle": "Error",
+        "enterEmail": "Please enter your email address",
+        "emailSentTitle": "Email sent",
+        "emailSentMessage": "Check your inbox for password reset instructions.",
+        "sendError": "Could not send reset email. Please try again."
+      }
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter the 6-digit code received by email and your new password.",
+      "emailPlaceholder": "Email address",
+      "codePlaceholder": "123456",
+      "newPasswordPlaceholder": "New password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "updating": "Updating...",
+      "updateButton": "Reset Password",
+      "alerts": {
+        "errorTitle": "Error",
+        "successTitle": "Success",
+        "fillAllFields": "Please fill in all fields",
+        "codeLength": "The reset code must be 6 digits",
+        "passwordsMismatch": "Passwords do not match",
+        "successMessage": "Your password has been reset successfully.",
+        "defaultError": "Failed to reset password. The code may have expired.",
+        "login": "Login"
+      }
+    }
   }
 }

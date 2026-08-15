@@ -15,14 +15,19 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { authService } from "@/services/auth.service";
+import { useTranslation } from "react-i18next";
 
 export default function ForgotPasswordScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleResetPassword = async () => {
     if (!email) {
-      Alert.alert("Error", "Please enter your email address");
+      Alert.alert(
+        t("auth.forgotPassword.alerts.errorTitle"),
+        t("auth.forgotPassword.alerts.enterEmail"),
+      );
       return;
     }
 
@@ -30,15 +35,18 @@ export default function ForgotPasswordScreen() {
       setIsLoading(true);
       await authService.forgotPassword(email);
       Alert.alert(
-        "Email sent",
-        "Check your inbox for password reset instructions.",
+        t("auth.forgotPassword.alerts.emailSentTitle"),
+        t("auth.forgotPassword.alerts.emailSentMessage"),
       );
       router.push({
         pathname: "/(auth)/reset-password",
         params: { email },
       });
     } catch (error) {
-      Alert.alert("Error", "Could not send reset email. Please try again.");
+      Alert.alert(
+        t("auth.forgotPassword.alerts.errorTitle"),
+        t("auth.forgotPassword.alerts.sendError"),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -62,10 +70,9 @@ export default function ForgotPasswordScreen() {
           </View>
 
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>RESET PASSWORD</Text>
+            <Text style={styles.title}>{t("auth.forgotPassword.title")}</Text>
             <Text style={styles.subtitle}>
-              Enter your email address and we'll send you instructions to reset
-              your password.
+              {t("auth.forgotPassword.subtitle")}
             </Text>
           </View>
 
@@ -73,7 +80,7 @@ export default function ForgotPasswordScreen() {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder={t("auth.forgotPassword.emailPlaceholder")}
                 placeholderTextColor="#8E8E93"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -90,7 +97,9 @@ export default function ForgotPasswordScreen() {
               disabled={isLoading}
             >
               <Text style={styles.buttonText}>
-                {isLoading ? "Sending..." : "Send Reset Instructions"}
+                {isLoading
+                  ? t("auth.forgotPassword.sending")
+                  : t("auth.forgotPassword.sendButton")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -109,7 +118,6 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    // justifyContent: "space-between",
     paddingHorizontal: 24,
     paddingTop: 60,
     paddingBottom: 40,

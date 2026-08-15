@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { authService } from "@/services/auth.service";
+import { useTranslation } from "react-i18next";
 
 export default function ResetPasswordScreen() {
+  const { t } = useTranslation();
   const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -20,17 +22,26 @@ export default function ResetPasswordScreen() {
 
   const handleReset = async () => {
     if (!email || !code || !newPassword || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert(
+        t("auth.resetPassword.alerts.errorTitle"),
+        t("auth.resetPassword.alerts.fillAllFields"),
+      );
       return;
     }
 
     if (code.length !== 6) {
-      Alert.alert("Error", "The reset code must be 6 digits");
+      Alert.alert(
+        t("auth.resetPassword.alerts.errorTitle"),
+        t("auth.resetPassword.alerts.codeLength"),
+      );
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+      Alert.alert(
+        t("auth.resetPassword.alerts.errorTitle"),
+        t("auth.resetPassword.alerts.passwordsMismatch"),
+      );
       return;
     }
 
@@ -38,13 +49,20 @@ export default function ResetPasswordScreen() {
       setIsLoading(true);
       await authService.resetPassword({ email, code, newPassword });
 
-      Alert.alert("Success", "Your password has been reset successfully.", [
-        { text: "Login", onPress: () => router.replace("/(auth)/login") },
-      ]);
+      Alert.alert(
+        t("auth.resetPassword.alerts.successTitle"),
+        t("auth.resetPassword.alerts.successMessage"),
+        [
+          {
+            text: t("auth.resetPassword.alerts.login"),
+            onPress: () => router.replace("/(auth)/login"),
+          },
+        ],
+      );
     } catch (error: any) {
       Alert.alert(
-        "Error",
-        error.message || "Failed to reset password. The code may have expired.",
+        t("auth.resetPassword.alerts.errorTitle"),
+        error.message || t("auth.resetPassword.alerts.defaultError"),
       );
     } finally {
       setIsLoading(false);
@@ -53,15 +71,13 @@ export default function ResetPasswordScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
-      <Text style={styles.subtitle}>
-        Enter the 6-digit code received by email and your new password.
-      </Text>
+      <Text style={styles.title}>{t("auth.resetPassword.title")}</Text>
+      <Text style={styles.subtitle}>{t("auth.resetPassword.subtitle")}</Text>
 
       {/* Email field pre-filled and disabled */}
       <TextInput
         style={[styles.input, styles.disabledInput]}
-        placeholder="Email address"
+        placeholder={t("auth.resetPassword.emailPlaceholder")}
         placeholderTextColor="#666"
         value={email}
         editable={false}
@@ -69,7 +85,7 @@ export default function ResetPasswordScreen() {
 
       <TextInput
         style={styles.codeInput}
-        placeholder="123456"
+        placeholder={t("auth.resetPassword.codePlaceholder")}
         placeholderTextColor="#666"
         keyboardType="number-pad"
         maxLength={6}
@@ -79,7 +95,7 @@ export default function ResetPasswordScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="New password"
+        placeholder={t("auth.resetPassword.newPasswordPlaceholder")}
         placeholderTextColor="#666"
         secureTextEntry
         value={newPassword}
@@ -88,7 +104,7 @@ export default function ResetPasswordScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="Confirm new password"
+        placeholder={t("auth.resetPassword.confirmPasswordPlaceholder")}
         placeholderTextColor="#666"
         secureTextEntry
         value={confirmPassword}
@@ -101,7 +117,9 @@ export default function ResetPasswordScreen() {
         disabled={isLoading}
       >
         <Text style={styles.buttonText}>
-          {isLoading ? "Updating..." : "Reset Password"}
+          {isLoading
+            ? t("auth.resetPassword.updating")
+            : t("auth.resetPassword.updateButton")}
         </Text>
       </TouchableOpacity>
     </View>
