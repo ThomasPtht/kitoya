@@ -5,8 +5,10 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
+  Req,
   Request,
   UploadedFiles,
   UseGuards,
@@ -18,6 +20,15 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateJerseyDto } from './dto/createJersey.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ImageProcessingService } from '../image-processing/image-processing.service';
+import { UpdateJerseyDto } from './dto/updateJersey.dto';
+
+interface JwtRequest extends Request {
+  user: {
+    userId: string;
+    email: string;
+    username: string;
+  };
+}
 
 @Controller('jerseys')
 export class JerseysController {
@@ -52,8 +63,6 @@ export class JerseysController {
     if (!userId) {
       throw new BadRequestException('Authenticated user id is missing');
     }
-
-
 
     if (!createJerseyDto.sportId) {
       console.log('ATTENTION : sportId est vide dans le DTO');
@@ -174,5 +183,39 @@ export class JerseysController {
     }
 
     return this.jerseysService.getCollectionAnalytics(userId);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'frontImage', maxCount: 1 },
+      { name: 'backImage', maxCount: 1 },
+    ]),
+  )
+  async update(
+    @Param('id') id: string,
+    @Body() updateJerseyDto: UpdateJerseyDto,
+    @UploadedFiles()
+    files: {
+      frontImage?: Express.Multer.File[];
+      backImage?: Express.Multer.File[];
+    },
+    @Req() req: JwtRequest,
+  ) {
+    const dtoWithUrls: any = { ...updateJerseyDto };
+
+    if (files.frontImage?.[0]) {
+      dtoWithUrls.frontImageUrl = await this.R2Service.uploadFile(
+        files.frontImage[0],
+      );
+    }
+    if (files.backImage?.[0]) {
+      dtoWithUrls.backImageUrl = await this.R2Service.uploadFile(
+        files.backImage[0],
+      );
+    }
+
+    return this.jerseysService.updateJersey(id, req.user.userId, dtoWithUrls);
   }
 }

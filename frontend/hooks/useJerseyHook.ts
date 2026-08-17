@@ -93,3 +93,19 @@ export const useCollectionAnalytics = () => {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 };
+
+export const useUpdateJersey = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
+      jerseyService.updateJersey(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jerseys"] });
+      queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
+      queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
+    },
+    onError: (error) => {
+      console.error("Error updating jersey:", error);
+    },
+  });
+};

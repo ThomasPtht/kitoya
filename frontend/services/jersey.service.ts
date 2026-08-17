@@ -64,4 +64,13 @@ export const jerseyService = {
     const { data } = await apiClient.get("/jerseys/analytics");
     return data;
   },
+
+  updateJersey: async (id: string, formData: FormData) => {
+    const { data } = await apiClient.patch(`/jerseys/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data;
+  },
 };

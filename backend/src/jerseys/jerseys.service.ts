@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -415,5 +416,58 @@ export class JerseysService {
       conditions,
       versions,
     };
+  }
+
+  async updateJersey(
+    jerseyId: string,
+    userId: string,
+    dto: Partial<CreateJerseyWithUrls>,
+  ) {
+    const jersey = await this.prisma.jersey.findUnique({
+      where: { id: jerseyId },
+    });
+
+    if (!jersey) {
+      throw new NotFoundException(`Jersey with ID ${jerseyId} not found`);
+    }
+
+    if (jersey.userId !== userId) {
+      throw new ForbiddenException(
+        `User ${userId} is not authorized to update this jersey`,
+      );
+    }
+
+    const updateData: Record<string, any> = {};
+
+    const fields = [
+      'clubId',
+      'season',
+      'type',
+      'size',
+      'condition',
+      'version',
+      'brand',
+      'playerName',
+      'number',
+      'purchasePrice',
+      'isOfficial',
+      'description',
+      'frontImageUrl',
+      'backImageUrl',
+    ] as const;
+
+    for (const field of fields) {
+      if (dto[field] !== undefined) {
+        updateData[field] = dto[field];
+      }
+    }
+
+    const updatedJersey = await this.prisma.jersey.update({
+      where: { id: jerseyId },
+      data: updateData,
+      include: { club: true, sport: true, _count: { select: { likes: true } } },
+    });
+
+    return this.signJersey(updatedJersey);
   }
 }
