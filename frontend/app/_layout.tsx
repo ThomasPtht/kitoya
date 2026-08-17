@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import "../lib/i18n";
 import {
   DarkTheme,
   DefaultTheme,

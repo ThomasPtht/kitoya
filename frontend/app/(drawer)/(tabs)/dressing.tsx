@@ -116,7 +116,7 @@ export default function TabDressingScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{t("dressing.myLocker")}</Text>
+        <Text style={styles.title}>{t("tabDressing.myLocker")}</Text>
       </View>
 
       {/* On n'affiche la barre de recherche que s'il y a des maillots */}
