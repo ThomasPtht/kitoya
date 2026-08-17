@@ -18,11 +18,13 @@ import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { exportCollectionToPdf } from "../lib/pdf-export";
 import { useUserMe } from "@/hooks/useAuthHook";
+import { useTranslation } from "react-i18next";
 
 type ExportFormat = "csv" | "json" | "pdf";
 
 export default function ExportCollectionScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { data: userMe, isLoading: isUserLoading } = useUserMe();
 
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,7 @@ export default function ExportCollectionScreen() {
   if (isUserLoading) {
     return (
       <View style={[styles.container, styles.centerContainer]}>
-        <Text style={{ color: "#888888" }}>Loading...</Text>
+        <Text style={{ color: "#888888" }}>{t("export.loading")}</Text>
       </View>
     );
   }
@@ -55,17 +57,16 @@ export default function ExportCollectionScreen() {
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color="#FFFFFF" />
           </Pressable>
-          <Text style={styles.headerTitle}>Export collection</Text>
+          <Text style={styles.headerTitle}>{t("export.headerTitle")}</Text>
         </View>
 
         <View style={styles.lockedContainer}>
           <View style={styles.lockIconContainer}>
             <Feather name="lock" size={32} color="#05C785" />
           </View>
-          <Text style={styles.lockedTitle}>ELITE Feature</Text>
+          <Text style={styles.lockedTitle}>{t("export.locked.title")}</Text>
           <Text style={styles.lockedText}>
-            Exporting your collection (CSV, JSON, PDF) is reserved for Kitroom
-            ELITE members.
+            {t("export.locked.description")}
           </Text>
           <TouchableOpacity
             style={styles.exportButton}
@@ -78,7 +79,9 @@ export default function ExportCollectionScreen() {
               color="#121212"
               style={{ marginRight: 8 }}
             />
-            <Text style={styles.exportButtonText}>Discover ELITE Plan</Text>
+            <Text style={styles.exportButtonText}>
+              {t("export.locked.button")}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -87,7 +90,7 @@ export default function ExportCollectionScreen() {
 
   const handleExport = async () => {
     if (!jerseyData || jerseyData.length === 0) {
-      Alert.alert("Error", "No data available to export");
+      Alert.alert(t("export.alerts.error"), t("export.alerts.noData"));
       return;
     }
 
@@ -149,17 +152,23 @@ export default function ExportCollectionScreen() {
       file.write(fileContent);
 
       if (!(await Sharing.isAvailableAsync())) {
-        Alert.alert("Error", "Sharing is not available on this device");
+        Alert.alert(
+          t("export.alerts.error"),
+          t("export.alerts.sharingNotAvailable"),
+        );
         return;
       }
 
       await Sharing.shareAsync(file.uri, {
         mimeType: mimeType,
-        dialogTitle: "Export your Collection",
+        dialogTitle: t("export.headerTitle"),
         UTI: uti,
       });
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to export collection");
+      Alert.alert(
+        t("export.alerts.error"),
+        error.message || t("export.alerts.exportFailed"),
+      );
     } finally {
       setLoading(false);
     }
@@ -168,11 +177,11 @@ export default function ExportCollectionScreen() {
   const getFormatLabel = () => {
     switch (selectedFormat) {
       case "csv":
-        return "Export CSV";
+        return t("export.buttons.csv");
       case "json":
-        return "Export JSON";
+        return t("export.buttons.json");
       case "pdf":
-        return "Export PDF";
+        return t("export.buttons.pdf");
     }
   };
 
@@ -183,8 +192,10 @@ export default function ExportCollectionScreen() {
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
         <View>
-          <Text style={styles.archiveSubtitle}>ARCHIVE</Text>
-          <Text style={styles.headerTitle}>Export collection</Text>
+          <Text style={styles.archiveSubtitle}>
+            {t("export.headerSubtitle")}
+          </Text>
+          <Text style={styles.headerTitle}>{t("export.headerTitle")}</Text>
         </View>
       </View>
 
@@ -194,15 +205,18 @@ export default function ExportCollectionScreen() {
       >
         <View style={styles.statCard}>
           <View>
-            <Text style={styles.statSubText}>IN YOUR ARCHIVE</Text>
+            <Text style={styles.statSubText}>
+              {t("export.statCard.subtitle")}
+            </Text>
             <Text style={styles.statMainText}>
-              {count} {count > 1 ? "kits" : "kit"}
+              {count}{" "}
+              {count > 1 ? t("export.statCard.kits") : t("export.statCard.kit")}
             </Text>
           </View>
           <Feather name="download" size={22} color="#05C785" />
         </View>
 
-        <Text style={styles.sectionHeader}>FORMAT</Text>
+        <Text style={styles.sectionHeader}>{t("export.sections.format")}</Text>
 
         <Pressable
           style={[
@@ -216,9 +230,11 @@ export default function ExportCollectionScreen() {
               <Feather name="file-text" size={20} color="#05C785" />
             </View>
             <View>
-              <Text style={styles.optionTitle}>CSV spreadsheet</Text>
+              <Text style={styles.optionTitle}>
+                {t("export.formats.csvTitle")}
+              </Text>
               <Text style={styles.optionDesc}>
-                Open in Excel, Numbers or Sheets
+                {t("export.formats.csvDesc")}
               </Text>
             </View>
           </View>
@@ -239,9 +255,11 @@ export default function ExportCollectionScreen() {
               <Feather name="code" size={20} color="#05C785" />
             </View>
             <View>
-              <Text style={styles.optionTitle}>JSON archive</Text>
+              <Text style={styles.optionTitle}>
+                {t("export.formats.jsonTitle")}
+              </Text>
               <Text style={styles.optionDesc}>
-                Full data, developer friendly
+                {t("export.formats.jsonDesc")}
               </Text>
             </View>
           </View>
@@ -265,10 +283,12 @@ export default function ExportCollectionScreen() {
             </View>
             <View>
               <View style={styles.titleRow}>
-                <Text style={styles.optionTitle}>PDF portfolio</Text>
+                <Text style={styles.optionTitle}>
+                  {t("export.formats.pdfTitle")}
+                </Text>
               </View>
               <Text style={styles.optionDesc}>
-                Printable, shareable summary
+                {t("export.formats.pdfDesc")}
               </Text>
             </View>
           </View>
@@ -277,11 +297,13 @@ export default function ExportCollectionScreen() {
           )}
         </Pressable>
 
-        <Text style={styles.sectionHeader}>INCLUDE</Text>
+        <Text style={styles.sectionHeader}>{t("export.sections.include")}</Text>
 
         <View style={styles.switchesContainer}>
           <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Kit stories</Text>
+            <Text style={styles.switchLabel}>
+              {t("export.switches.stories")}
+            </Text>
             <Switch
               value={includeStories}
               onValueChange={setIncludeStories}
@@ -291,7 +313,9 @@ export default function ExportCollectionScreen() {
           </View>
           <View style={styles.separator} />
           <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Purchase history</Text>
+            <Text style={styles.switchLabel}>
+              {t("export.switches.purchaseHistory")}
+            </Text>
             <Switch
               value={includePurchaseHistory}
               onValueChange={setIncludePurchaseHistory}
@@ -314,13 +338,11 @@ export default function ExportCollectionScreen() {
             style={{ marginRight: 8 }}
           />
           <Text style={styles.exportButtonText}>
-            {loading ? "Exporting..." : getFormatLabel()}
+            {loading ? t("export.buttons.exporting") : getFormatLabel()}
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.footerInfo}>
-          Your data stays yours. Files download directly to this device.
-        </Text>
+        <Text style={styles.footerInfo}>{t("export.footer")}</Text>
       </ScrollView>
     </View>
   );
@@ -469,20 +491,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  proBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(5, 199, 133, 0.15)",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    gap: 3,
-  },
-  proText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#05C785",
   },
   switchesContainer: {
     backgroundColor: "#161616",

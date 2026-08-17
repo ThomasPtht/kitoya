@@ -184,7 +184,6 @@
       "export": "Export and showcase your ultimate locker"
     }
   },
-  {
   "home": {
     "archiveCard": {
       "title": "Archive a new acquisition",
@@ -203,8 +202,7 @@
       "topTeam": "Top Team",
       "addFirstKit": "Add your first kit"
     }
-  }
-},
+  },
 "drawer": {
     "pro": {
       "badge": "KITROOM PRO",
@@ -223,6 +221,93 @@
     },
     "eliteBadge": "ELITE",
     "logout": "Log out"
+  },
+  "publicLocker": {
+    "badge": "PUBLIC LOCKER",
+    "notFound": "Locker not found or private.",
+    "backButton": "Go Back",
+    "stats": {
+      "kits": "KITS",
+      "clubs": "CLUBS"
+    },
+    "collectorRank": "COLLECTOR",
+    "sharedKits": "SHARED KITS",
+    "exhibits": "EXHIBITS",
+    "shareMessage": "Check out my football shirt collection on Kitroom! kitroom://locker/{{username}}",
+    "buttons": {
+      "front": "FRONT",
+      "back": "BACK"
+    }
+  },
+  "analytics": {
+    "loading": "Loading...",
+    "headerSubtitle": "ANALYTICS",
+    "headerTitle": "Collection stats",
+    "locked": {
+      "title": "ELITE Feature",
+      "description": "Advanced collection analytics are reserved for Kitroom ELITE members.",
+      "button": "Discover ELITE Plan"
+    },
+    "cards": {
+      "totalKits": "TOTAL KITS",
+      "uniqueClubs": "UNIQUE CLUBS",
+      "erasCovered": "ERAS COVERED",
+      "brands": "BRANDS",
+      "totalInvested": "TOTAL INVESTED",
+      "avgPrice": "AVG. PRICE"
+    },
+    "sections": {
+      "topClubs": "TOP CLUBS",
+      "kitsByEra": "KITS BY ERA",
+      "brandMix": "BRAND MIX",
+      "kitTypes": "KIT TYPES",
+      "editionMix": "EDITION MIX",
+      "conditionMix": "CONDITION MIX"
+    }
+  },
+  "export": {
+    "loading": "Loading...",
+    "headerSubtitle": "ARCHIVE",
+    "headerTitle": "Export collection",
+    "locked": {
+      "title": "ELITE Feature",
+      "description": "Exporting your collection (CSV, JSON, PDF) is reserved for Kitroom ELITE members.",
+      "button": "Discover ELITE Plan"
+    },
+    "statCard": {
+      "subtitle": "IN YOUR ARCHIVE",
+      "kits": "kits",
+      "kit": "kit"
+    },
+    "sections": {
+      "format": "FORMAT",
+      "include": "INCLUDE"
+    },
+    "formats": {
+      "csvTitle": "CSV spreadsheet",
+      "csvDesc": "Open in Excel, Numbers or Sheets",
+      "jsonTitle": "JSON archive",
+      "jsonDesc": "Full data, developer friendly",
+      "pdfTitle": "PDF portfolio",
+      "pdfDesc": "Printable, shareable summary"
+    },
+    "switches": {
+      "stories": "Kit stories",
+      "purchaseHistory": "Purchase history"
+    },
+    "buttons": {
+      "exporting": "Exporting...",
+      "csv": "Export CSV",
+      "json": "Export JSON",
+      "pdf": "Export PDF"
+    },
+    "footer": "Your data stays yours. Files download directly to this device.",
+    "alerts": {
+      "error": "Error",
+      "noData": "No data available to export",
+      "sharingNotAvailable": "Sharing is not available on this device",
+      "exportFailed": "Failed to export collection"
+    }
   }
 }
   

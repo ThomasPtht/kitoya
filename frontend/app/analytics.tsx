@@ -12,6 +12,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCollectionAnalytics } from "@/hooks/useJerseyHook";
 import { useUserMe } from "@/hooks/useAuthHook";
+import { useTranslation } from "react-i18next";
 
 interface AnalyticsProps {
   onClose?: () => void;
@@ -37,6 +38,7 @@ const formatLabel = (text: string) => {
 };
 
 export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: userMe, isLoading: isUserLoading } = useUserMe();
   const { data, isLoading, error } = useCollectionAnalytics();
@@ -67,7 +69,7 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
   if (isUserLoading) {
     return (
       <SafeAreaView style={[styles.container, styles.centerContainer]}>
-        <Text style={{ color: "#888888" }}>Loading...</Text>
+        <Text style={{ color: "#888888" }}>{t("analytics.loading")}</Text>
       </SafeAreaView>
     );
   }
@@ -79,17 +81,16 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <Pressable onPress={handleBack} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color="#FFFFFF" />
           </Pressable>
-          <Text style={styles.headerTitle}>Collection stats</Text>
+          <Text style={styles.headerTitle}>{t("analytics.headerTitle")}</Text>
         </View>
 
         <View style={styles.lockedContainer}>
           <View style={styles.lockIconContainer}>
             <Feather name="lock" size={32} color="#05C785" />
           </View>
-          <Text style={styles.lockedTitle}>ELITE Feature</Text>
+          <Text style={styles.lockedTitle}>{t("analytics.locked.title")}</Text>
           <Text style={styles.lockedText}>
-            Advanced collection analytics are reserved for Kitroom ELITE
-            members.
+            {t("analytics.locked.description")}
           </Text>
           <TouchableOpacity
             style={styles.exportButton}
@@ -102,7 +103,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
               color="#121212"
               style={{ marginRight: 8 }}
             />
-            <Text style={styles.exportButtonText}>Discover ELITE Plan</Text>
+            <Text style={styles.exportButtonText}>
+              {t("analytics.locked.button")}
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -116,8 +119,10 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
         <View>
-          <Text style={styles.archiveSubtitle}>ANALYTICS</Text>
-          <Text style={styles.headerTitle}>Collection stats</Text>
+          <Text style={styles.archiveSubtitle}>
+            {t("analytics.headerSubtitle")}
+          </Text>
+          <Text style={styles.headerTitle}>{t("analytics.headerTitle")}</Text>
         </View>
       </View>
 
@@ -129,7 +134,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
               <Feather name="shopping-bag" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>TOTAL KITS</Text>
+              <Text style={styles.cardLabel}>
+                {t("analytics.cards.totalKits")}
+              </Text>
             </View>
             <Text style={styles.cardValue}>{data?.totalKits ?? 0}</Text>
           </View>
@@ -137,7 +144,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
               <Feather name="shield" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>UNIQUE CLUBS</Text>
+              <Text style={styles.cardLabel}>
+                {t("analytics.cards.uniqueClubs")}
+              </Text>
             </View>
             <Text style={styles.cardValue}>{data?.uniqueClubs ?? 0}</Text>
           </View>
@@ -147,7 +156,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
               <Feather name="calendar" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>ERAS COVERED</Text>
+              <Text style={styles.cardLabel}>
+                {t("analytics.cards.erasCovered")}
+              </Text>
             </View>
             <Text style={styles.cardValue}>{data?.erasCovered ?? 0}</Text>
           </View>
@@ -155,7 +166,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
               <Feather name="tag" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>BRANDS</Text>
+              <Text style={styles.cardLabel}>
+                {t("analytics.cards.brands")}
+              </Text>
             </View>
             <Text style={styles.cardValue}>{data?.brandsCount ?? 0}</Text>
           </View>
@@ -165,7 +178,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
               <Feather name="credit-card" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>TOTAL INVESTED</Text>
+              <Text style={styles.cardLabel}>
+                {t("analytics.cards.totalInvested")}
+              </Text>
             </View>
             <Text style={styles.cardValueMoney}>
               {data?.totalInvested ?? 0} {currencySymbol}
@@ -175,7 +190,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           <View style={styles.smallCard}>
             <View style={styles.cardHeaderRow}>
               <Feather name="trending-up" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>AVG. PRICE</Text>
+              <Text style={styles.cardLabel}>
+                {t("analytics.cards.avgPrice")}
+              </Text>
             </View>
             <Text style={styles.cardValueMoney}>
               {data?.avgPrice ?? 0} {currencySymbol}
@@ -183,7 +200,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           </View>
         </View>
 
-        <Text style={styles.sectionHeader}>TOP CLUBS</Text>
+        <Text style={styles.sectionHeader}>
+          {t("analytics.sections.topClubs")}
+        </Text>
         <View style={styles.sectionCard}>
           {(data?.topClubs ?? []).map((club, index, array) => (
             <View
@@ -213,7 +232,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        <Text style={styles.sectionHeader}>KITS BY ERA</Text>
+        <Text style={styles.sectionHeader}>
+          {t("analytics.sections.kitsByEra")}
+        </Text>
         <View style={styles.sectionCard}>
           {(data?.eras ?? []).map((era, index, array) => (
             <View
@@ -243,7 +264,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        <Text style={styles.sectionHeader}>BRAND MIX</Text>
+        <Text style={styles.sectionHeader}>
+          {t("analytics.sections.brandMix")}
+        </Text>
         <View style={styles.pillsRow}>
           {(data?.brands ?? []).map((brand, index) => (
             <View key={index} style={styles.pill}>
@@ -254,7 +277,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        <Text style={styles.sectionHeader}>KIT TYPES</Text>
+        <Text style={styles.sectionHeader}>
+          {t("analytics.sections.kitTypes")}
+        </Text>
         <View style={styles.sectionCard}>
           {(data?.variants ?? []).map((variant, index, array) => (
             <View
@@ -288,7 +313,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        <Text style={styles.sectionHeader}>EDITION MIX</Text>
+        <Text style={styles.sectionHeader}>
+          {t("analytics.sections.editionMix")}
+        </Text>
         <View style={styles.sectionCard}>
           {(data?.versions ?? []).map((version, index, array) => (
             <View
@@ -322,7 +349,9 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
           ))}
         </View>
 
-        <Text style={styles.sectionHeader}>CONDITION MIX</Text>
+        <Text style={styles.sectionHeader}>
+          {t("analytics.sections.conditionMix")}
+        </Text>
         <View style={styles.sectionCard}>
           {(data?.conditions ?? []).map((condition, index, array) => (
             <View

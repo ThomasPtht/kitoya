@@ -220,5 +220,92 @@
     },
     "eliteBadge": "ELITE",
     "logout": "Se déconnecter"
+  },
+  "publicLocker": {
+    "badge": "CASIER PUBLIC",
+    "notFound": "Casier introuvable ou privé.",
+    "backButton": "Retour",
+    "stats": {
+      "kits": "KITS",
+      "clubs": "CLUBS"
+    },
+    "collectorRank": "COLLECTOR",
+    "sharedKits": "MAILLOTS PARTAGÉS",
+    "exhibits": "EXPOSITIONS",
+    "shareMessage": "Découvre ma collection de maillots de foot sur Kitroom ! kitroom://locker/{{username}}",
+    "buttons": {
+      "front": "FACE",
+      "back": "DOS"
+    }
+  },
+  "analytics": {
+    "loading": "Chargement...",
+    "headerSubtitle": "STATISTIQUES",
+    "headerTitle": "Statistiques de collection",
+    "locked": {
+      "title": "Fonctionnalité ELITE",
+      "description": "Les analyses avancées de collection sont réservées aux membres Kitroom ELITE.",
+      "button": "Découvrir l'offre ELITE"
+    },
+    "cards": {
+      "totalKits": "TOTAL MAILLOTS",
+      "uniqueClubs": "CLUBS UNIQUES",
+      "erasCovered": "ÉPOQUES COUVERTES",
+      "brands": "MARQUES",
+      "totalInvested": "TOTAL INVESTI",
+      "avgPrice": "PRIX MOYEN"
+    },
+    "sections": {
+      "topClubs": "TOP CLUBS",
+      "kitsByEra": "MAILLOTS PAR ÉPOQUE",
+      "brandMix": "RÉPARTITION DES MARQUES",
+      "kitTypes": "TYPES DE MAILLOTS",
+      "editionMix": "ÉDITIONS",
+      "conditionMix": "ÉTATS"
+    }
+  },
+  "export": {
+    "loading": "Chargement...",
+    "headerSubtitle": "ARCHIVE",
+    "headerTitle": "Exporter la collection",
+    "locked": {
+      "title": "Fonctionnalité ELITE",
+      "description": "L'export de votre collection (CSV, JSON, PDF) est réservé aux membres Kitroom ELITE.",
+      "button": "Découvrir l'offre ELITE"
+    },
+    "statCard": {
+      "subtitle": "DANS VOTRE ARCHIVE",
+      "kits": "maillots",
+      "kit": "maillot"
+    },
+    "sections": {
+      "format": "FORMAT",
+      "include": "INCLURE"
+    },
+    "formats": {
+      "csvTitle": "Tableur CSV",
+      "csvDesc": "Ouvrir dans Excel, Numbers ou Sheets",
+      "jsonTitle": "Archive JSON",
+      "jsonDesc": "Données complètes, idéal pour développeurs",
+      "pdfTitle": "Portfolio PDF",
+      "pdfDesc": "Résumé imprimable et partageable"
+    },
+    "switches": {
+      "stories": "Histoires des maillots",
+      "purchaseHistory": "Historique d'achat"
+    },
+    "buttons": {
+      "exporting": "Exportation...",
+      "csv": "Exporter en CSV",
+      "json": "Exporter en JSON",
+      "pdf": "Exporter en PDF"
+    },
+    "footer": "Vos données vous appartiennent. Les fichiers se téléchargent directement sur cet appareil.",
+    "alerts": {
+      "error": "Erreur",
+      "noData": "Aucune donnée disponible à exporter",
+      "sharingNotAvailable": "Le partage n'est pas disponible sur cet appareil",
+      "exportFailed": "Échec de l'exportation de la collection"
+    }
   }
 }

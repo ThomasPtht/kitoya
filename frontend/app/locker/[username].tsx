@@ -16,8 +16,10 @@ import { Colors } from "@/constants/Colors";
 import { useToggleLikeJersey } from "@/hooks/useJerseyHook";
 import { useLocker } from "@/hooks/useLocker";
 import { calculateRank } from "@/lib/ranks";
+import { useTranslation } from "react-i18next";
 
 export default function PublicLockerScreen() {
+  const { t } = useTranslation();
   const { username } = useLocalSearchParams<{ username: string }>();
   const router = useRouter();
 
@@ -41,7 +43,7 @@ export default function PublicLockerScreen() {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out my football shirt collection on Kitroom! kitroom://locker/${username}`,
+        message: t("publicLocker.shareMessage", { username }),
       });
     } catch (error) {
       console.error(error);
@@ -65,12 +67,14 @@ export default function PublicLockerScreen() {
             size={48}
             color={Colors.theme.textMuted}
           />
-          <Text style={styles.errorText}>Locker not found or private.</Text>
+          <Text style={styles.errorText}>{t("publicLocker.notFound")}</Text>
           <TouchableOpacity
             style={styles.backButtonSimple}
             onPress={() => router.back()}
           >
-            <Text style={styles.backButtonText}>Go Back</Text>
+            <Text style={styles.backButtonText}>
+              {t("publicLocker.backButton")}
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -95,7 +99,9 @@ export default function PublicLockerScreen() {
               size={14}
               color={Colors.theme.primary}
             />
-            <Text style={styles.publicBadgeText}>PUBLIC LOCKER</Text>
+            <Text style={styles.publicBadgeText}>
+              {t("publicLocker.badge")}
+            </Text>
           </View>
           <TouchableOpacity
             onPress={handleShare}
@@ -144,11 +150,13 @@ export default function PublicLockerScreen() {
         {/* Stats Cards (Kits / Clubs) */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>KITS</Text>
+            <Text style={styles.statLabel}>{t("publicLocker.stats.kits")}</Text>
             <Text style={styles.statValue}>{profileData.kitsCount ?? 0}</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>CLUBS</Text>
+            <Text style={styles.statLabel}>
+              {t("publicLocker.stats.clubs")}
+            </Text>
             <Text style={styles.statValue}>{profileData.clubsCount ?? 0}</Text>
           </View>
         </View>
@@ -164,15 +172,17 @@ export default function PublicLockerScreen() {
             <Text style={styles.rankHighlight}>
               {currentRank.toUpperCase()}
             </Text>{" "}
-            COLLECTOR
+            {t("publicLocker.collectorRank")}
           </Text>
         </View>
 
         {/* Section Shared Kits */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>SHARED KITS</Text>
+          <Text style={styles.sectionTitle}>
+            {t("publicLocker.sharedKits")}
+          </Text>
           <Text style={styles.sectionCount}>
-            {profileData.jerseys?.length || 0} EXHIBITS
+            {profileData.jerseys?.length || 0} {t("publicLocker.exhibits")}
           </Text>
         </View>
 
@@ -217,7 +227,9 @@ export default function PublicLockerScreen() {
                         color="#FFFFFF"
                       />
                       <Text style={styles.flipButtonText}>
-                        {isShowingBack ? "FRONT" : "BACK"}
+                        {isShowingBack
+                          ? t("publicLocker.buttons.front")
+                          : t("publicLocker.buttons.back")}
                       </Text>
                     </TouchableOpacity>
                   )}
