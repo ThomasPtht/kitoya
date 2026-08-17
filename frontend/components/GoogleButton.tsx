@@ -1,22 +1,19 @@
 import React from "react";
-import {
-  TouchableOpacity,
-  Text,
-  View,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface GoogleButtonProps {
   onPress: () => void;
-  isLoading?: boolean; // to display a spinner later if needed
+  isLoading?: boolean;
 }
 
 export default function GoogleButton({
   onPress,
   isLoading,
 }: GoogleButtonProps) {
+  const { t } = useTranslation();
+
   return (
     <TouchableOpacity
       style={styles.googleButton}
@@ -28,7 +25,7 @@ export default function GoogleButton({
         <FontAwesome name="google" size={20} color="#FFFFFF" />
       </View>
       <Text style={styles.googleButtonText}>
-        {isLoading ? "Connecting..." : "Continue with Google"}
+        {isLoading ? t("googleButton.loading") : t("googleButton.continue")}
       </Text>
     </TouchableOpacity>
   );

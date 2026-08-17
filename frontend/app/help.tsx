@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { feedbackService } from "@/services/feedback.service";
+import { useTranslation } from "react-i18next";
 
 interface FaqItem {
   question: string;
@@ -22,6 +23,7 @@ interface FaqItem {
 
 export default function HelpScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   // Feedback state
   const [feedbackType, setFeedbackType] = useState<
@@ -35,24 +37,20 @@ export default function HelpScreen() {
 
   const faqs: FaqItem[] = [
     {
-      question: "How do I add a new kit?",
-      answer:
-        "Tap the central + button in the tab bar, then fill in the kit's details and add a photo — either from your gallery or straight from your camera.",
+      question: t("help.faqs.addKit.question"),
+      answer: t("help.faqs.addKit.answer"),
     },
     {
-      question: "What is the collector rank ?",
-      answer:
-        "Your collector rank (from Rookie to Hall of Famer) reflects the number of kits in your collection — the more kits you add, the higher you climb.",
+      question: t("help.faqs.collectorRank.question"),
+      answer: t("help.faqs.collectorRank.answer"),
     },
     {
-      question: "Can I export my collection?",
-      answer:
-        "Yes! You can export your collection data anytime in CSV, JSON, or as a printable PDF portfolio directly from your archive settings.",
+      question: t("help.faqs.exportCollection.question"),
+      answer: t("help.faqs.exportCollection.answer"),
     },
     {
-      question: "Is my locker public?",
-      answer:
-        "By default, your locker is public — this lets you share your profile and get likes on your kits. You can make it private anytime from Settings, though a kit selected for Kit of the Community may still be seen by others that day.",
+      question: t("help.faqs.lockerPublic.question"),
+      answer: t("help.faqs.lockerPublic.answer"),
     },
   ];
 
@@ -62,10 +60,7 @@ export default function HelpScreen() {
 
   const handleSendFeedback = async () => {
     if (!message.trim()) {
-      Alert.alert(
-        "Error",
-        "Please enter a message before sending your feedback.",
-      );
+      Alert.alert(t("help.alerts.error"), t("help.alerts.emptyMessage"));
       return;
     }
 
@@ -77,17 +72,14 @@ export default function HelpScreen() {
       });
 
       Alert.alert(
-        "Success",
-        "Thank you! Your feedback has been sent successfully.",
+        t("help.alerts.successTitle"),
+        t("help.alerts.successMessage"),
       );
       setMessage("");
       setEmail("");
     } catch (error) {
       console.error("Error sending feedback:", error);
-      Alert.alert(
-        "Error",
-        "There was an error sending your feedback. Please try again later.",
-      );
+      Alert.alert(t("help.alerts.error"), t("help.alerts.sendError"));
     }
   };
 
@@ -99,8 +91,8 @@ export default function HelpScreen() {
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
         <View>
-          <Text style={styles.supportSubtitle}>SUPPORT</Text>
-          <Text style={styles.headerTitle}>Help & feedback</Text>
+          <Text style={styles.supportSubtitle}>{t("help.headerSubtitle")}</Text>
+          <Text style={styles.headerTitle}>{t("help.headerTitle")}</Text>
         </View>
       </View>
 
@@ -109,12 +101,16 @@ export default function HelpScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Quick Actions Section */}
-        <Text style={styles.sectionHeader}>QUICK ACTIONS</Text>
+        <Text style={styles.sectionHeader}>
+          {t("help.sections.quickActions")}
+        </Text>
         <View style={styles.cardContainer}>
           <Pressable style={styles.quickActionRow} onPress={handleEmailSupport}>
             <View style={styles.quickActionLeft}>
               <Feather name="mail" size={18} color="#05C785" />
-              <Text style={styles.quickActionText}>Email support</Text>
+              <Text style={styles.quickActionText}>
+                {t("help.quickActions.emailSupport")}
+              </Text>
             </View>
             <Text style={styles.quickActionValue}>hello@kitroom.app</Text>
           </Pressable>
@@ -127,7 +123,9 @@ export default function HelpScreen() {
           >
             <View style={styles.quickActionLeft}>
               <Feather name="alert-octagon" size={18} color="#05C785" />
-              <Text style={styles.quickActionText}>Report a bug</Text>
+              <Text style={styles.quickActionText}>
+                {t("help.quickActions.reportBug")}
+              </Text>
             </View>
             <Feather name="chevron-right" size={16} color="#555" />
           </Pressable>
@@ -140,14 +138,18 @@ export default function HelpScreen() {
           >
             <View style={styles.quickActionLeft}>
               <Feather name="life-buoy" size={18} color="#05C785" />
-              <Text style={styles.quickActionText}>Suggest a feature</Text>
+              <Text style={styles.quickActionText}>
+                {t("help.quickActions.suggestFeature")}
+              </Text>
             </View>
             <Feather name="chevron-right" size={16} color="#555" />
           </Pressable>
         </View>
 
         {/* Frequently Asked Section */}
-        <Text style={styles.sectionHeader}>FREQUENTLY ASKED</Text>
+        <Text style={styles.sectionHeader}>
+          {t("help.sections.frequentlyAsked")}
+        </Text>
 
         {faqs.map((faq, index) => {
           const isOpen = openFaqIndex === index;
@@ -171,7 +173,9 @@ export default function HelpScreen() {
         })}
 
         {/* Send Feedback Section */}
-        <Text style={styles.sectionHeader}>SEND FEEDBACK</Text>
+        <Text style={styles.sectionHeader}>
+          {t("help.sections.sendFeedback")}
+        </Text>
         <View style={styles.feedbackCard}>
           {/* Type Selector Tabs */}
           <View style={styles.tabContainer}>
@@ -195,10 +199,10 @@ export default function HelpScreen() {
           </View>
 
           {/* Message Input */}
-          <Text style={styles.inputLabel}>MESSAGE</Text>
+          <Text style={styles.inputLabel}>{t("help.inputs.messageLabel")}</Text>
           <TextInput
             style={styles.messageInput}
-            placeholder="Tell us what's on your mind..."
+            placeholder={t("help.inputs.messagePlaceholder")}
             placeholderTextColor="#555"
             multiline
             value={message}
@@ -206,10 +210,10 @@ export default function HelpScreen() {
           />
 
           {/* Email Input */}
-          <Text style={styles.inputLabel}>EMAIL (OPTIONAL)</Text>
+          <Text style={styles.inputLabel}>{t("help.inputs.emailLabel")}</Text>
           <TextInput
             style={styles.emailInput}
-            placeholder="you@example.com"
+            placeholder={t("help.inputs.emailPlaceholder")}
             placeholderTextColor="#555"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -229,7 +233,9 @@ export default function HelpScreen() {
               color="#121212"
               style={{ marginRight: 8 }}
             />
-            <Text style={styles.submitButtonText}>Send feedback</Text>
+            <Text style={styles.submitButtonText}>
+              {t("help.buttons.send")}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

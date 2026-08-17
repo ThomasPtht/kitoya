@@ -308,6 +308,288 @@
       "sharingNotAvailable": "Sharing is not available on this device",
       "exportFailed": "Failed to export collection"
     }
+  },
+  "help": {
+    "headerSubtitle": "SUPPORT",
+    "headerTitle": "Help & feedback",
+    "sections": {
+      "quickActions": "QUICK ACTIONS",
+      "frequentlyAsked": "FREQUENTLY ASKED",
+      "sendFeedback": "SEND FEEDBACK"
+    },
+    "quickActions": {
+      "emailSupport": "Email support",
+      "reportBug": "Report a bug",
+      "suggestFeature": "Suggest a feature"
+    },
+    "faqs": {
+      "addKit": {
+        "question": "How do I add a new kit?",
+        "answer": "Tap the central + button in the tab bar, then fill in the kit's details and add a photo — either from your gallery or straight from your camera."
+      },
+      "collectorRank": {
+        "question": "What is the collector rank ?",
+        "answer": "Your collector rank (from Rookie to Hall of Famer) reflects the number of kits in your collection — the more kits you add, the higher you climb."
+      },
+      "exportCollection": {
+        "question": "Can I export my collection?",
+        "answer": "Yes! You can export your collection data anytime in CSV, JSON, or as a printable PDF portfolio directly from your archive settings."
+      },
+      "lockerPublic": {
+        "question": "Is my locker public?",
+        "answer": "By default, your locker is public — this lets you share your profile and get likes on your kits. You can make it private anytime from Settings, though a kit selected for Kit of the Community may still be seen by others that day."
+      }
+    },
+    "inputs": {
+      "messageLabel": "MESSAGE",
+      "messagePlaceholder": "Tell us what's on your mind...",
+      "emailLabel": "EMAIL (OPTIONAL)",
+      "emailPlaceholder": "you@example.com"
+    },
+    "buttons": {
+      "send": "Send feedback"
+    },
+    "alerts": {
+      "error": "Error",
+      "emptyMessage": "Please enter a message before sending your feedback.",
+      "successTitle": "Success",
+      "successMessage": "Thank you! Your feedback has been sent successfully.",
+      "sendError": "There was an error sending your feedback. Please try again later."
+    }
+  },
+  "settings": {
+    "headerTitle": "Settings",
+    "sections": {
+      "profile": "Profile",
+      "preferences": "Preferences & Privacy",
+      "publicView": "Public View",
+      "security": "Account Security"
+    },
+    "profile": {
+      "username": "Username",
+      "defaultUsername": "Collector",
+      "bio": "Bio",
+      "noBio": "No bio yet",
+      "location": "Location",
+      "noLocation": "Not set",
+      "email": "Email",
+      "defaultEmail": "user@kitroom.app",
+      "subscription": "Subscription Plan"
+    },
+    "preferences": {
+      "pushNotifications": "Push Notifications",
+      "publicLocker": "Public Locker by Default",
+      "publicDesc": "Visible to everyone (Public)",
+      "privateDesc": "Hidden from others (Private)",
+      "currency": "Currency"
+    },
+    "publicView": {
+      "title": "Preview Public Profile",
+      "subtitle": "See how other collectors view your locker"
+    },
+    "security": {
+      "changePassword": "Change Password",
+      "deleteAccount": "Delete Account"
+    },
+    "modals": {
+      "username": {
+        "title": "Change Username",
+        "subtitle": "Enter your new unique username (min. 3 characters)",
+        "placeholder": "New username"
+      },
+      "bio": {
+        "title": "Edit Bio",
+        "subtitle": "Write a short bio for your collector profile",
+        "placeholder": "Tell us about your collection..."
+      },
+      "location": {
+        "title": "Edit Location",
+        "subtitle": "Enter your location (city, country) to let others know where you're based",
+        "placeholder": "Location (e.g., Paris, France)"
+      },
+      "currency": {
+        "title": "Select Currency",
+        "subtitle": "Choose the currency used to display your collection prices"
+      },
+      "delete": {
+        "title": "Delete Account",
+        "message": "Are you sure you want to delete your account? This action cannot be undone."
+      }
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "close": "Close",
+      "delete": "Delete"
+    },
+    "alerts": {
+      "error": "Error",
+      "success": "Success",
+      "usernameLength": "Username must be at least 3 characters long.",
+      "usernameSuccess": "Username changed successfully.",
+      "usernameError": "Failed to change username",
+      "bioSuccess": "Bio updated successfully.",
+      "bioError": "Failed to update bio",
+      "locationSuccess": "Location updated successfully.",
+      "locationError": "Failed to update location",
+      "currencyError": "Failed to update currency",
+      "profileError": "An error occurred while updating the profile",
+      "deleteError": "An error occurred while deleting the account"
+    }
+  },
+  "subscription": {
+  "headerSubtitle": "MEMBERSHIP",
+  "headerTitle": "Choose your plan",
+  "plans": {
+    "free": {
+      "name": "FREE",
+      "period": "/ LIFETIME",
+      "subtext": "Basic collection tracking",
+      "cta": "STAY FREE",
+      "features": [
+        "✓ Up to 15 slots",
+        "✓ Share your collection",
+        "X Advanced filters",
+        "X Collection stats & insights"
+      ]
+    },
+    "elite": {
+      "name": "ELITE",
+      "period": "/ MONTH",
+      "subtext": "or €39.99 / YEAR",
+      "cta": "UPGRADE TO ELITE",
+      "features": [
+        "✓ Unlimited slots",
+        "✓ Advanced filters",
+        "✓ Collection stats & insights",
+        "✓ Portfolio export"
+      ]
+    }
+  },
+  "upgrade": {
+  "alreadyElite": {
+    "title": "You are a Kitroom ELITE member!",
+    "backButton": "Back to App"
+  },
+  "errors": {
+    "packageNotAvailable": "Subscription package not available right now.",
+    "defaultPurchaseError": "An error occurred during purchase"
+  },
+  "headerTitle": "Take Your Collection Further",
+  "subtitle": "Organize your jerseys, fill your digital locker, and showcase your passion without limits.",
+  "annual": {
+    "title": "Annual",
+    "subtext": "Billed as €39.99/year",
+    "badge": "Popular"
+  },
+  "monthly": {
+    "title": "Monthly",
+    "subtext": "Cancel anytime"
+  },
+  "featuresHeader": "Everything a true collector needs",
+  "features": {
+    "unlimited": {
+      "title": "Unlimited Slots",
+      "desc": "Add every home, away, and third kit to your digital room."
+    },
+    "stats": {
+      "title": "Advanced Stats",
+      "desc": "Break down your kit collection by clubs, brands, and seasons."
+    },
+    "export": {
+      "title": "Collection Export",
+      "desc": "Export clean catalogs of your sports jerseys instantly."
+    }
+  },
+  "restore": "Restore Purchases",
+  "cta": {
+    "loading": "Loading...",
+    "trial": "Start 7-Day Free Trial",
+    "monthly": "Subscribe Monthly (€4.99/mo)"
+  },
+  "legal": {
+    "trial": "7-day free trial, then €39.99/year. Cancel anytime.",
+    "monthly": "Billed monthly at €4.99. Cancel anytime."
   }
+}
+  },
+  "common": {
+  "searchPlaceholder": "Search by club or season"
+},
+"filterModal": {
+  "title": "Filters",
+  "sections": {
+    "team": "Team",
+    "season": "Season",
+    "brand": "Brand",
+    "kitType": "Kit Type",
+    "version": "Version",
+    "condition": "Condition"
+  },
+  "apply": "See Results"
+},
+"googleButton": {
+  "loading": "Connecting...",
+  "continue": "Continue with Google"
+},
+"jerseyDetail": {
+  "back": "BACK",
+  "official": "OFFICIAL",
+  "replica": "REPLICA / FAN",
+  "noImage": "No image available",
+  "front": "Front",
+  "backSide": "Back",
+  "myCollection": "MY COLLECTION",
+  "footballKit": "Football Kit",
+  "clubUnknown": "Club Unknown",
+  "likes": "LIKE",
+  "likes_plural": "LIKES",
+  "sizePrefix": "Size",
+  "storyTitle": "THE STORY & DETAILS",
+  "specsTitle": "SPECIFICATIONS",
+  "player": "Player",
+  "number": "Number",
+  "brand": "Brand",
+  "version": "Version",
+  "condition": "Condition",
+  "size": "Size",
+  "na": "N/A",
+  "purchaseInfo": "PURCHASE INFO",
+  "purchasePrice": "Purchase Price",
+  "shareCard": "Generating card...",
+  "shareKit": "Share this kit",
+  "deleteButton": "Delete from collection",
+  "alerts": {
+    "deleteTitle": "Delete Jersey",
+    "deleteMessage": "Are you sure you want to delete this jersey from your collection?",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "errorTitle": "Error",
+    "errorMessage": "There was an error deleting the jersey. Please try again.",
+    "shareErrorTitle": "Error",
+    "shareErrorMessage": "Could not share the jersey image.",
+    "toastDeletedTitle": "Jersey deleted",
+    "toastDeletedMessage": "The jersey has been removed from your collection."
+  },
+  "shareMessage": "Check out this kit from my collection! 👕✨ Join me on KITROOM to build and showcase your ultimate football locker: https://kitroom.app",
+  "shareTitle": "Check out this football kit!"
+},
+"kitOfTheDay": {
+  "headerTitle": "KIT OF THE COMMUNITY",
+  "noKitTitle": "No featured kit today",
+  "noKitText": "Featured kits appear when the daily selection service returns a jersey.",
+  "privateLockerTitle": "Private Locker",
+  "privateLockerMessage": "This collector's locker is private.",
+  "viewDetails": "VIEW DETAILS →",
+  "fromLocker": "From",
+  "lockerSuffix": "'s locker"
+},
+"kitOfTheDayModal": {
+  "headerTitle": "KIT OF THE COMMUNITY",
+  "grail": "GRAIL",
+  "from": "From",
+  "lockerSuffix": "'s locker",
+  "storyTitle": "THE STORY"
+}
 }
   

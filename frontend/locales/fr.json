@@ -307,5 +307,287 @@
       "sharingNotAvailable": "Le partage n'est pas disponible sur cet appareil",
       "exportFailed": "Échec de l'exportation de la collection"
     }
+  },
+  "help": {
+    "headerSubtitle": "SUPPORT",
+    "headerTitle": "Aide & retour",
+    "sections": {
+      "quickActions": "ACTIONS RAPIDES",
+      "frequentlyAsked": "FOIRE AUX QUESTIONS",
+      "sendFeedback": "ENVOYER UN RETOUR"
+    },
+    "quickActions": {
+      "emailSupport": "Contacter le support par email",
+      "reportBug": "Signaler un bug",
+      "suggestFeature": "Suggérer une fonctionnalité"
+    },
+    "faqs": {
+      "addKit": {
+        "question": "Comment ajouter un nouveau maillot ?",
+        "answer": "Appuyez sur le bouton central + dans la barre d'onglets, puis remplissez les détails du maillot et ajoutez une photo - depuis votre galerie ou directement avec votre appareil photo."
+      },
+      "collectorRank": {
+        "question": "Qu'est-ce que le rang de collectionneur ?",
+        "answer": "Votre rang de collectionneur (de Rookie à Hall Of Famer) reflète le nombre de maillots dans votre collection - plus vous en ajoutez, plus vous progressez."
+      },
+      "exportCollection": {
+        "question": "Puis-je exporter ma collection ?",
+        "answer": "Oui ! Vous pouvez exporter les données de votre collection à tout moment au format CSV, JSON ou sous forme de portfolio PDF imprimable directement depuis les paramètres de vos archives."
+      },
+      "lockerPublic": {
+        "question": "Mon vestiaire est-il public ?",
+        "answer": "Par défaut, votre vestiaire est public - cela vous permet de partager votre profil et d'obtenir des j'aime sur vos maillots. Vous pouvez le rendre privé à tout moment dans les paramètres, bien qu'un maillot sélectionné pour le Maillot de la communauté puisse encore être visible ce jour-là."
+      }
+    },
+    "inputs": {
+      "messageLabel": "MESSAGE",
+      "messagePlaceholder": "Dites-nous ce qui vous préoccupe...",
+      "emailLabel": "EMAIL (OPTIONNEL)",
+      "emailPlaceholder": "vous@exemple.com"
+    },
+    "buttons": {
+      "send": "Envoyer le retour"
+    },
+    "alerts": {
+      "error": "Erreur",
+      "emptyMessage": "Veuillez saisir un message avant d'envoyer votre retour.",
+      "successTitle": "Succès",
+      "successMessage": "Merci ! Votre retour a bien été envoyé.",
+      "sendError": "Une erreur est survenue lors de l'envoi de votre retour. Veuillez réessayer plus tard."
+    }
+  },
+  "settings": {
+    "headerTitle": "Paramètres",
+    "sections": {
+      "profile": "Profil",
+      "preferences": "Préférences & Confidentialité",
+      "publicView": "Vue publique",
+      "security": "Sécurité du compte"
+    },
+    "profile": {
+      "username": "Nom d'utilisateur",
+      "defaultUsername": "Collectionneur",
+      "bio": "Bio",
+      "noBio": "Aucune bio pour l'instant",
+      "location": "Localisation",
+      "noLocation": "Non défini",
+      "email": "Email",
+      "defaultEmail": "user@kitroom.app",
+      "subscription": "Plan d'abonnement"
+    },
+    "preferences": {
+      "pushNotifications": "Notifications Push",
+      "publicLocker": "Vestiaire public par défaut",
+      "publicDesc": "Visible par tout le monde (Public)",
+      "privateDesc": "Masqué pour les autres (Privé)",
+      "currency": "Devise"
+    },
+    "publicView": {
+      "title": "Aperçu du profil public",
+      "subtitle": "Voir comment les autres collectionneurs voient votre vestiaire"
+    },
+    "security": {
+      "changePassword": "Changer le mot de passe",
+      "deleteAccount": "Supprimer le compte"
+    },
+    "modals": {
+      "username": {
+        "title": "Changer le nom d'utilisateur",
+        "subtitle": "Entrez votre nouveau nom unique (min. 3 caractères)",
+        "placeholder": "Nouveau nom d'utilisateur"
+      },
+      "bio": {
+        "title": "Modifier la bio",
+        "subtitle": "Rédigez une courte bio pour votre profil de collectionneur",
+        "placeholder": "Parlez-nous de votre collection..."
+      },
+      "location": {
+        "title": "Modifier la localisation",
+        "subtitle": "Entrez votre localisation (ville, pays) pour indiquer où vous vous trouvez",
+        "placeholder": "Localisation (ex: Paris, France)"
+      },
+      "currency": {
+        "title": "Sélectionner la devise",
+        "subtitle": "Choisissez la devise utilisée pour afficher les prix de votre collection"
+      },
+      "delete": {
+        "title": "Supprimer le compte",
+        "message": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible."
+      }
+    },
+    "buttons": {
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "close": "Fermer",
+      "delete": "Supprimer"
+    },
+    "alerts": {
+      "error": "Erreur",
+      "success": "Succès",
+      "usernameLength": "Le nom d'utilisateur doit contenir au moins 3 caractères.",
+      "usernameSuccess": "Nom d'utilisateur modifié avec succès.",
+      "usernameError": "Échec de la modification du nom d'utilisateur",
+      "bioSuccess": "Bio mise à jour avec succès.",
+      "bioError": "Échec de la mise à jour de la bio",
+      "locationSuccess": "Localisation mise à jour avec succès.",
+      "locationError": "Échec de la mise à jour de la localisation",
+      "currencyError": "Échec de la mise à jour de la devise",
+      "profileError": "Une erreur est survenue lors de la mise à jour du profil",
+      "deleteError": "Une erreur est survenue lors de la suppression du compte"
+    }
+  },
+  "subscription": {
+  "headerSubtitle": "ABONNEMENT",
+  "headerTitle": "Choisissez votre formule",
+  "plans": {
+    "free": {
+      "name": "GRATUIT",
+      "period": "/ À VIE",
+      "subtext": "Suivi de collection basique",
+      "cta": "RESTER GRATUIT",
+      "features": [
+        "✓ Jusqu'à 15 emplacements",
+        "✓ Partager votre collection",
+        "X Filtres avancés",
+        "X Statistiques & analyses de collection"
+      ]
+    },
+    "elite": {
+      "name": "ÉLITE",
+      "period": "/ MOIS",
+      "subtext": "ou 39,99 € / AN",
+      "cta": "PASSER À ÉLITE",
+      "features": [
+        "✓ Emplacements illimités",
+        "✓ Filtres avancés",
+        "✓ Statistiques & analyses de collection",
+        "✓ Exportation du portfolio"
+      ]
+    }
+  },
+  "upgrade": {
+  "alreadyElite": {
+    "title": "Vous êtes membre Kitroom ÉLITE !",
+    "backButton": "Retour à l'application"
+  },
+  "errors": {
+    "packageNotAvailable": "Le forfait d'abonnement n'est pas disponible pour le moment.",
+    "defaultPurchaseError": "Une erreur est survenue lors de l'achat"
+  },
+  "headerTitle": "Allez plus loin avec votre collection",
+  "subtitle": "Organisez vos maillots, remplissez votre vestiaire numérique et exposez votre passion sans limites.",
+  "annual": {
+    "title": "Annuel",
+    "subtext": "Facturé 39,99 €/an",
+    "badge": "Populaire"
+  },
+  "monthly": {
+    "title": "Mensuel",
+    "subtext": "Annulable à tout moment"
+  },
+  "featuresHeader": "Tout ce dont un vrai collectionneur a besoin",
+  "features": {
+    "unlimited": {
+      "title": "Emplacements illimités",
+      "desc": "Ajoutez tous vos maillots domicile, extérieur et third à votre vestiaire numérique."
+    },
+    "stats": {
+      "title": "Statistiques avancées",
+      "desc": "Analysez votre collection de maillots par clubs, marques et saisons."
+    },
+    "export": {
+      "title": "Exportation de collection",
+      "desc": "Exportez instantanément des catalogues propres de vos maillots de sport."
+    }
+  },
+  "restore": "Restaurer les achats",
+  "cta": {
+    "loading": "Chargement...",
+    "trial": "Démarrer l'essai gratuit de 7 jours",
+    "monthly": "S'abonner (4,99 €/mois)"
+  },
+  "legal": {
+    "trial": "Essai gratuit de 7 jours, puis 39,99 €/an. Annulable à tout moment.",
+    "monthly": "Facturé 4,99 € par mois. Annulable à tout moment."
   }
+}
+  },
+  "common": {
+  "searchPlaceholder": "Rechercher par club ou saison"
+},
+"filterModal": {
+  "title": "Filtres",
+  "sections": {
+    "team": "Équipe",
+    "season": "Saison",
+    "brand": "Marque",
+    "kitType": "Type de maillot",
+    "version": "Version",
+    "condition": "État"
+  },
+  "apply": "Voir les résultats"
+},
+"googleButton": {
+  "loading": "Connexion...",
+  "continue": "Continuer avec Google"
+},
+"jerseyDetail": {
+  "back": "RETOUR",
+  "official": "OFFICIEL",
+  "replica": "RÉPLICA / FAN",
+  "noImage": "Aucune image disponible",
+  "front": "Face",
+  "backSide": "Dos",
+  "myCollection": "MA COLLECTION",
+  "footballKit": "Maillot de foot",
+  "clubUnknown": "Club inconnu",
+  "likes": "J'AIME",
+  "likes_plural": "J'AIME",
+  "sizePrefix": "Taille",
+  "storyTitle": "L'HISTOIRE & DÉTAILS",
+  "specsTitle": "SPÉCIFICATIONS",
+  "player": "Joueur",
+  "number": "Numéro",
+  "brand": "Équipementier",
+  "version": "Version",
+  "condition": "État",
+  "size": "Taille",
+  "na": "N/A",
+  "purchaseInfo": "INFOS D'ACHAT",
+  "purchasePrice": "Prix d'achat",
+  "shareCard": "Génération de la carte...",
+  "shareKit": "Partager ce maillot",
+  "deleteButton": "Supprimer de la collection",
+  "alerts": {
+    "deleteTitle": "Supprimer le maillot",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce maillot de votre collection ?",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "errorTitle": "Erreur",
+    "errorMessage": "Une erreur est survenue lors de la suppression du maillot. Veuillez réessayer.",
+    "shareErrorTitle": "Erreur",
+    "shareErrorMessage": "Impossible de partager l'image du maillot.",
+    "toastDeletedTitle": "Maillot supprimé",
+    "toastDeletedMessage": "Le maillot a été retiré de votre collection."
+  },
+  "shareMessage": "Découvrez ce maillot de ma collection ! 👕✨ Rejoignez-moi sur KITROOM pour créer et exposer votre vestiaire de football ultime : https://kitroom.app",
+  "shareTitle": "Découvrez ce maillot de foot !"
+},
+"kitOfTheDay": {
+  "headerTitle": "MAILLOT DE LA COMMUNAUTÉ",
+  "noKitTitle": "Aucun maillot vedette aujourd'hui",
+  "noKitText": "Les maillots vedettes apparaissent lorsque le service de sélection quotidienne renvoie un maillot.",
+  "privateLockerTitle": "Vestiaire privé",
+  "privateLockerMessage": "Le vestiaire de ce collectionneur est privé.",
+  "viewDetails": "VOIR LES DÉTAILS →",
+  "fromLocker": "Du vestiaire de",
+  "lockerSuffix": ""
+},
+"kitOfTheDayModal": {
+  "headerTitle": "KIT OF THE COMMUNITY",
+  "grail": "GRAIL",
+  "from": "From",
+  "lockerSuffix": "'s locker",
+  "storyTitle": "THE STORY"
+}
 }

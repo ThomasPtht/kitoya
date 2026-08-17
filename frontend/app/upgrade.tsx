@@ -12,10 +12,12 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useTranslation } from "react-i18next";
 
 type IntervalKey = "month" | "year";
 
 export default function UpgradeScreen() {
+  const { t } = useTranslation();
   const [selectedInterval, setSelectedInterval] = useState<IntervalKey>("year");
   const [loading, setLoading] = useState(false);
 
@@ -23,25 +25,25 @@ export default function UpgradeScreen() {
   const { packages, purchasePackage, restorePurchases, isElite } =
     useSubscription();
 
-  // Si l'utilisateur est déjà ELITE, on peut afficher un écran de succès direct ou un message
+  // Si l'utilisateur est déjà ELITE, on affiche l'écran de succès traduit
   if (isElite) {
     return (
       <SafeAreaView style={[styles.container, styles.loadingContainer]}>
         <Feather name="check-circle" size={64} color="#D4AF37" />
-        <Text style={styles.mainTitle}>You are a Kitroom ELITE member!</Text>
+        <Text style={styles.mainTitle}>{t("upgrade.alreadyElite.title")}</Text>
         <TouchableOpacity
           style={styles.ctaButton}
           onPress={() => router.back()}
         >
-          <Text style={styles.ctaButtonText}>Back to App</Text>
+          <Text style={styles.ctaButtonText}>
+            {t("upgrade.alreadyElite.backButton")}
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
   }
 
   const handleSubscribe = async () => {
-    // Trouve le package correspondant dans ceux renvoyés par RevenueCat
-    // (Par convention RevenueCat identifie souvent les abonnements par durée ou type)
     const targetPackage = packages.find((pkg) => {
       if (selectedInterval === "year") {
         return (
@@ -56,11 +58,10 @@ export default function UpgradeScreen() {
       }
     });
 
-    // Si on est en mode Expo Go ou si les packages ne sont pas chargés, fallback de sécurité
     if (!targetPackage) {
       Toast.show({
         type: "error",
-        text1: "Subscription package not available right now.",
+        text1: t("upgrade.errors.packageNotAvailable"),
       });
       return;
     }
@@ -68,11 +69,10 @@ export default function UpgradeScreen() {
     setLoading(true);
     try {
       await purchasePackage(targetPackage);
-      // Le hook gère déjà les alertes de succès/erreur, on peut juste fermer si c'est bon
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: error.message || "An error occurred during purchase",
+        text1: error.message || t("upgrade.errors.defaultPurchaseError"),
       });
     } finally {
       setLoading(false);
@@ -94,11 +94,8 @@ export default function UpgradeScreen() {
       >
         {/* Title & Subtitle */}
         <View style={styles.titleContainer}>
-          <Text style={styles.mainTitle}>Take Your Collection Further</Text>
-          <Text style={styles.subtitle}>
-            Organize your jerseys, fill your digital locker, and showcase your
-            passion without limits.
-          </Text>
+          <Text style={styles.mainTitle}>{t("upgrade.headerTitle")}</Text>
+          <Text style={styles.subtitle}>{t("upgrade.subtitle")}</Text>
         </View>
 
         {/* Subscription Options (Yearly / Monthly) */}
@@ -113,14 +110,20 @@ export default function UpgradeScreen() {
           >
             <View style={styles.badgeContainer}>
               <View style={styles.popularBadge}>
-                <Text style={styles.popularBadgeText}>Popular</Text>
+                <Text style={styles.popularBadgeText}>
+                  {t("upgrade.annual.badge")}
+                </Text>
               </View>
             </View>
 
             <View style={styles.planInfoRow}>
               <View>
-                <Text style={styles.planTitle}>Annual</Text>
-                <Text style={styles.planSubtext}>Billed as €39.99/year</Text>
+                <Text style={styles.planTitle}>
+                  {t("upgrade.annual.title")}
+                </Text>
+                <Text style={styles.planSubtext}>
+                  {t("upgrade.annual.subtext")}
+                </Text>
               </View>
               <View style={styles.priceContainer}>
                 <Text style={styles.oldPrice}>€9.99</Text>
@@ -141,8 +144,12 @@ export default function UpgradeScreen() {
           >
             <View style={styles.planInfoRow}>
               <View>
-                <Text style={styles.planTitle}>Monthly</Text>
-                <Text style={styles.planSubtext}>Cancel anytime</Text>
+                <Text style={styles.planTitle}>
+                  {t("upgrade.monthly.title")}
+                </Text>
+                <Text style={styles.planSubtext}>
+                  {t("upgrade.monthly.subtext")}
+                </Text>
               </View>
               <Text style={styles.priceHighlight}>
                 €4.99<Text style={styles.perPeriod}>/mo</Text>
@@ -154,7 +161,7 @@ export default function UpgradeScreen() {
         {/* Features Section */}
         <View style={styles.featuresSection}>
           <Text style={styles.featuresHeaderTitle}>
-            Everything a true collector needs
+            {t("upgrade.featuresHeader")}
           </Text>
 
           <View style={styles.featureRow}>
@@ -162,9 +169,11 @@ export default function UpgradeScreen() {
               <MaterialCommunityIcons name="hanger" size={20} color="#D4AF37" />
             </View>
             <View style={styles.featureTextContainer}>
-              <Text style={styles.featureTitle}>Unlimited Slots</Text>
+              <Text style={styles.featureTitle}>
+                {t("upgrade.features.unlimited.title")}
+              </Text>
               <Text style={styles.featureDesc}>
-                Add every home, away, and third kit to your digital room.
+                {t("upgrade.features.unlimited.desc")}
               </Text>
             </View>
           </View>
@@ -174,9 +183,11 @@ export default function UpgradeScreen() {
               <Feather name="bar-chart-2" size={20} color="#D4AF37" />
             </View>
             <View style={styles.featureTextContainer}>
-              <Text style={styles.featureTitle}>Advanced Stats</Text>
+              <Text style={styles.featureTitle}>
+                {t("upgrade.features.stats.title")}
+              </Text>
               <Text style={styles.featureDesc}>
-                Break down your kit collection by clubs, brands, and seasons.
+                {t("upgrade.features.stats.desc")}
               </Text>
             </View>
           </View>
@@ -186,9 +197,11 @@ export default function UpgradeScreen() {
               <Feather name="download" size={20} color="#D4AF37" />
             </View>
             <View style={styles.featureTextContainer}>
-              <Text style={styles.featureTitle}>Collection Export</Text>
+              <Text style={styles.featureTitle}>
+                {t("upgrade.features.export.title")}
+              </Text>
               <Text style={styles.featureDesc}>
-                Export clean catalogs of your sports jerseys instantly.
+                {t("upgrade.features.export.desc")}
               </Text>
             </View>
           </View>
@@ -199,7 +212,7 @@ export default function UpgradeScreen() {
           onPress={restorePurchases}
           style={styles.restoreButton}
         >
-          <Text style={styles.restoreButtonText}>Restore Purchases</Text>
+          <Text style={styles.restoreButtonText}>{t("upgrade.restore")}</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -212,16 +225,16 @@ export default function UpgradeScreen() {
         >
           <Text style={styles.ctaButtonText}>
             {loading
-              ? "Loading..."
+              ? t("upgrade.cta.loading")
               : selectedInterval === "year"
-                ? "Start 7-Day Free Trial"
-                : "Subscribe Monthly (€4.99/mo)"}
+                ? t("upgrade.cta.trial")
+                : t("upgrade.cta.monthly")}
           </Text>
         </TouchableOpacity>
         <Text style={styles.footerLegal}>
           {selectedInterval === "year"
-            ? "7-day free trial, then €39.99/year. Cancel anytime."
-            : "Billed monthly at €4.99. Cancel anytime."}
+            ? t("upgrade.legal.trial")
+            : t("upgrade.legal.monthly")}
         </Text>
       </View>
     </SafeAreaView>

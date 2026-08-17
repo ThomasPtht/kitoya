@@ -2,6 +2,7 @@ import React from "react";
 import { View, TextInput, StyleSheet, TextInputProps } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { useTranslation } from "react-i18next";
 
 interface CustomSearchBarProps extends TextInputProps {
   value: string;
@@ -11,7 +12,10 @@ interface CustomSearchBarProps extends TextInputProps {
 export const CustomSearchBar = ({
   value,
   onChangeText,
+  ...props
 }: CustomSearchBarProps) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.searchContainer}>
       <Feather
@@ -22,11 +26,12 @@ export const CustomSearchBar = ({
       />
       <TextInput
         style={styles.input}
-        placeholder="Search by club or season"
+        placeholder={t("common.searchPlaceholder")}
         placeholderTextColor={Colors.theme.textMuted}
         value={value}
         onChangeText={onChangeText}
         clearButtonMode="while-editing"
+        {...props}
       />
     </View>
   );

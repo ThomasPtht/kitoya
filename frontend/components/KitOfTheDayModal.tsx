@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { formatText } from "./KitOfTheDayCard";
+import { useTranslation } from "react-i18next";
 
 interface KitOfTheDayModalProps {
   visible: boolean;
@@ -26,6 +27,8 @@ export default function KitOfTheDayModal({
   jersey,
   onToggleLike,
 }: KitOfTheDayModalProps) {
+  const { t } = useTranslation();
+
   if (!jersey) return null;
 
   return (
@@ -38,7 +41,9 @@ export default function KitOfTheDayModal({
       <SafeAreaView style={styles.container}>
         {/* Barre de fermeture */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
+          <Text style={styles.headerTitle}>
+            {t("kitOfTheDayModal.headerTitle")}
+          </Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Ionicons name="close" size={20} color="#FFFFFF" />
           </TouchableOpacity>
@@ -91,7 +96,9 @@ export default function KitOfTheDayModal({
                 )}
                 {jersey.isGrail && (
                   <View style={styles.badge}>
-                    <Text style={styles.badgeText}>GRAIL</Text>
+                    <Text style={styles.badgeText}>
+                      {t("kitOfTheDayModal.grail")}
+                    </Text>
                   </View>
                 )}
               </ScrollView>
@@ -107,11 +114,11 @@ export default function KitOfTheDayModal({
                     />
                   </View>
                   <Text style={styles.modalOwnerText}>
-                    From{" "}
+                    {t("kitOfTheDayModal.from")}{" "}
                     <Text style={styles.modalOwnerName}>
                       @{jersey.user.username}
                     </Text>
-                    's locker
+                    {t("kitOfTheDayModal.lockerSuffix")}
                   </Text>
                 </View>
               )}
@@ -146,7 +153,9 @@ export default function KitOfTheDayModal({
 
           {/* Story complète */}
           <View style={styles.storySection}>
-            <Text style={styles.storyTitle}>THE STORY</Text>
+            <Text style={styles.storyTitle}>
+              {t("kitOfTheDayModal.storyTitle")}
+            </Text>
             <Text style={styles.storyFullText}>{formatText(jersey.story)}</Text>
           </View>
         </ScrollView>

@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useJerseyOfTheDay, useToggleLikeJersey } from "@/hooks/useJerseyHook";
 import KitOfTheDayModal from "./KitOfTheDayModal";
+import { useTranslation } from "react-i18next";
 
 // Helper to format types/conditions cleanly (e.g. "HOME_KIT" -> "Home kit")
 export const formatText = (text: string | null | undefined) => {
@@ -24,6 +25,7 @@ export const formatText = (text: string | null | undefined) => {
 };
 
 export default function KitOfTheDayCard() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: jersey, isLoading, isError } = useJerseyOfTheDay();
   const [imageFailed, setImageFailed] = useState(false);
@@ -49,7 +51,7 @@ export default function KitOfTheDayCard() {
       <View style={styles.wrapper}>
         <View style={styles.header}>
           <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
-          <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
+          <Text style={styles.headerTitle}>{t("kitOfTheDay.headerTitle")}</Text>
         </View>
 
         <View style={styles.card}>
@@ -59,10 +61,11 @@ export default function KitOfTheDayCard() {
               size={28}
               color={Colors.theme.primary}
             />
-            <Text style={styles.placeholderTitle}>No featured kit today</Text>
+            <Text style={styles.placeholderTitle}>
+              {t("kitOfTheDay.noKitTitle")}
+            </Text>
             <Text style={styles.placeholderText}>
-              Featured kits appear when the daily selection service returns a
-              jersey.
+              {t("kitOfTheDay.noKitText")}
             </Text>
           </View>
         </View>
@@ -82,7 +85,10 @@ export default function KitOfTheDayCard() {
 
     // Keep the locker visibility check only for navigation, not for KOTD display.
     if (jersey.user.isPublic === false) {
-      Alert.alert("Private Locker", "This collector's locker is private.");
+      Alert.alert(
+        t("kitOfTheDay.privateLockerTitle"),
+        t("kitOfTheDay.privateLockerMessage"),
+      );
       return;
     }
 
@@ -98,7 +104,7 @@ export default function KitOfTheDayCard() {
         {/* Title Header */}
         <View style={styles.header}>
           <Ionicons name="sparkles" size={14} color={Colors.theme.primary} />
-          <Text style={styles.headerTitle}>KIT OF THE COMMUNITY</Text>
+          <Text style={styles.headerTitle}>{t("kitOfTheDay.headerTitle")}</Text>
         </View>
 
         {/* Main card container */}
@@ -141,7 +147,9 @@ export default function KitOfTheDayCard() {
                 </Text>
               </View>
 
-              <Text style={styles.readMore}>VIEW DETAILS →</Text>
+              <Text style={styles.readMore}>
+                {t("kitOfTheDay.viewDetails")}
+              </Text>
             </View>
           </View>
 
@@ -163,11 +171,11 @@ export default function KitOfTheDayCard() {
                 />
               </View>
               <Text style={styles.authorText}>
-                From{" "}
+                {t("kitOfTheDay.fromN") || "From"}{" "}
                 <Text style={styles.authorUsername}>
                   @{jersey.user.username}
                 </Text>
-                's locker
+                {t("kitOfTheDay.lockerSuffix") || "'s locker"}
               </Text>
             </TouchableOpacity>
 

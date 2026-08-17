@@ -10,6 +10,7 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -19,47 +20,38 @@ const SIDE_OFFSET = SCREEN_WIDTH * 0.2;
 
 type PlanKey = "FREE" | "ELITE";
 
-interface PlanData {
+interface PlanConfig {
   key: PlanKey;
-  name: string;
+  nameKey: string;
   price: string;
-  period: string;
-  subtext: string;
-  features: string[];
-  cta: string;
+  periodKey: string;
+  subtextKey: string;
+  featuresKey: string;
+  ctaKey: string;
 }
 
 export default function SubscriptionScreen() {
+  const { t } = useTranslation();
   const [activePlan, setActivePlan] = useState<PlanKey>("ELITE");
 
-  const plans: PlanData[] = [
+  const plansConfig: PlanConfig[] = [
     {
       key: "FREE",
-      name: "FREE",
+      nameKey: "subscription.plans.free.name",
       price: "€0.00",
-      period: "/ LIFETIME",
-      subtext: "Basic collection tracking",
-      features: [
-        "✓ Up to 15 slots",
-        "✓ Share your collection",
-        "X Advanced filters",
-        "X Collection stats & insights",
-      ],
-      cta: "STAY FREE",
+      periodKey: "subscription.plans.free.period",
+      subtextKey: "subscription.plans.free.subtext",
+      featuresKey: "subscription.plans.free.features",
+      ctaKey: "subscription.plans.free.cta",
     },
     {
       key: "ELITE",
-      name: "ELITE",
+      nameKey: "subscription.plans.elite.name",
       price: "€4.99",
-      period: "/ MONTH",
-      subtext: "or €39.99 / YEAR",
-      features: [
-        "✓ Unlimited slots",
-        "✓ Advanced filters",
-        "✓ Collection stats & insights",
-        "✓ Portfolio export",
-      ],
-      cta: "UPGRADE TO ELITE",
+      periodKey: "subscription.plans.elite.period",
+      subtextKey: "subscription.plans.elite.subtext",
+      featuresKey: "subscription.plans.elite.features",
+      ctaKey: "subscription.plans.elite.cta",
     },
   ];
 
@@ -100,13 +92,17 @@ export default function SubscriptionScreen() {
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
         <View>
-          <Text style={styles.archiveSubtitle}>MEMBERSHIP</Text>
-          <Text style={styles.headerTitle}>Choose your plan</Text>
+          <Text style={styles.archiveSubtitle}>
+            {t("subscription.headerSubtitle")}
+          </Text>
+          <Text style={styles.headerTitle}>
+            {t("subscription.headerTitle")}
+          </Text>
         </View>
       </View>
 
       <View style={styles.stackContainer}>
-        {plans.map((plan) => {
+        {plansConfig.map((plan) => {
           const isSelected = plan.key === activePlan;
           const cardAnimatedStyle = getCardStyle(plan.key);
 
@@ -116,6 +112,10 @@ export default function SubscriptionScreen() {
           let themeColor = "#05C785";
           if (isElite) themeColor = "#D4AF37";
           if (isFree) themeColor = "#777777";
+
+          const featuresList = t(plan.featuresKey, {
+            returnObjects: true,
+          }) as string[];
 
           return (
             <Pressable
@@ -130,12 +130,12 @@ export default function SubscriptionScreen() {
             >
               <View>
                 <Text style={[styles.planName, { color: themeColor }]}>
-                  {plan.name}
+                  {t(plan.nameKey)}
                 </Text>
 
                 <Text style={styles.price}>
                   {plan.price}{" "}
-                  <Text style={styles.perMonth}>{plan.period}</Text>
+                  <Text style={styles.perMonth}>{t(plan.periodKey)}</Text>
                 </Text>
                 <Text
                   style={[
@@ -143,17 +143,18 @@ export default function SubscriptionScreen() {
                     { color: isFree ? "#666666" : themeColor },
                   ]}
                 >
-                  {plan.subtext}
+                  {t(plan.subtextKey)}
                 </Text>
 
                 <View style={styles.divider} />
 
                 <View style={styles.featuresContainer}>
-                  {plan.features.map((feature, index) => (
-                    <Text key={index} style={styles.feature}>
-                      {feature}
-                    </Text>
-                  ))}
+                  {Array.isArray(featuresList) &&
+                    featuresList.map((feature, index) => (
+                      <Text key={index} style={styles.feature}>
+                        {feature}
+                      </Text>
+                    ))}
                 </View>
               </View>
 
@@ -174,7 +175,7 @@ export default function SubscriptionScreen() {
                     { color: isFree ? "#FFFFFF" : "#000000" },
                   ]}
                 >
-                  {plan.cta}
+                  {t(plan.ctaKey)}
                 </Text>
               </TouchableOpacity>
             </Pressable>

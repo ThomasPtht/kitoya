@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { FilterSection } from "./FilterSection";
 import { JerseyData } from "@/services/jersey.service";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface FilterModalProps {
   visible: boolean;
@@ -23,6 +24,7 @@ export default function FilterModal({
   onClose,
   jerseys,
 }: FilterModalProps) {
+  const { t } = useTranslation();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   const {
@@ -45,8 +47,6 @@ export default function FilterModal({
   };
 
   // --- FILTRAGE CROISÉ (CROSS-FILTERING) ---
-  // Chaque section est filtrée par rapport aux sélections des AUTRES sections
-
   const filteredForClubs = useMemo(() => {
     return jerseys.filter((j) => {
       const matchSeason =
@@ -223,7 +223,6 @@ export default function FilterModal({
   ]);
 
   // --- EXTRACTION DES LISTES UNIQUES ---
-
   const allClubs = useMemo(() => {
     return Array.from(new Set(filteredForClubs.map((j) => j.club?.name)))
       .filter((name): name is string => Boolean(name))
@@ -272,7 +271,7 @@ export default function FilterModal({
       <View style={styles.modalContainer}>
         <View style={styles.header}>
           <View style={{ width: 32 }} />
-          <Text style={styles.headerTitle}>Filters</Text>
+          <Text style={styles.headerTitle}>{t("filterModal.title")}</Text>
           <TouchableOpacity
             onPress={onClose}
             style={styles.closeButton}
@@ -285,7 +284,7 @@ export default function FilterModal({
         <ScrollView>
           {/* TEAM */}
           <FilterSection
-            title="Team"
+            title={t("filterModal.sections.team")}
             isOpen={openSection === "Team"}
             onToggle={() =>
               setOpenSection(openSection === "Team" ? null : "Team")
@@ -312,7 +311,7 @@ export default function FilterModal({
 
           {/* SEASON */}
           <FilterSection
-            title="Season"
+            title={t("filterModal.sections.season")}
             isOpen={openSection === "Season"}
             onToggle={() =>
               setOpenSection(openSection === "Season" ? null : "Season")
@@ -339,7 +338,7 @@ export default function FilterModal({
 
           {/* BRAND */}
           <FilterSection
-            title="Brand"
+            title={t("filterModal.sections.brand")}
             isOpen={openSection === "Brand"}
             onToggle={() =>
               setOpenSection(openSection === "Brand" ? null : "Brand")
@@ -366,7 +365,7 @@ export default function FilterModal({
 
           {/* KIT TYPE */}
           <FilterSection
-            title="Kit Type"
+            title={t("filterModal.sections.kitType")}
             isOpen={openSection === "Kit Type"}
             onToggle={() =>
               setOpenSection(openSection === "Kit Type" ? null : "Kit Type")
@@ -393,7 +392,7 @@ export default function FilterModal({
 
           {/* VERSION */}
           <FilterSection
-            title="Version"
+            title={t("filterModal.sections.version")}
             isOpen={openSection === "Version"}
             onToggle={() =>
               setOpenSection(openSection === "Version" ? null : "Version")
@@ -420,7 +419,7 @@ export default function FilterModal({
 
           {/* CONDITION */}
           <FilterSection
-            title="Condition"
+            title={t("filterModal.sections.condition")}
             isOpen={openSection === "Condition"}
             onToggle={() =>
               setOpenSection(openSection === "Condition" ? null : "Condition")
@@ -447,7 +446,7 @@ export default function FilterModal({
         </ScrollView>
 
         <TouchableOpacity style={styles.applyButton} onPress={onClose}>
-          <Text style={styles.applyButtonText}>See Results</Text>
+          <Text style={styles.applyButtonText}>{t("filterModal.apply")}</Text>
         </TouchableOpacity>
       </View>
     </Modal>

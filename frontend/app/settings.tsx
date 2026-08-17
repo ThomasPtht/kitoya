@@ -17,8 +17,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsScreen() {
+  const { t } = useTranslation();
   const { data: userInfo } = useUserMe();
   const queryClient = useQueryClient();
 
@@ -60,7 +62,6 @@ export default function SettingsScreen() {
   ];
 
   const verifyUsername = async (username: string) => {
-    console.log("Vérification API pour :", username);
     if (!username || username.length < 3) {
       setIsUsernameAvailable(null);
       return;
@@ -78,7 +79,6 @@ export default function SettingsScreen() {
     }
   };
 
-  // Effet déclenché lors de la modification de l'input (avec debounce)
   useEffect(() => {
     const trimmed = newUsernameInput.trim();
     const timer = setTimeout(() => {
@@ -105,7 +105,10 @@ export default function SettingsScreen() {
 
   const handleSaveUsername = async () => {
     if (!newUsernameInput || newUsernameInput.trim().length < 3) {
-      Alert.alert("Error", "Username must be at least 3 characters long.");
+      Alert.alert(
+        t("settings.alerts.error"),
+        t("settings.alerts.usernameLength"),
+      );
       return;
     }
 
@@ -114,9 +117,15 @@ export default function SettingsScreen() {
       await authService.changeUsername(newUsernameInput.trim());
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
       setIsUsernameModalVisible(false);
-      Alert.alert("Success", "Username changed successfully.");
+      Alert.alert(
+        t("settings.alerts.success"),
+        t("settings.alerts.usernameSuccess"),
+      );
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to change username");
+      Alert.alert(
+        t("settings.alerts.error"),
+        error.message || t("settings.alerts.usernameError"),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -128,9 +137,15 @@ export default function SettingsScreen() {
       await authService.updateBio(newBioInput.trim());
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
       setIsBioModalVisible(false);
-      Alert.alert("Success", "Bio updated successfully.");
+      Alert.alert(
+        t("settings.alerts.success"),
+        t("settings.alerts.bioSuccess"),
+      );
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update bio");
+      Alert.alert(
+        t("settings.alerts.error"),
+        error.message || t("settings.alerts.bioError"),
+      );
     } finally {
       setIsSubmittingBio(false);
     }
@@ -142,9 +157,15 @@ export default function SettingsScreen() {
       await authService.updateProfile({ location: newLocationInput.trim() });
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
       setIsLocationModalVisible(false);
-      Alert.alert("Success", "Location updated successfully.");
+      Alert.alert(
+        t("settings.alerts.success"),
+        t("settings.alerts.locationSuccess"),
+      );
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update location");
+      Alert.alert(
+        t("settings.alerts.error"),
+        error.message || t("settings.alerts.locationError"),
+      );
     } finally {
       setIsSubmittingLocation(false);
     }
@@ -157,7 +178,10 @@ export default function SettingsScreen() {
       queryClient.invalidateQueries({ queryKey: ["userMe"] });
       setIsCurrencyModalVisible(false);
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update currency");
+      Alert.alert(
+        t("settings.alerts.error"),
+        error.message || t("settings.alerts.currencyError"),
+      );
     } finally {
       setIsSubmittingCurrency(false);
     }
@@ -165,23 +189,23 @@ export default function SettingsScreen() {
 
   const handleDeleteAccount = async () => {
     Alert.alert(
-      "Delete Account",
-      "Are you sure you want to delete your account? This action cannot be undone.",
+      t("settings.modals.delete.title"),
+      t("settings.modals.delete.message"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("settings.buttons.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("settings.buttons.delete"),
           style: "destructive",
           onPress: async () => {
             try {
               await authService.deleteAccount();
-              queryClient.clear(); // Clear the cache after logout and avoid to log with old data
+              queryClient.clear();
               await authService.logout();
               router.replace("/(auth)/login");
             } catch (error: any) {
               Alert.alert(
-                "Error",
-                error.message || "An error occurred while deleting the account",
+                t("settings.alerts.error"),
+                error.message || t("settings.alerts.deleteError"),
               );
             }
           },
@@ -198,8 +222,8 @@ export default function SettingsScreen() {
     } catch (error: any) {
       setPublicLocker(!newValue);
       Alert.alert(
-        "Error",
-        error.message || "An error occurred while updating the profile",
+        t("settings.alerts.error"),
+        error.message || t("settings.alerts.profileError"),
       );
     }
   };
@@ -211,7 +235,7 @@ export default function SettingsScreen() {
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
-        <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={styles.headerTitle}>{t("settings.headerTitle")}</Text>
       </View>
 
       <ScrollView
@@ -220,7 +244,9 @@ export default function SettingsScreen() {
       >
         {/* Profile Section */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Profile</Text>
+          <Text style={styles.sectionTitle}>
+            {t("settings.sections.profile")}
+          </Text>
           <View style={styles.card}>
             <TouchableOpacity
               style={styles.row}
@@ -228,11 +254,13 @@ export default function SettingsScreen() {
             >
               <View style={styles.rowLeft}>
                 <Feather name="user" size={18} color="#05C785" />
-                <Text style={styles.label}>Username</Text>
+                <Text style={styles.label}>
+                  {t("settings.profile.username")}
+                </Text>
               </View>
               <View style={styles.rowRight}>
                 <Text style={styles.value}>
-                  {userInfo?.username || "Collector"}
+                  {userInfo?.username || t("settings.profile.defaultUsername")}
                 </Text>
                 <Feather
                   name="chevron-right"
@@ -246,7 +274,7 @@ export default function SettingsScreen() {
             <TouchableOpacity style={styles.row} onPress={handleOpenBioModal}>
               <View style={styles.rowLeft}>
                 <Feather name="file-text" size={18} color="#05C785" />
-                <Text style={styles.label}>Bio</Text>
+                <Text style={styles.label}>{t("settings.profile.bio")}</Text>
               </View>
               <View
                 style={[
@@ -258,7 +286,7 @@ export default function SettingsScreen() {
                   style={[styles.value, { textAlign: "right" }]}
                   numberOfLines={1}
                 >
-                  {userInfo?.bio || "No bio yet"}
+                  {userInfo?.bio || t("settings.profile.noBio")}
                 </Text>
                 <Feather
                   name="chevron-right"
@@ -277,11 +305,13 @@ export default function SettingsScreen() {
             >
               <View style={styles.rowLeft}>
                 <Feather name="map-pin" size={18} color="#05C785" />
-                <Text style={styles.label}>Location</Text>
+                <Text style={styles.label}>
+                  {t("settings.profile.location")}
+                </Text>
               </View>
               <View style={styles.rowRight}>
                 <Text style={styles.value}>
-                  {userInfo?.location || "Not set"}
+                  {userInfo?.location || t("settings.profile.noLocation")}
                 </Text>
                 <Feather
                   name="chevron-right"
@@ -296,17 +326,19 @@ export default function SettingsScreen() {
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="mail" size={18} color="#05C785" />
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>{t("settings.profile.email")}</Text>
               </View>
               <Text style={styles.value}>
-                {userInfo?.email || "user@kitroom.app"}
+                {userInfo?.email || t("settings.profile.defaultEmail")}
               </Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="award" size={18} color="#05C785" />
-                <Text style={styles.label}>Subscription Plan</Text>
+                <Text style={styles.label}>
+                  {t("settings.profile.subscription")}
+                </Text>
               </View>
               <View style={styles.planBadge}>
                 <Text style={styles.planBadgeText}>
@@ -321,12 +353,16 @@ export default function SettingsScreen() {
 
         {/* Preferences / Notifications */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Preferences & Privacy</Text>
+          <Text style={styles.sectionTitle}>
+            {t("settings.sections.preferences")}
+          </Text>
           <View style={styles.card}>
             <View style={styles.row}>
               <View style={styles.rowLeft}>
                 <Feather name="bell" size={18} color="#05C785" />
-                <Text style={styles.label}>Push Notifications</Text>
+                <Text style={styles.label}>
+                  {t("settings.preferences.pushNotifications")}
+                </Text>
               </View>
               <Switch
                 value={pushNotifications}
@@ -346,11 +382,13 @@ export default function SettingsScreen() {
                   color={publicLocker ? "#05C785" : "#888"}
                 />
                 <View>
-                  <Text style={styles.label}>Public Locker by Default</Text>
+                  <Text style={styles.label}>
+                    {t("settings.preferences.publicLocker")}
+                  </Text>
                   <Text style={styles.subLabel}>
                     {publicLocker
-                      ? "Visible to everyone (Public)"
-                      : "Hidden from others (Private)"}
+                      ? t("settings.preferences.publicDesc")
+                      : t("settings.preferences.privateDesc")}
                   </Text>
                 </View>
               </View>
@@ -368,7 +406,9 @@ export default function SettingsScreen() {
             >
               <View style={styles.rowLeft}>
                 <Feather name="dollar-sign" size={18} color="#05C785" />
-                <Text style={styles.label}>Currency</Text>
+                <Text style={styles.label}>
+                  {t("settings.preferences.currency")}
+                </Text>
               </View>
               <View style={styles.rowRight}>
                 <Text style={styles.value}>
@@ -391,7 +431,9 @@ export default function SettingsScreen() {
         {/* Public View / Preview Section */}
         {publicLocker && (
           <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Public View</Text>
+            <Text style={styles.sectionTitle}>
+              {t("settings.sections.publicView")}
+            </Text>
             <TouchableOpacity
               style={styles.previewCard}
               onPress={() =>
@@ -408,10 +450,10 @@ export default function SettingsScreen() {
                 </View>
                 <View>
                   <Text style={styles.previewTitle}>
-                    Preview Public Profile
+                    {t("settings.publicView.title")}
                   </Text>
                   <Text style={styles.previewSubtitle}>
-                    See how other collectors view your locker
+                    {t("settings.publicView.subtitle")}
                   </Text>
                 </View>
               </View>
@@ -422,7 +464,9 @@ export default function SettingsScreen() {
 
         {/* Account Security & Actions */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Account Security</Text>
+          <Text style={styles.sectionTitle}>
+            {t("settings.sections.security")}
+          </Text>
           <View style={styles.card}>
             {userInfo?.hasPassword && (
               <TouchableOpacity
@@ -431,14 +475,15 @@ export default function SettingsScreen() {
               >
                 <View style={styles.rowLeft}>
                   <Feather name="key" size={18} color="#FFFFFF" />
-                  <Text style={styles.text}>Change Password</Text>
+                  <Text style={styles.text}>
+                    {t("settings.security.changePassword")}
+                  </Text>
                 </View>
-
                 <Feather name="chevron-right" size={16} color="#555" />
               </TouchableOpacity>
             )}
 
-            <View style={styles.separator} />
+            {userInfo?.hasPassword && <View style={styles.separator} />}
 
             <TouchableOpacity
               style={styles.menuItem}
@@ -446,7 +491,9 @@ export default function SettingsScreen() {
             >
               <View style={styles.rowLeft}>
                 <Feather name="trash-2" size={18} color="#A66363" />
-                <Text style={styles.deleteText}>Delete Account</Text>
+                <Text style={styles.deleteText}>
+                  {t("settings.security.deleteAccount")}
+                </Text>
               </View>
               <Feather name="chevron-right" size={16} color="#555" />
             </TouchableOpacity>
@@ -463,12 +510,13 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Change Username</Text>
+            <Text style={styles.modalTitle}>
+              {t("settings.modals.username.title")}
+            </Text>
             <Text style={styles.modalSubtitle}>
-              Enter your new unique username (min. 3 characters)
+              {t("settings.modals.username.subtitle")}
             </Text>
 
-            {/* Conteneur Input + Indicateur visuel */}
             <View style={styles.inputContainer}>
               <TextInput
                 style={[
@@ -478,7 +526,7 @@ export default function SettingsScreen() {
                 ]}
                 value={newUsernameInput}
                 onChangeText={(text: string) => setNewUsernameInput(text)}
-                placeholder="New username"
+                placeholder={t("settings.modals.username.placeholder")}
                 placeholderTextColor="#555"
                 autoCapitalize="none"
                 autoFocus={true}
@@ -508,7 +556,9 @@ export default function SettingsScreen() {
                 onPress={() => setIsUsernameModalVisible(false)}
                 disabled={isSubmitting}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>
+                  {t("settings.buttons.cancel")}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -530,7 +580,9 @@ export default function SettingsScreen() {
                 {isSubmitting ? (
                   <ActivityIndicator size="small" color="#050806" />
                 ) : (
-                  <Text style={styles.saveButtonText}>Save</Text>
+                  <Text style={styles.saveButtonText}>
+                    {t("settings.buttons.save")}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -547,9 +599,11 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit Bio</Text>
+            <Text style={styles.modalTitle}>
+              {t("settings.modals.bio.title")}
+            </Text>
             <Text style={styles.modalSubtitle}>
-              Write a short bio for your collector profile
+              {t("settings.modals.bio.subtitle")}
             </Text>
 
             <TextInput
@@ -559,7 +613,7 @@ export default function SettingsScreen() {
               ]}
               value={newBioInput}
               onChangeText={(text: string) => setNewBioInput(text)}
-              placeholder="Tell us about your collection..."
+              placeholder={t("settings.modals.bio.placeholder")}
               placeholderTextColor="#555"
               multiline={true}
               autoFocus={true}
@@ -571,7 +625,9 @@ export default function SettingsScreen() {
                 onPress={() => setIsBioModalVisible(false)}
                 disabled={isSubmittingBio}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>
+                  {t("settings.buttons.cancel")}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -582,7 +638,9 @@ export default function SettingsScreen() {
                 {isSubmittingBio ? (
                   <ActivityIndicator size="small" color="#050806" />
                 ) : (
-                  <Text style={styles.saveButtonText}>Save</Text>
+                  <Text style={styles.saveButtonText}>
+                    {t("settings.buttons.save")}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -599,17 +657,18 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit Location</Text>
+            <Text style={styles.modalTitle}>
+              {t("settings.modals.location.title")}
+            </Text>
             <Text style={styles.modalSubtitle}>
-              Enter your location (city, country) to let others know where
-              you're based
+              {t("settings.modals.location.subtitle")}
             </Text>
 
             <TextInput
               style={styles.modalInput}
               value={newLocationInput}
               onChangeText={(text: string) => setNewLocationInput(text)}
-              placeholder="Location (e.g., Paris, France)"
+              placeholder={t("settings.modals.location.placeholder")}
               placeholderTextColor="#555"
               autoCapitalize="none"
               autoFocus={true}
@@ -621,7 +680,9 @@ export default function SettingsScreen() {
                 onPress={() => setIsLocationModalVisible(false)}
                 disabled={isSubmitting}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>
+                  {t("settings.buttons.cancel")}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -632,7 +693,9 @@ export default function SettingsScreen() {
                 {isSubmitting ? (
                   <ActivityIndicator size="small" color="#050806" />
                 ) : (
-                  <Text style={styles.saveButtonText}>Save</Text>
+                  <Text style={styles.saveButtonText}>
+                    {t("settings.buttons.save")}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -649,9 +712,11 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Currency</Text>
+            <Text style={styles.modalTitle}>
+              {t("settings.modals.currency.title")}
+            </Text>
             <Text style={styles.modalSubtitle}>
-              Choose the currency used to display your collection prices
+              {t("settings.modals.currency.subtitle")}
             </Text>
 
             {CURRENCY_OPTIONS.map((c) => (
@@ -675,7 +740,9 @@ export default function SettingsScreen() {
               onPress={() => setIsCurrencyModalVisible(false)}
               disabled={isSubmittingCurrency}
             >
-              <Text style={styles.cancelButtonText}>Close</Text>
+              <Text style={styles.cancelButtonText}>
+                {t("settings.buttons.close")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

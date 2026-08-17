@@ -17,20 +17,22 @@ import { useState, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
 import { captureRef } from "react-native-view-shot";
+import { useTranslation } from "react-i18next";
 
 interface JerseyDetailProps {
   jersey: JerseyData & { likesCount?: number };
   onClose: () => void;
 }
 
-  // Helper function to format strings nicely (e.g. "Very_Good" -> "Very good")
- export const formatText = (text: string) => {
-    if (!text) return "";
-    const clean = text.replace(/_/g, " ").toLowerCase();
-    return clean.charAt(0).toUpperCase() + clean.slice(1);
-  };
+// Helper function to format strings nicely (e.g. "Very_Good" -> "Very good")
+export const formatText = (text: string) => {
+  if (!text) return "";
+  const clean = text.replace(/_/g, " ").toLowerCase();
+  return clean.charAt(0).toUpperCase() + clean.slice(1);
+};
 
 export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
+  const { t } = useTranslation();
   const [showBackImage, setShowBackImage] = useState(false);
   const activeImageUrl = showBackImage
     ? jersey.backImageUrl || jersey.frontImageUrl || jersey.frontImageUri
@@ -50,28 +52,28 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
       onClose();
       Toast.show({
         type: "success",
-        text1: "Jersey deleted",
-        text2: "The jersey has been removed from your collection.",
+        text1: t("jerseyDetail.alerts.toastDeletedTitle"),
+        text2: t("jerseyDetail.alerts.toastDeletedMessage"),
         position: "bottom",
       });
     },
     onError: (error) => {
       console.error("Error deleting jersey:", error);
       Alert.alert(
-        "Error",
-        "There was an error deleting the jersey. Please try again.",
+        t("jerseyDetail.alerts.errorTitle"),
+        t("jerseyDetail.alerts.errorMessage"),
       );
     },
   });
 
   const handleDelete = () => {
     Alert.alert(
-      "Delete Jersey",
-      "Are you sure you want to delete this jersey from your collection?",
+      t("jerseyDetail.alerts.deleteTitle"),
+      t("jerseyDetail.alerts.deleteMessage"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("jerseyDetail.alerts.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("jerseyDetail.alerts.delete"),
           style: "destructive",
           onPress: () => mutation.mutate(jersey.id as string),
         },
@@ -93,22 +95,23 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 
       setIsSharing(false);
 
-      const shareMessage = `Check out this kit from my collection! 👕✨ Join me on KITROOM to build and showcase your ultimate football locker: https://kitroom.app`;
+      const shareMessage = t("jerseyDetail.shareMessage");
 
       await Share.share({
         message: shareMessage,
         url: uri,
-        title: "Check out this football kit!",
+        title: t("jerseyDetail.shareTitle"),
       });
     } catch (error) {
       console.error("Error sharing jersey card:", error);
-      Alert.alert("Error", "Could not share the jersey image.");
+      Alert.alert(
+        t("jerseyDetail.alerts.shareErrorTitle"),
+        t("jerseyDetail.alerts.shareErrorMessage"),
+      );
     } finally {
       setIsSharing(false);
     }
   };
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -116,7 +119,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
       <View style={styles.topBar}>
         <TouchableOpacity onPress={onClose} style={styles.backButton}>
           <Feather name="arrow-left" size={16} color="#FFFFFF" />
-          <Text style={styles.backText}>BACK</Text>
+          <Text style={styles.backText}>{t("jerseyDetail.back")}</Text>
         </TouchableOpacity>
         <View style={styles.topRightInfo}>
           {jersey.isOfficial !== null && jersey.isOfficial !== undefined && (
@@ -132,7 +135,9 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
                   { color: jersey.isOfficial ? "#05C785" : "#FFA500" },
                 ]}
               >
-                {jersey.isOfficial ? "OFFICIAL" : "REPLICA / FAN"}
+                {jersey.isOfficial
+                  ? t("jerseyDetail.official")
+                  : t("jerseyDetail.replica")}
               </Text>
             </View>
           )}
@@ -159,9 +164,11 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 
           {isSharing && (
             <View style={styles.cardHeaderContext}>
-              <Text style={styles.cardContextSubtitle}>MY COLLECTION</Text>
+              <Text style={styles.cardContextSubtitle}>
+                {t("jerseyDetail.myCollection")}
+              </Text>
               <Text style={styles.cardContextTitle}>
-                {jersey.club?.name || "Football Kit"}{" "}
+                {jersey.club?.name || t("jerseyDetail.footballKit")}{" "}
                 {jersey.season ? `• ${jersey.season}` : ""}
               </Text>
             </View>
@@ -174,7 +181,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               resizeMode="contain"
             />
           ) : (
-            <Text style={styles.placeholder}>No image available</Text>
+            <Text style={styles.placeholder}>{t("jerseyDetail.noImage")}</Text>
           )}
 
           {jersey.backImageUrl && (
@@ -192,7 +199,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
                     !showBackImage && styles.toggleTextActive,
                   ]}
                 >
-                  Front
+                  {t("jerseyDetail.front")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -208,7 +215,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
                     showBackImage && styles.toggleTextActive,
                   ]}
                 >
-                  Back
+                  {t("jerseyDetail.backSide")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -229,7 +236,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               {jersey.season ? jersey.season.toUpperCase() : ""}
             </Text>
             <Text style={styles.clubName}>
-              {jersey.club?.name || "Club Unknown"}
+              {jersey.club?.name || t("jerseyDetail.clubUnknown")}
             </Text>
           </View>
 
@@ -239,7 +246,9 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               <Ionicons name="heart" size={13} color="#05C785" />
               <Text style={styles.likesCountText}>{jersey.likesCount}</Text>
               <Text style={styles.likesLabelText}>
-                {jersey.likesCount === 1 ? "LIKE" : "LIKES"}
+                {jersey.likesCount === 1
+                  ? t("jerseyDetail.likes")
+                  : t("jerseyDetail.likes_plural")}
               </Text>
             </View>
           )}
@@ -263,7 +272,9 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           )}
           {jersey.size && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>Size {jersey.size}</Text>
+              <Text style={styles.badgeText}>
+                {t("jerseyDetail.sizePrefix")} {jersey.size}
+              </Text>
             </View>
           )}
         </View>
@@ -271,47 +282,55 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         {/* Story / Description Section */}
         {jersey.description && (
           <View style={styles.storySection}>
-            <Text style={styles.storyTitle}>THE STORY & DETAILS</Text>
+            <Text style={styles.storyTitle}>
+              {t("jerseyDetail.storyTitle")}
+            </Text>
             <Text style={styles.storyText}>{jersey.description}</Text>
           </View>
         )}
 
         {/* Specifications Card */}
         <View style={styles.card}>
-          <Text style={styles.cardSectionTitle}>SPECIFICATIONS</Text>
+          <Text style={styles.cardSectionTitle}>
+            {t("jerseyDetail.specsTitle")}
+          </Text>
 
           {jersey.playerName && (
             <View style={styles.row}>
-              <Text style={styles.label}>Player</Text>
+              <Text style={styles.label}>{t("jerseyDetail.player")}</Text>
               <Text style={styles.value}>{jersey.playerName}</Text>
             </View>
           )}
           {jersey.number !== null && jersey.number !== undefined && (
             <View style={styles.row}>
-              <Text style={styles.label}>Number</Text>
+              <Text style={styles.label}>{t("jerseyDetail.number")}</Text>
               <Text style={styles.value}>{jersey.number}</Text>
             </View>
           )}
 
           <View style={styles.row}>
-            <Text style={styles.label}>Brand</Text>
+            <Text style={styles.label}>{t("jerseyDetail.brand")}</Text>
             <Text style={styles.value}>{jersey.brand}</Text>
           </View>
           {jersey.version && (
             <View style={styles.row}>
-              <Text style={styles.label}>Version</Text>
+              <Text style={styles.label}>{t("jerseyDetail.version")}</Text>
               <Text style={styles.value}>{formatText(jersey.version)}</Text>
             </View>
           )}
           <View style={styles.row}>
-            <Text style={styles.label}>Condition</Text>
+            <Text style={styles.label}>{t("jerseyDetail.condition")}</Text>
             <Text style={styles.value}>
-              {jersey.condition ? formatText(jersey.condition) : "N/A"}
+              {jersey.condition
+                ? formatText(jersey.condition)
+                : t("jerseyDetail.na")}
             </Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Size</Text>
-            <Text style={styles.value}>{jersey.size || "N/A"}</Text>
+            <Text style={styles.label}>{t("jerseyDetail.size")}</Text>
+            <Text style={styles.value}>
+              {jersey.size || t("jerseyDetail.na")}
+            </Text>
           </View>
         </View>
 
@@ -320,10 +339,14 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
             <View style={styles.card}>
               <View style={styles.cardHeaderRow}>
                 <Feather name="tag" size={13} color="#05C785" />
-                <Text style={styles.cardSectionTitle}>PURCHASE INFO</Text>
+                <Text style={styles.cardSectionTitle}>
+                  {t("jerseyDetail.purchaseInfo")}
+                </Text>
               </View>
               <View style={styles.row}>
-                <Text style={styles.label}>Purchase Price</Text>
+                <Text style={styles.label}>
+                  {t("jerseyDetail.purchasePrice")}
+                </Text>
                 <Text style={styles.priceValue}>{jersey.purchasePrice} €</Text>
               </View>
             </View>
@@ -337,7 +360,9 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         >
           <EvilIcons name="share-google" size={22} color="#1E1A16" />
           <Text style={styles.shareButtonText}>
-            {isSharing ? "Generating card..." : "Share this kit"}
+            {isSharing
+              ? t("jerseyDetail.shareCard")
+              : t("jerseyDetail.shareKit")}
           </Text>
         </TouchableOpacity>
 
@@ -348,7 +373,9 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           disabled={mutation.isPending}
         >
           <Feather name="trash-2" size={15} color="#A66363" />
-          <Text style={styles.deleteButtonText}>Delete from collection</Text>
+          <Text style={styles.deleteButtonText}>
+            {t("jerseyDetail.deleteButton")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
