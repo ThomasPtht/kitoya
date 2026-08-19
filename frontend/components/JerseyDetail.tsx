@@ -18,6 +18,8 @@ import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
 import { captureRef } from "react-native-view-shot";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
+import Colors from "@/constants/Colors";
 
 interface JerseyDetailProps {
   jersey: JerseyData & { likesCount?: number };
@@ -40,6 +42,8 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 
   const cardRef = useRef<View>(null);
   const [isSharing, setIsSharing] = useState(false);
+
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
@@ -121,6 +125,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           <Feather name="arrow-left" size={16} color="#FFFFFF" />
           <Text style={styles.backText}>{t("jerseyDetail.back")}</Text>
         </TouchableOpacity>
+
         <View style={styles.topRightInfo}>
           {jersey.isOfficial !== null && jersey.isOfficial !== undefined && (
             <View
@@ -240,7 +245,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
             </Text>
           </View>
 
-          {/* Like badge aux couleurs de l'app (Harmonie vert/sombre) */}
+          {/* Like badge */}
           {(jersey.likesCount ?? 0) > 0 && (
             <View style={styles.likesBadge}>
               <Ionicons name="heart" size={13} color="#05C785" />
@@ -366,17 +371,39 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           </Text>
         </TouchableOpacity>
 
-        {/* Delete Button */}
-        <TouchableOpacity
-          style={[styles.deleteButton, mutation.isPending && { opacity: 0.5 }]}
-          onPress={handleDelete}
-          disabled={mutation.isPending}
-        >
-          <Feather name="trash-2" size={15} color="#A66363" />
-          <Text style={styles.deleteButtonText}>
-            {t("jerseyDetail.deleteButton")}
-          </Text>
-        </TouchableOpacity>
+        {/* Edit and Delete Buttons Row */}
+        <View style={styles.actionButtonsRow}>
+          <TouchableOpacity
+            style={[styles.editButton, mutation.isPending && { opacity: 0.5 }]}
+            onPress={() => {
+              onClose();
+              router.push({
+                pathname: "/add",
+                params: { jerseyId: jersey.id },
+              });
+            }}
+            disabled={mutation.isPending}
+          >
+            <Feather name="edit-2" size={15} color="#05C785" />
+            <Text style={styles.editButtonText}>
+              {t("jerseyDetail.editButton")}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.deleteButton,
+              mutation.isPending && { opacity: 0.5 },
+            ]}
+            onPress={handleDelete}
+            disabled={mutation.isPending}
+          >
+            <Feather name="trash-2" size={15} color="#A66363" />
+            <Text style={styles.deleteButtonText}>
+              {t("jerseyDetail.deleteButton")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -663,7 +690,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-  deleteButton: {
+  actionButtonsRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 12,
+  },
+  editButton: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -672,8 +705,24 @@ const styles = StyleSheet.create({
     borderColor: "#261C1C",
     padding: 16,
     borderRadius: 16,
-    gap: 10,
-    marginTop: 12,
+    gap: 8,
+  },
+  editButtonText: {
+    color: "#05C785",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  deleteButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#151515",
+    borderWidth: 1,
+    borderColor: "#261C1C",
+    padding: 16,
+    borderRadius: 16,
+    gap: 8,
   },
   deleteButtonText: {
     color: "#A66363",

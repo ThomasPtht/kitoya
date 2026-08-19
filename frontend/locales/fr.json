@@ -557,7 +557,8 @@
   "purchasePrice": "Prix d'achat",
   "shareCard": "Génération de la carte...",
   "shareKit": "Partager ce maillot",
-  "deleteButton": "Supprimer de la collection",
+  "deleteButton": "Supprimer",
+  "editButton": "Modifier",
   "alerts": {
     "deleteTitle": "Supprimer le maillot",
     "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce maillot de votre collection ?",
