@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { KotdService } from './kotd.service';
 
@@ -8,9 +16,13 @@ export class KotdController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  async getKOTD(@Req() req: Request) {
+  async getKOTD(
+    @Req() req: Request,
+    @Query('locale') locale: 'en' | 'fr' = 'en',
+  ) {
+    console.log('Locale reçue par le backend:', locale);
     const currentUserId = (req as any).user?.userId || (req as any).user?.id;
-    return this.kotdService.getJerseyOfTheDay(currentUserId);
+    return this.kotdService.getJerseyOfTheDay(currentUserId, locale);
   }
 
   @Post(':jerseyId/like')

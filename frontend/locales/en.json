@@ -559,9 +559,9 @@
   "shareCard": "Generating card...",
   "shareKit": "Share this kit",
   "deleteButton": "Delete from collection",
-  "editButton": "Edit jersey",
+  "editButton": "Edit",
   "alerts": {
-    "deleteTitle": "Delete Jersey",
+    "deleteTitle": "Delete",
     "deleteMessage": "Are you sure you want to delete this jersey from your collection?",
     "cancel": "Cancel",
     "delete": "Delete",

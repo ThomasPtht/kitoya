@@ -1,4 +1,5 @@
 import { apiClient } from "./api";
+import i18n from "../lib/i18n";
 
 export interface JerseyOfTheDay {
   id: string;
@@ -20,7 +21,8 @@ export interface JerseyOfTheDay {
 
 export const kotdService = {
   getJerseyOfTheDay: async () => {
-    const response = await apiClient.get("/kotd");
+    console.log("Langue envoyée:", i18n.language);
+    const response = await apiClient.get(`/kotd?locale=${i18n.language}`);
     return response.data;
   },
 

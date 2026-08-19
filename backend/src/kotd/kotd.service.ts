@@ -12,7 +12,7 @@ export class KotdService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async getJerseyOfTheDay(currentUserId?: string) {
+  async getJerseyOfTheDay(currentUserId?: string, locale: 'en' | 'fr' = 'en') {
     // Fetch shareable jerseys whose owner has a public profile
     const allJerseys = await this.prisma.jersey.findMany({
       include: {
@@ -77,13 +77,17 @@ export class KotdService {
       );
     }
 
-    const story = generateJerseyStory({
-      clubName: jerseyOfTheDay.club.name,
-      season: jerseyOfTheDay.season as string,
-      type: jerseyOfTheDay.type,
-      version: jerseyOfTheDay.version,
-      playerName: jerseyOfTheDay.playerName,
-    });
+    console.log('Locale utilisée pour generateJerseyStory:', locale);
+    const story = generateJerseyStory(
+      {
+        clubName: jerseyOfTheDay.club.name,
+        season: jerseyOfTheDay.season as string,
+        type: jerseyOfTheDay.type,
+        version: jerseyOfTheDay.version,
+        playerName: jerseyOfTheDay.playerName,
+      },
+      locale,
+    );
 
     const [frontImageUrl, backImageUrl] = await Promise.all([
       this.r2Service.getSignedUrl(jerseyOfTheDay.frontImageUrl),
