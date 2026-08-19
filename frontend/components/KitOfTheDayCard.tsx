@@ -143,7 +143,7 @@ export default function KitOfTheDayCard() {
                 </Text>
 
                 <Text style={styles.story} numberOfLines={2}>
-                  {formatText(jersey.story)}
+                  {jersey.story}
                 </Text>
               </View>
 
@@ -171,11 +171,11 @@ export default function KitOfTheDayCard() {
                 />
               </View>
               <Text style={styles.authorText}>
-                {t("kitOfTheDay.fromN") || "From"}{" "}
+                {t("kitOfTheDay.fromLockerPrefix")}
                 <Text style={styles.authorUsername}>
                   @{jersey.user.username}
                 </Text>
-                {t("kitOfTheDay.lockerSuffix") || "'s locker"}
+                {t("kitOfTheDay.fromLockerSuffix")}
               </Text>
             </TouchableOpacity>
 

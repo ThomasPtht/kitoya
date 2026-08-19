@@ -581,8 +581,8 @@
   "privateLockerTitle": "Vestiaire privé",
   "privateLockerMessage": "Le vestiaire de ce collectionneur est privé.",
   "viewDetails": "VOIR LES DÉTAILS →",
-  "fromLocker": "Du vestiaire de",
-  "lockerSuffix": ""
+  "fromLockerPrefix": "Du vestiaire de ",
+  "fromLockerSuffix": ""
 },
 "kitOfTheDayModal": {
   "headerTitle": "KIT OF THE COMMUNITY",

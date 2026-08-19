@@ -582,8 +582,8 @@
   "privateLockerTitle": "Private Locker",
   "privateLockerMessage": "This collector's locker is private.",
   "viewDetails": "VIEW DETAILS →",
-  "fromLocker": "From",
-  "lockerSuffix": "'s locker"
+    "fromLockerPrefix": "From ",
+  "fromLockerSuffix": "'s locker"
 },
 "kitOfTheDayModal": {
   "headerTitle": "KIT OF THE COMMUNITY",

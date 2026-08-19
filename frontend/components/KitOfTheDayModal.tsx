@@ -156,7 +156,7 @@ export default function KitOfTheDayModal({
             <Text style={styles.storyTitle}>
               {t("kitOfTheDayModal.storyTitle")}
             </Text>
-            <Text style={styles.storyFullText}>{formatText(jersey.story)}</Text>
+            <Text style={styles.storyFullText}>{jersey.story}</Text>
           </View>
         </ScrollView>
       </SafeAreaView>
