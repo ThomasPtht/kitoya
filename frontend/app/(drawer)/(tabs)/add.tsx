@@ -112,6 +112,7 @@ export default function TabAddScreen() {
   const existingJersey = isEditing
     ? jerseys?.find((j) => j.id === jerseyId)
     : null;
+
   const footballSportId = sports?.find(
     (s: { name: string }) => s.name.toLowerCase() === "football",
   )?.id;
@@ -408,11 +409,17 @@ export default function TabAddScreen() {
       setSelectedClubId("");
       router.navigate("/(drawer)/(tabs)/dressing");
     } catch (error) {
+      const err = error as any;
+      console.log(
+        "❌ DÉTAIL ERREUR 400 :",
+        JSON.stringify(err.response?.data, null, 2),
+      );
       Toast.show({
         type: "error",
         text1: t("addJersey.toasts.errorTitle"),
         position: "bottom",
       });
+
       console.error("Error saving jersey:", error);
     }
   };
@@ -520,6 +527,7 @@ export default function TabAddScreen() {
               onChangeText={(text) => {
                 onChange(text);
                 setClubSearchInput(text);
+                setSelectedClubId(""); // Reset selected club ID when user types
               }}
             />
           )}

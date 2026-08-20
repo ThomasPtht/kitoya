@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 
-@Injectable() 
+@Injectable()
 export class FootballService {
   private readonly baseUrl = 'https://v3.football.api-sports.io';
-
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -13,14 +12,15 @@ export class FootballService {
     const apiKey = this.configService.get<string>('API_FOOTBALL_KEY');
 
     if (!apiKey) {
-      console.error("ERREUR : La variable API_FOOTBALL_KEY est undefined !");
+      console.error('ERREUR : La variable API_FOOTBALL_KEY est undefined !');
+      return [];
     }
 
     try {
       const response = await axios.get(`${this.baseUrl}/teams`, {
         params: { search: query },
         headers: {
-          'x-apisports-key': apiKey, 
+          'x-apisports-key': apiKey,
           'x-rapidapi-host': 'v3.football.api-sports.io',
         },
       });
@@ -35,7 +35,7 @@ export class FootballService {
       return [];
     } catch (error) {
       console.error('Erreur API Football (Backend):', error);
-      throw new Error("Impossible de joindre l'API Football");
+      return [];
     }
   }
 }

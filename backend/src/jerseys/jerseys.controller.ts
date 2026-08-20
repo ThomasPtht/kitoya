@@ -216,6 +216,17 @@ export class JerseysController {
       );
     }
 
-    return this.jerseysService.updateJersey(id, req.user.userId, dtoWithUrls);
+    // if clubName is provided and clubId is not, create a new club or find existing one, then update the jersey's clubId
+    const clubData =
+      updateJerseyDto.clubName && !updateJerseyDto.clubId
+        ? { name: updateJerseyDto.clubName, sportId: updateJerseyDto.sportId! }
+        : undefined;
+
+    return this.jerseysService.updateJersey(
+      id,
+      req.user.userId,
+      dtoWithUrls,
+      clubData,
+    );
   }
 }

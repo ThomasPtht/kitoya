@@ -70,17 +70,13 @@ export class JerseysService {
           (t) => t.name.toLowerCase() === clubData.name.toLowerCase(),
         ) || teams[0];
 
-      if (!targetTeam) {
-        throw new BadRequestException(
-          "Impossible de trouver le club via l'API.",
-        );
-      }
+      // if api doesnt find any team, create the club with the name provided by the user and no logo
 
       club = await this.prisma.club.create({
         data: {
-          name: targetTeam.name,
+          name: targetTeam?.name || clubData.name,
           sportId: clubData.sportId,
-          logoUrl: targetTeam.logo,
+          logoUrl: targetTeam?.logo || null,
         },
       });
     }
@@ -422,6 +418,7 @@ export class JerseysService {
     jerseyId: string,
     userId: string,
     dto: Partial<CreateJerseyWithUrls>,
+    clubData?: { name: string; sportId: string },
   ) {
     const jersey = await this.prisma.jersey.findUnique({
       where: { id: jerseyId },
@@ -460,6 +457,36 @@ export class JerseysService {
       if (dto[field] !== undefined) {
         updateData[field] = dto[field];
       }
+    }
+
+    // if new name club is provided, search for it in the database or create it if it doesn't exist, then update the jersey's clubId
+    if (clubData?.name) {
+      let club = await this.prisma.club.findUnique({
+        where: {
+          sportId_name: {
+            sportId: clubData.sportId,
+            name: clubData.name,
+          },
+        },
+      });
+
+      if (!club) {
+        const teams = await this.FootballService.searchTeams(clubData.name);
+        const targetTeam =
+          teams.find(
+            (t) => t.name.toLowerCase() === clubData.name.toLowerCase(),
+          ) || teams[0];
+
+        club = await this.prisma.club.create({
+          data: {
+            name: targetTeam?.name || clubData.name,
+            sportId: clubData.sportId,
+            logoUrl: targetTeam?.logo || null,
+          },
+        });
+      }
+
+      updateData.clubId = club.id; // Update the jersey's clubId to the new club's ID
     }
 
     const updatedJersey = await this.prisma.jersey.update({
