@@ -11,6 +11,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -19,6 +20,15 @@ const CARD_HEIGHT = 440;
 const SIDE_OFFSET = SCREEN_WIDTH * 0.2;
 
 type PlanKey = "FREE" | "ELITE";
+
+const { packages } = useSubscription();
+
+const monthlyPackage = packages.find(
+  (pkg) => pkg.identifier === "elite_monthly",
+);
+const eliteMonthlyPrice = monthlyPackage?.product.priceString || "4.99€";
+const annualPackage = packages.find((pkg) => pkg.identifier === "elite_annual");
+const eliteAnnualPrice = annualPackage?.product.priceString || "39.99€";
 
 interface PlanConfig {
   key: PlanKey;
@@ -38,7 +48,7 @@ export default function SubscriptionScreen() {
     {
       key: "FREE",
       nameKey: "subscription.plans.free.name",
-      price: "€0.00",
+      price: "0.00€",
       periodKey: "subscription.plans.free.period",
       subtextKey: "subscription.plans.free.subtext",
       featuresKey: "subscription.plans.free.features",
@@ -47,9 +57,11 @@ export default function SubscriptionScreen() {
     {
       key: "ELITE",
       nameKey: "subscription.plans.elite.name",
-      price: "€4.99",
+      price: eliteMonthlyPrice,
       periodKey: "subscription.plans.elite.period",
-      subtextKey: "subscription.plans.elite.subtext",
+      subtextKey: t("subscription.plans.elite.subtext", {
+        price: eliteAnnualPrice,
+      }),
       featuresKey: "subscription.plans.elite.features",
       ctaKey: "subscription.plans.elite.cta",
     },

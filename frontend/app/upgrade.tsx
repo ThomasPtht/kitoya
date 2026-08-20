@@ -126,9 +126,9 @@ export default function UpgradeScreen() {
                 </Text>
               </View>
               <View style={styles.priceContainer}>
-                <Text style={styles.oldPrice}>€9.99</Text>
+                <Text style={styles.oldPrice}>9.99€</Text>
                 <Text style={styles.priceHighlight}>
-                  €3.33<Text style={styles.perPeriod}>/mo</Text>
+                  3.33€<Text style={styles.perPeriod}>/mo</Text>
                 </Text>
               </View>
             </View>
@@ -152,7 +152,7 @@ export default function UpgradeScreen() {
                 </Text>
               </View>
               <Text style={styles.priceHighlight}>
-                €4.99<Text style={styles.perPeriod}>/mo</Text>
+                4.99€<Text style={styles.perPeriod}>/mo</Text>
               </Text>
             </View>
           </Pressable>

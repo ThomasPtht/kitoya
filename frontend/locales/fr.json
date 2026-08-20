@@ -319,7 +319,7 @@
       "sendFeedback": "ENVOYER UN RETOUR"
     },
     "quickActions": {
-      "emailSupport": "Contacter le support par email",
+      "emailSupport": "Contacter le support",
       "reportBug": "Signaler un bug",
       "suggestFeature": "Suggérer une fonctionnalité"
     },
@@ -460,7 +460,7 @@
     "elite": {
       "name": "ÉLITE",
       "period": "/ MOIS",
-      "subtext": "ou 39,99 € / AN",
+    "subtext": "ou {{price}}/AN",
       "cta": "PASSER À ÉLITE",
       "features": [
         "✓ Emplacements illimités",
@@ -469,7 +469,8 @@
         "✓ Exportation du portfolio"
       ]
     }
-  },
+  }
+},
   "upgrade": {
   "alreadyElite": {
     "title": "Vous êtes membre Kitroom ÉLITE !",
@@ -483,7 +484,7 @@
   "subtitle": "Organisez vos maillots, remplissez votre vestiaire numérique et exposez votre passion sans limites.",
   "annual": {
     "title": "Annuel",
-    "subtext": "Facturé 39,99 €/an",
+    "subtext": "/an",
     "badge": "Populaire"
   },
   "monthly": {
@@ -502,7 +503,7 @@
     },
     "export": {
       "title": "Exportation de collection",
-      "desc": "Exportez instantanément des catalogues propres de vos maillots de sport."
+      "desc": "Un portfolio PDF de votre collection, prêt en un clic."
     }
   },
   "restore": "Restaurer les achats",
@@ -515,8 +516,7 @@
     "trial": "Essai gratuit de 7 jours, puis 39,99 €/an. Annulable à tout moment.",
     "monthly": "Facturé 4,99 € par mois. Annulable à tout moment."
   }
-}
-  },
+},
   "common": {
   "searchPlaceholder": "Rechercher par club ou saison"
 },

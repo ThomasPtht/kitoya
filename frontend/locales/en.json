@@ -461,7 +461,7 @@
     "elite": {
       "name": "ELITE",
       "period": "/ MONTH",
-      "subtext": "or €39.99 / YEAR",
+      "subtext": "or {{price}}/YEAR",
       "cta": "UPGRADE TO ELITE",
       "features": [
         "✓ Unlimited slots",
@@ -470,7 +470,8 @@
         "✓ Portfolio export"
       ]
     }
-  },
+  }
+},
   "upgrade": {
     "alreadyElite": {
     "title": "You are a Kitroom ELITE member!",
@@ -484,7 +485,7 @@
   "subtitle": "Organize your jerseys, fill your digital locker, and showcase your passion without limits.",
   "annual": {
     "title": "Annual",
-    "subtext": "Billed as €39.99/year",
+    "subtext": "/year",
     "badge": "Popular"
   },
   "monthly": {
@@ -516,8 +517,7 @@
     "trial": "7-day free trial, then €39.99/year. Cancel anytime.",
     "monthly": "Billed monthly at €4.99. Cancel anytime."
   }
-}
-  },
+},
   "common": {
   "searchPlaceholder": "Search by club or season"
 },
