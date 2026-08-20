@@ -12,7 +12,13 @@ import {
   Alert,
   Share,
 } from "react-native";
-import { Entypo, EvilIcons, Feather, Ionicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Entypo,
+  EvilIcons,
+  Feather,
+  Ionicons,
+} from "@expo/vector-icons";
 import { useState, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
@@ -122,8 +128,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
       {/* Top Bar with Back / Code */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={onClose} style={styles.backButton}>
-          <Feather name="arrow-left" size={16} color="#FFFFFF" />
-          <Text style={styles.backText}>{t("jerseyDetail.back")}</Text>
+          <AntDesign name="close" size={14} color="#FFFFFF" />
         </TouchableOpacity>
 
         <View style={styles.topRightInfo}>
@@ -423,9 +428,12 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+    marginRight: 15,
+    backgroundColor: "#151515",
+    padding: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
   },
   backText: {
     color: "#FFFFFF",

@@ -185,9 +185,11 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   closeButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "#151515",
     padding: 6,
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
   },
   scrollContent: {
     padding: 20,
