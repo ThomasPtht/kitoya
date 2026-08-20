@@ -121,6 +121,7 @@
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Add your memories, stories, or any details about this jersey...",
     "submit": "Add to Locker",
+    "saveChanges": "Save Changes",
     "submitting": "Submitting...",
     "alerts": {
       "addImageTitle": "Add image",
@@ -174,6 +175,7 @@
   },
   "tabDressing": {
     "myLocker": "My Locker",
+    "editTitle" : "Edit Jersey",
     "emptyTitle": "Your locker is empty",
     "emptySubtitle": "Start building your archive. Add your first shirt and unlock your collector rank.",
     "addFirstKit": "Add your first kit",
@@ -467,7 +469,7 @@
     }
   },
   "upgrade": {
-  "alreadyElite": {
+    "alreadyElite": {
     "title": "You are a Kitroom ELITE member!",
     "backButton": "Back to App"
   },
@@ -557,7 +559,7 @@
   "purchaseInfo": "PURCHASE INFO",
   "purchasePrice": "Purchase Price",
   "shareCard": "Generating card...",
-  "shareKit": "Share this kit",
+  "shareKit": "Share",
   "deleteButton": "Delete from collection",
   "editButton": "Edit",
   "alerts": {

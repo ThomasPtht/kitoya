@@ -94,6 +94,7 @@
   },
   "addJersey": {
     "title": "Ajouter un maillot",
+    "editTitle": "Modifier le maillot",
     "imageHint": "Conseil : étalez le maillot à plat sur un lit ou le sol pour la meilleure photo.",
     "frontView": "Vue de face *",
     "backView": "Vue de dos",
@@ -120,6 +121,7 @@
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Ajoutez vos souvenirs, anecdotes ou détails sur ce maillot...",
     "submit": "Ajouter au vestiaire",
+    "saveChanges": "Mettre à jour",
     "submitting": "Envoi en cours...",
     "alerts": {
       "addImageTitle": "Ajouter une image",
@@ -556,7 +558,7 @@
   "purchaseInfo": "INFOS D'ACHAT",
   "purchasePrice": "Prix d'achat",
   "shareCard": "Génération de la carte...",
-  "shareKit": "Partager ce maillot",
+  "shareKit": "Partager",
   "deleteButton": "Supprimer",
   "editButton": "Modifier",
   "alerts": {
@@ -585,10 +587,10 @@
   "fromLockerSuffix": ""
 },
 "kitOfTheDayModal": {
-  "headerTitle": "KIT OF THE COMMUNITY",
-  "grail": "GRAIL",
-  "from": "From",
-  "lockerSuffix": "'s locker",
-  "storyTitle": "THE STORY"
+ "headerTitle": "MAILLOT DE LA COMMUNAUTÉ",
+    "grail": "GRAAL",
+    "from": "Du vestiaire de",
+    "lockerSuffix": "",
+    "storyTitle": "L'HISTOIRE"
 }
 }
