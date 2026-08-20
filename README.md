@@ -4,14 +4,16 @@ This is a React Native application built with Expo, to allow users to easily man
 
 <img width="900" height="1195" alt="IMG_9382" src="https://github.com/user-attachments/assets/6acd9271-e72e-4d0a-a1d5-a8301df11f39" />
 
-
 ### Features
 
 - Add and manage your sports jerseys collection
 - Take photos of your jerseys and add them to your collection
 - Locker room to view and organize your jerseys
 - Home screen with quick access to add new jersey, last added, kit of community to share a random jersey from a user every day, statistics
+- Search and filter your collection by team, league, year, and more
+- Like integration to like kit of community jerseys and jerseys on public profiles
 - export your collection in csv/ json / or printable pdf
+- settings screen to manage your account, add bio, change password, delete account, and more
 
 ### Technologies Used
 
@@ -29,12 +31,12 @@ This is a React Native application built with Expo, to allow users to easily man
 #### Authentication
 
 - NestJS Passport (Native Authentication Handler)
-- JWT (Access & Refresh Token rotation tailored for Mobile Secure Store)
-- Native OAuth2 (Google Sign-In & Sign-In with Apple via Expo Native SDKs, validated by NestJS backend)
+- JWT (Access Token stored securely via Expo SecureStore)
+- Native OAuth2 (Google Sign-In)
 
 #### Data
 
-- API-Football + TheSportsDB (initial feed data for teams)
+- API-Football
 
 #### Storage & Media
 
@@ -45,12 +47,11 @@ This is a React Native application built with Expo, to allow users to easily man
 #### Testing
 
 - Jest (unit testing with NestJS)
-- Supertest (integration testing with NestJS)
 
-#### Deployment
+### Deployment (Planned)
 
-- Render (backend)
-- Expo (mobile app)
+- VPS with Docker + Nginx reverse proxy (backend)
+- EAS Build + App Store / Google Play (mobile)
 
 ## Technical Notes & Troubleshooting
 
@@ -61,6 +62,9 @@ This is a React Native application built with Expo, to allow users to easily man
 - **R2 image display:** public R2 links returned `404`, so jersey images were not loading in the app. We switched to **signed R2 URLs** for read responses.
 - **Frontend image card:** the jersey card now tolerates missing or failing image URLs and shows a fallback instead of a blank area.
 - **TypeScript deprecation warning:** `baseUrl` triggered a TypeScript deprecation warning, so we aligned the compiler setup to keep the backend build clean.
+- **ValidationPipe** silently missing: no ValidationPipe was ever registered in main.ts, so all class-validator decorators on DTOs were effectively no-ops for a long time — malformed payloads were reaching the service layer unchecked.
+- **`nest build` vs `nest start --watch` config drift:** after adding an explicit `rootDir`/`include` to `tsconfig.json` for Jest, `nest start --watch` silently stopped emitting `dist/main.js` (or emitted it under `dist/src/`), breaking `node dist/main` on every dev restart. Root cause: `nest build` reads `tsconfig.build.json` while `nest start --watch` reads `tsconfig.json` directly, and the two had drifted out of sync. Fixed by isolating Jest's config into its own `tsconfig.spec.json`.
+- **ESM-only packages breaking Jest:** `uuid` and `expo-server-sdk` ship native ES module syntax (`SyntaxError: Unexpected token 'export'`). Fixed via `transformIgnorePatterns` so Jest transpiles those packages instead of skipping them.
 
 ### Install Notes
 
