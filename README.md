@@ -70,3 +70,9 @@ This is a React Native application built with Expo, to allow users to easily man
 
 - `multer`: `npm install @nestjs/platform-express multer`
 - Types: `npm install -D @types/multer`
+
+
+ ### MCD
+
+ <img width="1198" height="831" alt="KITROOM_MCD" src="https://github.com/user-attachments/assets/5715029b-337b-421c-8204-48b0282fddc3" />
+
