@@ -25,7 +25,25 @@ export default function UpgradeScreen() {
   const { packages, purchasePackage, restorePurchases, isElite } =
     useSubscription();
 
-  // Si l'utilisateur est déjà ELITE, on affiche l'écran de succès traduit
+  const monthlyPackage = packages.find(
+    (pkg) => pkg.identifier === "elite_monthly",
+  );
+  const annualPackage = packages.find(
+    (pkg) => pkg.identifier === "elite_annual",
+  );
+
+  const monthlyPrice = monthlyPackage?.product.priceString || "4.99€";
+  const annualPrice = annualPackage?.product.priceString || "39.99€";
+
+  // Annual price per month calculation for display purposes
+  const annualPricePerMonth = annualPackage
+    ? new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: annualPackage.product.currencyCode,
+      }).format(annualPackage.product.price / 12)
+    : "3.33€";
+
+  // If the user is already an Elite member, show a message and a back button
   if (isElite) {
     return (
       <SafeAreaView style={[styles.container, styles.loadingContainer]}>
@@ -122,13 +140,14 @@ export default function UpgradeScreen() {
                   {t("upgrade.annual.title")}
                 </Text>
                 <Text style={styles.planSubtext}>
-                  {t("upgrade.annual.subtext")}
+                  {annualPrice} {t("upgrade.annual.subtext")}
                 </Text>
               </View>
               <View style={styles.priceContainer}>
-                <Text style={styles.oldPrice}>9.99€</Text>
+                <Text style={styles.oldPrice}>{monthlyPrice}</Text>
                 <Text style={styles.priceHighlight}>
-                  3.33€<Text style={styles.perPeriod}>/mo</Text>
+                  {annualPricePerMonth}
+                  <Text style={styles.perPeriod}>/mo</Text>
                 </Text>
               </View>
             </View>
@@ -152,7 +171,8 @@ export default function UpgradeScreen() {
                 </Text>
               </View>
               <Text style={styles.priceHighlight}>
-                4.99€<Text style={styles.perPeriod}>/mo</Text>
+                {monthlyPrice}
+                <Text style={styles.perPeriod}>/mo</Text>
               </Text>
             </View>
           </Pressable>
@@ -228,13 +248,13 @@ export default function UpgradeScreen() {
               ? t("upgrade.cta.loading")
               : selectedInterval === "year"
                 ? t("upgrade.cta.trial")
-                : t("upgrade.cta.monthly")}
+                : t("upgrade.cta.monthly", { price: monthlyPrice })}
           </Text>
         </TouchableOpacity>
         <Text style={styles.footerLegal}>
           {selectedInterval === "year"
-            ? t("upgrade.legal.trial")
-            : t("upgrade.legal.monthly")}
+            ? t("upgrade.legal.trial", { price: annualPrice })
+            : t("upgrade.legal.monthly", { price: monthlyPrice })}
         </Text>
       </View>
     </SafeAreaView>

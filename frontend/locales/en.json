@@ -511,11 +511,11 @@
   "cta": {
     "loading": "Loading...",
     "trial": "Start 7-Day Free Trial",
-    "monthly": "Subscribe Monthly (€4.99/mo)"
+     "monthly": "Subscribe ({{price}}/mo)"
   },
   "legal": {
-    "trial": "7-day free trial, then €39.99/year. Cancel anytime.",
-    "monthly": "Billed monthly at €4.99. Cancel anytime."
+  "trial": "7-day free trial, then {{price}}/year. Cancel anytime.",
+  "monthly": "Billed {{price}} per month. Cancel anytime."
   }
 },
   "common": {

@@ -510,11 +510,11 @@
   "cta": {
     "loading": "Chargement...",
     "trial": "Démarrer l'essai gratuit de 7 jours",
-    "monthly": "S'abonner (4,99 €/mois)"
+     "monthly": "S'abonner ({{price}}/mois)"
   },
   "legal": {
-    "trial": "Essai gratuit de 7 jours, puis 39,99 €/an. Annulable à tout moment.",
-    "monthly": "Facturé 4,99 € par mois. Annulable à tout moment."
+    "trial": "Essai gratuit de 7 jours, puis {{price}}/an. Annulable à tout moment.",
+  "monthly": "Facturé {{price}} par mois. Annulable à tout moment."
   }
 },
   "common": {
