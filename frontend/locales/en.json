@@ -390,8 +390,11 @@
       "subtitle": "See how other collectors view your locker"
     },
     "security": {
+      "changeLanguage": "Language",
+       "languageModalTitle": "Select Language",
       "changePassword": "Change Password",
-      "deleteAccount": "Delete Account"
+      "deleteAccount": "Delete Account",
+      "languageClose": "Close"
     },
     "modals": {
       "username": {

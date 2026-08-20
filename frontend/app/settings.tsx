@@ -1,6 +1,6 @@
 import { useUserMe } from "@/hooks/useAuthHook";
 import { authService } from "@/services/auth.service";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Fontisto, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState, useEffect } from "react";
 import {
@@ -17,6 +17,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "../lib/i18n";
 import { useTranslation } from "react-i18next";
 
 export default function SettingsScreen() {
@@ -60,6 +62,19 @@ export default function SettingsScreen() {
     { code: "USD", symbol: "$" },
     { code: "GBP", symbol: "£" },
   ];
+
+  const LANGUAGE_OPTIONS = [
+    { code: "en", label: "English" },
+    { code: "fr", label: "Français" },
+  ];
+
+  const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
+
+  const handleChangeLanguage = async (code: string) => {
+    await i18n.changeLanguage(code);
+    await AsyncStorage.setItem("userLanguage", code);
+    setIsLanguageModalVisible(false);
+  };
 
   const verifyUsername = async (username: string) => {
     if (!username || username.length < 3) {
@@ -468,6 +483,30 @@ export default function SettingsScreen() {
             {t("settings.sections.security")}
           </Text>
           <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => setIsLanguageModalVisible(true)}
+            >
+              <View style={styles.rowLeft}>
+                <Fontisto name="world-o" size={18} color="#FFFFFF" />
+                <Text style={styles.text}>
+                  {t("settings.security.changeLanguage")}
+                </Text>
+              </View>
+              <View style={styles.rowRight}>
+                <Text style={styles.value}>
+                  {LANGUAGE_OPTIONS.find((l) => l.code === i18n.language)
+                    ?.label ?? "English"}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color="#555"
+                  style={{ marginLeft: 6 }}
+                />
+              </View>
+            </TouchableOpacity>
+
             {userInfo?.hasPassword && (
               <TouchableOpacity
                 style={styles.menuItem}
@@ -742,6 +781,49 @@ export default function SettingsScreen() {
             >
               <Text style={styles.cancelButtonText}>
                 {t("settings.buttons.close")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Language Modal */}
+      {/* Language Modal */}
+      <Modal
+        visible={isLanguageModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsLanguageModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              {t("settings.security.languageModalTitle")}
+            </Text>
+
+            {LANGUAGE_OPTIONS.map((lang) => (
+              <TouchableOpacity
+                key={lang.code}
+                style={styles.row}
+                onPress={() => handleChangeLanguage(lang.code)}
+              >
+                <Text style={styles.label}>{lang.label}</Text>
+                {i18n.language === lang.code && (
+                  <Feather name="check" size={18} color="#05C785" />
+                )}
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity
+              style={[
+                styles.modalButton,
+                styles.cancelButton,
+                { marginTop: 12 },
+              ]}
+              onPress={() => setIsLanguageModalVisible(false)}
+            >
+              <Text style={styles.cancelButtonText}>
+                {t("settings.security.languageClose")}
               </Text>
             </TouchableOpacity>
           </View>

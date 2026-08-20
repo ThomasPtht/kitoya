@@ -389,8 +389,11 @@
       "subtitle": "Voir comment les autres collectionneurs voient votre vestiaire"
     },
     "security": {
+      "changeLanguage": "Langue",
+      "languageModalTitle": "Choisir la langue",
       "changePassword": "Changer le mot de passe",
-      "deleteAccount": "Supprimer le compte"
+      "deleteAccount": "Supprimer le compte",
+      "languageClose": "Fermer"
     },
     "modals": {
       "username": {
