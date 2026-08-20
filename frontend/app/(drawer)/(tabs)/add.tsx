@@ -256,6 +256,32 @@ export default function TabAddScreen() {
     }, [debouncedClubSearch, selectedSportId]),
   );
 
+  useEffect(() => {
+    // if we arrive on the screen without a jerseyId (add mode), we reset the form to its default values to avoid any leftover data from previous edits
+    if (!isEditing) {
+      reset({
+        clubId: "",
+        clubName: "",
+        season: "",
+        size: "",
+        type: "",
+        purchasePrice: null,
+        isOfficial: true,
+        playerName: "",
+        number: undefined,
+        frontImageUri: "",
+        backImageUri: null,
+        description: "",
+        condition: "",
+        version: "",
+        brand: "",
+      });
+      setFrontImage("");
+      setBackImage(null);
+      setSelectedClubId("");
+    }
+  }, [jerseyId]);
+
   // ==========================================
   // ACTION HANDLERS (Images & Submission)
   // ==========================================
