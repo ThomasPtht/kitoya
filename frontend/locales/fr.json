@@ -187,8 +187,8 @@
   },
   "home": {
     "archiveCard": {
-      "title": "Archiver une nouvelle acquisition",
-      "subtitle": "Chaque maillot raconte une histoire, la vôtre. Ajoutez tous les détails et regardez votre vestiaire grandir !",
+      "title": "Votre vestiaire vous attend",
+      "subtitle": "Chaque maillot raconte une histoire, la vôtre. Faites grandir votre collection, pièce après pièce.",
       "button": "Ajouter un maillot"
     },
     "lastAdded": "DERNIERS AJOUTS AU VESTIAIRE",

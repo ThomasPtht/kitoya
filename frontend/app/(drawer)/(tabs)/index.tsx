@@ -123,14 +123,20 @@ export default function TabOneScreen() {
             ) : count === 0 ? (
               <TouchableOpacity
                 onPress={() => router.push("/add")}
-                style={{ alignItems: "center" }}
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
               >
                 <Text
                   style={[
                     styles.statValue,
                     {
-                      fontSize: 14,
+                      fontSize: 12,
                       color: Colors.theme.primary,
+                      textAlign: "center",
                     },
                   ]}
                 >

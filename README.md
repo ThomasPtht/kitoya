@@ -65,6 +65,11 @@ This is a React Native application built with Expo, to allow users to easily man
 - **ValidationPipe** silently missing: no ValidationPipe was ever registered in main.ts, so all class-validator decorators on DTOs were effectively no-ops for a long time — malformed payloads were reaching the service layer unchecked.
 - **`nest build` vs `nest start --watch` config drift:** after adding an explicit `rootDir`/`include` to `tsconfig.json` for Jest, `nest start --watch` silently stopped emitting `dist/main.js` (or emitted it under `dist/src/`), breaking `node dist/main` on every dev restart. Root cause: `nest build` reads `tsconfig.build.json` while `nest start --watch` reads `tsconfig.json` directly, and the two had drifted out of sync. Fixed by isolating Jest's config into its own `tsconfig.spec.json`.
 - **ESM-only packages breaking Jest:** `uuid` and `expo-server-sdk` ship native ES module syntax (`SyntaxError: Unexpected token 'export'`). Fixed via `transformIgnorePatterns` so Jest transpiles those packages instead of skipping them.
+- local dev database drifted heavily from schema.prisma (only had the
+  original 7 columns from the first migration, missing location, bio,
+  currency, role, etc. added since via db push, never migrated).
+  Symptom: P2022 errors mentioning a generic 'colonne' column. Fixed
+  with `npx prisma db push` locally.
 
 ### Install Notes
 

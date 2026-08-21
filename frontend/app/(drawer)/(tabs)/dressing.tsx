@@ -186,9 +186,9 @@ export default function TabDressingScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>{t("dressing.empty.title")}</Text>
+            <Text style={styles.emptyTitle}>{t("tabDressing.emptyTitle")}</Text>
             <Text style={styles.emptySubtitle}>
-              {t("dressing.empty.subtitle")}
+              {t("tabDressing.emptySubtitle")}
             </Text>
 
             <TouchableOpacity
@@ -200,7 +200,7 @@ export default function TabDressingScreen() {
             >
               <Feather name="plus" size={18} color="#121212" />
               <Text style={styles.addButtonText}>
-                {t("dressing.empty.addButton")}
+                {t("tabDressing.addFirstKit")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -208,12 +208,12 @@ export default function TabDressingScreen() {
           {/* Why Archive Card */}
           <View style={styles.whyBox}>
             <Text style={styles.whyTitle}>
-              {t("dressing.whyArchive.title")}
+              {t("tabDressing.whyArchive.title")}
             </Text>
             <View style={styles.whyItem}>
               <Feather name="zap" size={14} color="#05C785" />
               <Text style={styles.whyText}>
-                {t("dressing.whyArchive.item1")}
+                {t("tabDressing.whyArchive.track")}
               </Text>
             </View>
             <View style={styles.whyItem}>
@@ -223,13 +223,13 @@ export default function TabDressingScreen() {
                 color="#05C785"
               />
               <Text style={styles.whyText}>
-                {t("dressing.whyArchive.item2")}
+                {t("tabDressing.whyArchive.levelUp")}
               </Text>
             </View>
             <View style={styles.whyItem}>
               <Feather name="arrow-up-right" size={14} color="#05C785" />
               <Text style={styles.whyText}>
-                {t("dressing.whyArchive.item3")}
+                {t("tabDressing.whyArchive.export")}
               </Text>
             </View>
           </View>
