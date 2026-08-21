@@ -89,6 +89,11 @@ first connection with server name and password
 - install certbot to get ssl certificate for domain
 - clone the project from github to server
 - create .env file with environment variables for backend
+- build and run backend docker container
+- configure neon database and set DATABASE_URL in .env file
+- configure an OVH DNS A record pointing the custom domain (api.kitroomapp.com) to the VPS IP address
+- configure Nginx as a reverse proxy to route incoming traffic securely to the backend container
+- install and configure Certbot with Nginx plugin to issue a Let's Encrypt SSL certificate, enabling HTTPS and automated background renewal
 
 ### Useful commands
 
