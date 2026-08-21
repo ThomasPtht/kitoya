@@ -46,7 +46,7 @@ export default function DrawerLayout() {
   }, [userMe]);
 
   const displayName = userMe?.name || userMe?.username || "Collector";
-  const displayEmail = userMe?.email || "user@kitroom.app";
+  const displayEmail = userMe?.email || "";
 
   // Dynamic rank and collection count
   const currentRank = calculateRank(jerseys);

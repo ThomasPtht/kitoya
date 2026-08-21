@@ -7,7 +7,7 @@ export class EmailService {
 
   async sendPasswordResetEmail(email: string, code: string) {
     await this.resend.emails.send({
-      from: 'Kitroom <onboarding@resend.dev>',
+      from: 'Kitroom <no-reply@kitroomapp.com>',
       to: email,
       subject: 'Your Kitroom Reset Code',
       html: `
