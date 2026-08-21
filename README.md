@@ -84,8 +84,37 @@ first connection with server name and password
 - change ssh port to custom port
 - firewall UFW configuration to allow only ssh port and http/https ports
 - install fail2ban to protect against brute force attacks
-- install docker 
-- install nginx 
+- install docker
+- install nginx
 - install certbot to get ssl certificate for domain
 - clone the project from github to server
-- create .env file with environment variables for backend 
+- create .env file with environment variables for backend
+
+### Useful commands
+
+- build image: `sudo docker build -t kitroom-backend .`
+- force rebuild ignoring cache: `sudo docker build --no-cache -t kitroom-backend .`
+- run container: `sudo docker run -d --name kitroom-backend -p 3000:3000 --env-file .env --restart unless-stopped kitroom-backend`
+- check running containers: `sudo docker ps`
+- view logs: `sudo docker logs kitroom-backend`
+- stop and remove before redeploying: `sudo docker stop kitroom-backend && sudo docker rm kitroom-backend`
+- pull latest code and redeploy: cd ~/kitroom && git pull && cd backend
+  sudo docker build -t kitroom-backend .
+  sudo docker stop kitroom-backend && sudo docker rm kitroom-backend
+  sudo docker run -d --name kitroom-backend -p 3000:3000 --env-file .env --restart unless-stopped kitroom-backend
+- check firewall rules: `sudo ufw status`
+- check banned IPs: `sudo fail2ban-client status sshd`
+
+### Known issues config server
+
+- compiled `prisma.config.js`/`.bak`/`.map`/`.d.ts` artifacts (source is
+  `prisma.config.ts`) kept being re-tracked by `git add .` because they
+  were missing from `.gitignore` — broke `prisma generate` in Docker
+  builds ("Failed to parse syntax of config file"). Fixed by adding
+  them to `.gitignore` and `git rm --cached`.
+- `schema.prisma` had a custom Prisma client `output` path
+  (`../generated/client`) that broke every `@prisma/client` import in
+  the codebase — reverted to the default output location.
+- Docker caches build steps aggressively; after fixing source files,
+  always rebuild with `--no-cache` to make sure the fix is actually
+  picked up, not silently reusing a stale cached layer.
