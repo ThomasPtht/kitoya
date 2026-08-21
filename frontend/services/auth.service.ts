@@ -102,12 +102,12 @@ export const authService = {
     location?: string;
     currency?: string;
   }) => {
-    const response = await apiClient.post("/auth/update-profile", data);
+    const response = await apiClient.put("/auth/update-profile", data);
     return response.data;
   },
 
   updateBio: async (bio: string) => {
-    const response = await apiClient.post("/auth/update-bio", { bio });
+    const response = await apiClient.put("/auth/update-bio", { bio });
     return response.data;
   },
 };

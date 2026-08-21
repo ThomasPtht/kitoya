@@ -20,7 +20,7 @@ export class KotdController {
     @Req() req: Request,
     @Query('locale') locale: 'en' | 'fr' = 'en',
   ) {
-    console.log('Locale reçue par le backend:', locale);
+
     const currentUserId = (req as any).user?.userId || (req as any).user?.id;
     return this.kotdService.getJerseyOfTheDay(currentUserId, locale);
   }

@@ -61,6 +61,7 @@ export default function TabLayout() {
             height: 74,
             paddingBottom: 8,
             paddingTop: 8,
+            paddingHorizontal: 30,
           },
           tabBarLabelStyle: {
             fontSize: 12,
