@@ -71,8 +71,21 @@ This is a React Native application built with Expo, to allow users to easily man
 - `multer`: `npm install @nestjs/platform-express multer`
 - Types: `npm install -D @types/multer`
 
-
- ### MCD
+### MCD
 
  <img width="1198" height="831" alt="KITROOM_MCD" src="https://github.com/user-attachments/assets/5715029b-337b-421c-8204-48b0282fddc3" />
 
+### VPS configuration
+
+first connection with server name and password
+
+- update and upgrade server
+- create ssh key pair and add public key to server to connect without password
+- change ssh port to custom port
+- firewall UFW configuration to allow only ssh port and http/https ports
+- install fail2ban to protect against brute force attacks
+- install docker 
+- install nginx 
+- install certbot to get ssl certificate for domain
+- clone the project from github to server
+- create .env file with environment variables for backend 
