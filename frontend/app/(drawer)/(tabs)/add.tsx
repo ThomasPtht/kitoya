@@ -707,24 +707,65 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.type.message}</Text>
         )}
 
-        {/* Purchase Price */}
-        <Text style={styles.label}>{t("addJersey.priceLabel")}</Text>
+        {/* Version */}
+        <Text style={styles.label}>{t("addJersey.versionLabel")}</Text>
         <Controller
           control={control}
-          name="purchasePrice"
+          name="version"
           render={({ field: { onChange, value } }) => (
-            <TextInput
-              style={styles.input}
-              placeholder={t("addJersey.pricePlaceholder")}
-              placeholderTextColor="#8E8E93"
-              keyboardType="numeric"
-              onChangeText={(text) =>
-                onChange(text ? parseFloat(text.replace(",", ".")) : null)
-              }
-              value={value !== null && value !== undefined ? String(value) : ""}
-            />
+            <View style={styles.chipRow}>
+              {KIT_VERSION_KEYS.map((vKey) => (
+                <TouchableOpacity
+                  key={vKey}
+                  style={[styles.chip, value === vKey && styles.chipSelected]}
+                  onPress={() => onChange(vKey)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      value === vKey && styles.chipTextSelected,
+                    ]}
+                  >
+                    {t(`addJersey.versions.${vKey}`)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           )}
         />
+        {errors.version && (
+          <Text style={styles.errorText}>{errors.version.message}</Text>
+        )}
+
+        {/* Condition */}
+        <Text style={styles.label}>{t("addJersey.conditionLabel")}</Text>
+        <Controller
+          control={control}
+          name="condition"
+          render={({ field: { onChange, value } }) => (
+            <View style={styles.chipRow}>
+              {KIT_CONDITION_KEYS.map((cKey) => (
+                <TouchableOpacity
+                  key={cKey}
+                  style={[styles.chip, value === cKey && styles.chipSelected]}
+                  onPress={() => onChange(cKey)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      value === cKey && styles.chipTextSelected,
+                    ]}
+                  >
+                    {t(`addJersey.conditions.${cKey}`)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        />
+        {errors.condition && (
+          <Text style={styles.errorText}>{errors.condition.message}</Text>
+        )}
 
         <View style={styles.separator} />
 
@@ -761,65 +802,41 @@ export default function TabAddScreen() {
           )}
         />
 
-        {/* Condition */}
-        <Text style={styles.label}>{t("addJersey.conditionLabel")}</Text>
+        {/* Purchase Price */}
+        <Text style={styles.label}>{t("addJersey.priceLabel")}</Text>
         <Controller
           control={control}
-          name="condition"
+          name="purchasePrice"
           render={({ field: { onChange, value } }) => (
-            <View style={styles.chipRow}>
-              {KIT_CONDITION_KEYS.map((cKey) => (
-                <TouchableOpacity
-                  key={cKey}
-                  style={[styles.chip, value === cKey && styles.chipSelected]}
-                  onPress={() => onChange(cKey)}
-                >
-                  <Text
-                    style={[
-                      styles.chipText,
-                      value === cKey && styles.chipTextSelected,
-                    ]}
-                  >
-                    {t(`addJersey.conditions.${cKey}`)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <TextInput
+              style={styles.input}
+              placeholder={t("addJersey.pricePlaceholder")}
+              placeholderTextColor="#8E8E93"
+              keyboardType="numeric"
+              onChangeText={(text) =>
+                onChange(text ? parseFloat(text.replace(",", ".")) : null)
+              }
+              value={value !== null && value !== undefined ? String(value) : ""}
+            />
           )}
         />
-        {errors.condition && (
-          <Text style={styles.errorText}>{errors.condition.message}</Text>
-        )}
 
-        {/* Version */}
-        <Text style={styles.label}>{t("addJersey.versionLabel")}</Text>
+        {/* Description */}
+        <Text style={styles.label}>{t("addJersey.descriptionLabel")}</Text>
         <Controller
           control={control}
-          name="version"
+          name="description"
           render={({ field: { onChange, value } }) => (
-            <View style={styles.chipRow}>
-              {KIT_VERSION_KEYS.map((vKey) => (
-                <TouchableOpacity
-                  key={vKey}
-                  style={[styles.chip, value === vKey && styles.chipSelected]}
-                  onPress={() => onChange(vKey)}
-                >
-                  <Text
-                    style={[
-                      styles.chipText,
-                      value === vKey && styles.chipTextSelected,
-                    ]}
-                  >
-                    {t(`addJersey.versions.${vKey}`)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <TextInput
+              style={[styles.input, { height: 100, textAlignVertical: "top" }]}
+              placeholder={t("addJersey.descriptionPlaceholder")}
+              placeholderTextColor="#8E8E93"
+              multiline
+              onChangeText={onChange}
+              value={value}
+            />
           )}
         />
-        {errors.version && (
-          <Text style={styles.errorText}>{errors.version.message}</Text>
-        )}
 
         {/* Official Switch */}
         <View style={styles.switchRow}>
@@ -844,23 +861,6 @@ export default function TabAddScreen() {
             )}
           />
         </View>
-
-        {/* Description */}
-        <Text style={styles.label}>{t("addJersey.descriptionLabel")}</Text>
-        <Controller
-          control={control}
-          name="description"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              style={[styles.input, { height: 100, textAlignVertical: "top" }]}
-              placeholder={t("addJersey.descriptionPlaceholder")}
-              placeholderTextColor="#8E8E93"
-              multiline
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
 
         {/* Submit Button */}
         <TouchableOpacity
