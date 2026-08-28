@@ -1,4 +1,4 @@
-## KITROOM
+## KITADIUM
 
 This is a React Native application built with Expo, to allow users to easily manage their sports jerseys collection. The app features a sleek and modern design, with a focus on user experience and ease of use.
 
