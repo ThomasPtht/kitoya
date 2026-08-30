@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { SentryModule } from '@sentry/nestjs/setup';
+import { APP_FILTER } from '@nestjs/core';
+import { SentryGlobalFilter } from '@sentry/nestjs/setup';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -25,6 +28,7 @@ import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     PrismaModule,
     AuthModule,
     JerseysModule,
@@ -41,6 +45,10 @@ import { FeedbackModule } from './feedback/feedback.module';
   ],
   controllers: [AppController, GoogleStrategyController, LockerController],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
+    },
     AppService,
     EmailService,
     PasswordResetService,
