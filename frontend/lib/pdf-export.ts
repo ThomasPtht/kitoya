@@ -127,7 +127,7 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
         <body>
           <div class="header-container">
             <div>
-              <h1>Kitroom <span class="accent">Portfolio</span></h1>
+              <h1>Kitoya <span class="accent">Portfolio</span></h1>
               <div class="subtitle">Collection Archive Generated on ${generatedDate}</div>
             </div>
             <div style="text-align: right; font-weight: bold; font-size: 14px; color: #05C785;">
@@ -171,7 +171,7 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
               .join("")}
           </div>
 
-          <div class="footer">Kitroom App - Your data stays yours.</div>
+          <div class="footer">Kitoya App - Your data stays yours.</div>
         </body>
       </html>
     `;
@@ -185,7 +185,7 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
 
     await Sharing.shareAsync(uri, {
       mimeType: "application/pdf",
-      dialogTitle: "Your Kitroom Portfolio PDF",
+      dialogTitle: "Your Kitoya Portfolio PDF",
       UTI: "com.adobe.pdf",
     });
   } catch (error: any) {

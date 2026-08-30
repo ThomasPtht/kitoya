@@ -7,13 +7,13 @@ export class EmailService {
 
   async sendPasswordResetEmail(email: string, code: string) {
     await this.resend.emails.send({
-      from: 'Kitroom <no-reply@kitroomapp.com>',
+      from: 'Kitoya <no-reply@kitoya.com>',
       to: email,
-      subject: 'Your Kitroom Reset Code',
+      subject: 'Your Kitoya Reset Code',
       html: `
         <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
           <h2>Password Reset Code</h2>
-          <p>You requested a password reset for your Kitroom account.</p>
+          <p>You requested a password reset for your Kitoya account.</p>
           <p>Here is your verification code (valid for 15 minutes):</p>
           
           <div style="background: #f4f4f4; padding: 16px; text-align: center; font-size: 28px; font-weight: bold; letter-spacing: 6px; border-radius: 8px; color: #05C785; margin: 20px 0;">

@@ -8,10 +8,10 @@ export class FeedbackService {
 
   async sendFeedback(dto: CreateFeedbackDto, userId?: string) {
     await this.resend.emails.send({
-      from: 'Kitroom <no-reply@kitroomapp.com>',
-      to: 'hello@kitroomapp.com',
+      from: 'Kitoya <no-reply@kitoya.com>',
+      to: 'hello@kitoya.com',
       replyTo: dto.email, // to allow direct replies to the user if they provided an email
-      subject: `[${dto.type}] New feedback from Kitroom`,
+      subject: `[${dto.type}] New feedback from Kitoya`,
       html: `
         <p><strong>Type:</strong> ${dto.type}</p>
         <p><strong>User ID:</strong> ${userId ?? 'not logged in'}</p>

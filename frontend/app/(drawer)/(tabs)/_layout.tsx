@@ -8,8 +8,8 @@ import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-const KITROOM_EMERALD = "#0DFFAA";
-const KITROOM_INACTIVE = "#6B7280";
+const KITOYA_EMERALD = "#0DFFAA";
+const KITOYA_INACTIVE = "#6B7280";
 
 function AddButton() {
   return (
@@ -52,8 +52,8 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           header: () => <Header />,
-          tabBarActiveTintColor: KITROOM_EMERALD,
-          tabBarInactiveTintColor: KITROOM_INACTIVE,
+          tabBarActiveTintColor: KITOYA_EMERALD,
+          tabBarInactiveTintColor: KITOYA_INACTIVE,
           headerShown: true,
           tabBarStyle: {
             backgroundColor: "#121212",
@@ -128,7 +128,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   iconBase: { marginBottom: -3 },
   iconNeonGlow: {
-    shadowColor: KITROOM_EMERALD,
+    shadowColor: KITOYA_EMERALD,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 6,
@@ -144,10 +144,10 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: KITROOM_EMERALD,
+    backgroundColor: KITOYA_EMERALD,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: KITROOM_EMERALD,
+    shadowColor: KITOYA_EMERALD,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 6,

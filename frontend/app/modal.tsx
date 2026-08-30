@@ -26,7 +26,7 @@ export default function CameraModal() {
       <View style={styles.container}>
         <View style={styles.permissionBox}>
           <Text style={styles.permissionText}>
-            Kitroom needs access to your camera to let you scan new kits and add
+            Kitoya needs access to your camera to let you scan new kits and add
             them to your locker.
           </Text>
           <TouchableOpacity

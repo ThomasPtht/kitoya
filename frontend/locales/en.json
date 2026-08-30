@@ -1,7 +1,7 @@
 {
   "auth": {
     "register": {
-      "subtitle": "Welcome ! Please sign up to add your kits and manage your locker.",
+      "subtitle": "Please sign up to add your kits and manage your locker.",
       "usernamePlaceholder": "Username",
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
@@ -21,7 +21,7 @@
       }
     },
     "login": {
-      "subtitle": "Welcome back! Log in to access your locker.",
+      "subtitle": "Log in to access your locker.",
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
       "forgotPassword": "Forgot password?",
@@ -207,7 +207,7 @@
   },
 "drawer": {
     "pro": {
-      "badge": "KITROOM PRO",
+      "badge": "KITOYA PRO",
       "title": "Unlock the full archive",
       "feature1": "• Unlimited jerseys storage",
       "feature2": "• Collection stats & insights",
@@ -235,7 +235,7 @@
     "collectorRank": "COLLECTOR",
     "sharedKits": "SHARED KITS",
     "exhibits": "EXHIBITS",
-    "shareMessage": "Check out my football shirt collection on Kitroom! kitroom://locker/{{username}}",
+    "shareMessage": "Check out my football shirt collection on Kitoya ! kitoya://locker/{{username}}",
     "buttons": {
       "front": "FRONT",
       "back": "BACK"
@@ -247,7 +247,7 @@
     "headerTitle": "Collection stats",
     "locked": {
       "title": "ELITE Feature",
-      "description": "Advanced collection analytics are reserved for Kitroom ELITE members.",
+      "description": "Advanced collection analytics are reserved for Kitoya ELITE members.",
       "button": "Discover ELITE Plan"
     },
     "cards": {
@@ -273,7 +273,7 @@
     "headerTitle": "Export collection",
     "locked": {
       "title": "ELITE Feature",
-      "description": "Exporting your collection (CSV, JSON, PDF) is reserved for Kitroom ELITE members.",
+      "description": "Exporting your collection (CSV, JSON, PDF) is reserved for Kitoya ELITE members.",
       "button": "Discover ELITE Plan"
     },
     "statCard": {
@@ -375,7 +375,7 @@
       "location": "Location",
       "noLocation": "Not set",
       "email": "Email",
-      "defaultEmail": "user@kitroom.app",
+      "defaultEmail": "user@kitoya.app",
       "subscription": "Subscription Plan"
     },
     "preferences": {
@@ -474,7 +474,7 @@
 },
   "upgrade": {
     "alreadyElite": {
-    "title": "You are a Kitroom ELITE member!",
+    "title": "You are a Kitoya ELITE member!",
     "backButton": "Back to App"
   },
   "errors": {
@@ -577,7 +577,7 @@
     "toastDeletedTitle": "Jersey deleted",
     "toastDeletedMessage": "The jersey has been removed from your collection."
   },
-  "shareMessage": "Check out this kit from my collection! 👕✨ Join me on KITROOM to build and showcase your ultimate football locker: https://kitroom.app",
+  "shareMessage": "Check out this kit from my collection! 👕✨ Join me on KITOYA to build and showcase your ultimate football locker: https://kitoya.com",
   "shareTitle": "Check out this football kit!"
 },
 "kitOfTheDay": {

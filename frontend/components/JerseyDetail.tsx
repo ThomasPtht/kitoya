@@ -233,8 +233,8 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 
           {isSharing && (
             <View style={styles.watermarkContainer}>
-              <Text style={styles.watermarkBrand}>KITROOM</Text>
-              <Text style={styles.watermarkUrl}>kitroom.app</Text>
+              <Text style={styles.watermarkBrand}>KITOYA</Text>
+              <Text style={styles.watermarkUrl}>Kitoya.app</Text>
             </View>
           )}
         </View>

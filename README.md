@@ -78,7 +78,7 @@ This is a React Native application built with Expo, to allow users to easily man
 
 ### MCD
 
- <img width="1198" height="831" alt="KITROOM_MCD" src="https://github.com/user-attachments/assets/5715029b-337b-421c-8204-48b0282fddc3" />
+ <img width="1198" height="831" alt="kitoya_MCD" src="https://github.com/user-attachments/assets/5715029b-337b-421c-8204-48b0282fddc3" />
 
 ### VPS configuration
 
@@ -96,22 +96,22 @@ first connection with server name and password
 - create .env file with environment variables for backend
 - build and run backend docker container
 - configure neon database and set DATABASE_URL in .env file
-- configure an OVH DNS A record pointing the custom domain (api.kitroomapp.com) to the VPS IP address
+- configure an OVH DNS A record pointing the custom domain (api.kitoyaapp.com) to the VPS IP address
 - configure Nginx as a reverse proxy to route incoming traffic securely to the backend container
 - install and configure Certbot with Nginx plugin to issue a Let's Encrypt SSL certificate, enabling HTTPS and automated background renewal
 
 ### Useful commands
 
-- build image: `sudo docker build -t kitroom-backend .`
-- force rebuild ignoring cache: `sudo docker build --no-cache -t kitroom-backend .`
-- run container: `sudo docker run -d --name kitroom-backend -p 3000:3000 --env-file .env --restart unless-stopped kitroom-backend`
+- build image: `sudo docker build -t kitoya-backend .`
+- force rebuild ignoring cache: `sudo docker build --no-cache -t kitoya-backend .`
+- run container: `sudo docker run -d --name kitoya-backend -p 3000:3000 --env-file .env --restart unless-stopped kitoya-backend`
 - check running containers: `sudo docker ps`
-- view logs: `sudo docker logs kitroom-backend`
-- stop and remove before redeploying: `sudo docker stop kitroom-backend && sudo docker rm kitroom-backend`
-- pull latest code and redeploy: cd ~/kitroom && git pull && cd backend
-  sudo docker build -t kitroom-backend .
-  sudo docker stop kitroom-backend && sudo docker rm kitroom-backend
-  sudo docker run -d --name kitroom-backend -p 3000:3000 --env-file .env --restart unless-stopped kitroom-backend
+- view logs: `sudo docker logs kitoya-backend`
+- stop and remove before redeploying: `sudo docker stop kitoya-backend && sudo docker rm kitoya-backend`
+- pull latest code and redeploy: cd ~/kitoya && git pull && cd backend
+  sudo docker build -t kitoya-backend .
+  sudo docker stop kitoya-backend && sudo docker rm kitoya-backend
+  sudo docker run -d --name kitoya-backend -p 3000:3000 --env-file .env --restart unless-stopped kitoya-backend
 - check firewall rules: `sudo ufw status`
 - check banned IPs: `sudo fail2ban-client status sshd`
 

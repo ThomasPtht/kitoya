@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "kitroom",
-    "slug": "kitroom",
+    "name": "kitoya",
+    "slug": "kitoya",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "kitroom",
+    "scheme": "kitoya",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.kitroom"
+      "package": "com.anonymous.kitoya"
     },
     "web": {
       "bundler": "metro",

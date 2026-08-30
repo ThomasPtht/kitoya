@@ -109,7 +109,7 @@ export default function ExportCollectionScreen() {
 
       if (selectedFormat === "json") {
         fileContent = JSON.stringify(jerseyData, null, 2);
-        fileName = `kitroom_collection_${Date.now()}.json`;
+        fileName = `kitoya_collection_${Date.now()}.json`;
         mimeType = "application/json";
         uti = "public.json";
       } else if (selectedFormat === "csv") {
@@ -138,7 +138,7 @@ export default function ExportCollectionScreen() {
           .join("\n");
 
         fileContent = headers + rows;
-        fileName = `kitroom_collection_${Date.now()}.csv`;
+        fileName = `kitoya_collection_${Date.now()}.csv`;
         mimeType = "text/csv";
         uti = "public.comma-separated-values-text";
       }

@@ -93,7 +93,7 @@ export default function LoginScreen() {
         <View style={styles.inner}>
           {/* Header */}
           <View style={styles.logoContainer}>
-            <Text style={styles.title}>KITROOM</Text>
+            <Text style={styles.title}>KITOYA</Text>
             <Text style={styles.subtitle}>{t("auth.login.subtitle")}</Text>
           </View>
 

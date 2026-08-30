@@ -47,10 +47,10 @@ describe('FeedbackService', () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'Kitroom <no-reply@kitroomapp.com>',
-          to: 'hello@kitroomapp.com',
+          from: 'Kitoya <no-reply@kitoya.com>',
+          to: 'hello@kitoya.com',
           replyTo: baseDto.email,
-          subject: `[${baseDto.type}] New feedback from Kitroom`,
+          subject: `[${baseDto.type}] New feedback from Kitoya`,
         }),
       );
 

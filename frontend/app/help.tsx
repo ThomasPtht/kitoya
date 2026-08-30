@@ -55,7 +55,7 @@ export default function HelpScreen() {
   ];
 
   const handleEmailSupport = () => {
-    Linking.openURL("mailto:hello@kitroomapp.com");
+    Linking.openURL("mailto:hello@kitoya.com");
   };
 
   const handleSendFeedback = async () => {
@@ -112,7 +112,7 @@ export default function HelpScreen() {
                 {t("help.quickActions.emailSupport")}
               </Text>
             </View>
-            <Text style={styles.quickActionValue}>hello@kitroomapp.com</Text>
+            <Text style={styles.quickActionValue}>hello@kitoya.com</Text>
           </Pressable>
 
           <View style={styles.separator} />

@@ -19,7 +19,7 @@ export default function Header() {
     <View style={styles.container}>
       <View style={styles.row}>
         <Text onPress={() => router.push("/")} style={styles.title}>
-          KITROOM
+          KITOYA
         </Text>
         <View style={styles.actions}>
           <Pressable

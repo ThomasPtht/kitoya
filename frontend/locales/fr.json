@@ -1,7 +1,7 @@
 {
   "auth": {
     "register": {
-      "subtitle": "Bienvenue ! Inscrivez-vous pour ajouter vos maillots et gérer votre vestiaire.",
+      "subtitle": "Inscrivez-vous pour ajouter vos maillots et gérer votre vestiaire.",
       "usernamePlaceholder": "Nom d'utilisateur",
       "emailPlaceholder": "E-mail",
       "passwordPlaceholder": "Mot de passe",
@@ -21,7 +21,7 @@
       }
     },
     "login": {
-      "subtitle": "Bon retour ! Connectez-vous pour accéder à votre vestiaire.",
+      "subtitle": "Connectez-vous pour accéder à votre vestiaire.",
       "emailPlaceholder": "E-mail",
       "passwordPlaceholder": "Mot de passe",
       "forgotPassword": "Mot de passe oublié ?",
@@ -206,7 +206,7 @@
   },
   "drawer": {
     "pro": {
-      "badge": "KITROOM ELITE",
+      "badge": "kITOYA ELITE",
       "title": "Débloquez l'archive complète",
       "feature1": "• Stockage de maillots illimité",
       "feature2": "• Stats et analyses de collection",
@@ -234,7 +234,7 @@
     "collectorRank": "COLLECTOR",
     "sharedKits": "MAILLOTS PARTAGÉS",
     "exhibits": "EXPOSITIONS",
-    "shareMessage": "Découvre ma collection de maillots de foot sur Kitroom ! kitroom://locker/{{username}}",
+    "shareMessage": "Découvre ma collection de maillots de foot sur Kitoya ! kitoya://locker/{{username}}",
     "buttons": {
       "front": "FACE",
       "back": "DOS"
@@ -246,7 +246,7 @@
     "headerTitle": "Statistiques de collection",
     "locked": {
       "title": "Fonctionnalité ELITE",
-      "description": "Les analyses avancées de collection sont réservées aux membres Kitroom ELITE.",
+      "description": "Les analyses avancées de collection sont réservées aux membres Kitoya ELITE.",
       "button": "Découvrir l'offre ELITE"
     },
     "cards": {
@@ -272,7 +272,7 @@
     "headerTitle": "Exporter la collection",
     "locked": {
       "title": "Fonctionnalité ELITE",
-      "description": "L'export de votre collection (CSV, JSON, PDF) est réservé aux membres Kitroom ELITE.",
+      "description": "L'export de votre collection (CSV, JSON, PDF) est réservé aux membres Kitoya ELITE.",
       "button": "Découvrir l'offre ELITE"
     },
     "statCard": {
@@ -374,7 +374,7 @@
       "location": "Localisation",
       "noLocation": "Non défini",
       "email": "Email",
-      "defaultEmail": "user@kitroom.app",
+      "defaultEmail": "user@kitoya.app",
       "subscription": "Plan d'abonnement"
     },
     "preferences": {
@@ -473,7 +473,7 @@
 },
   "upgrade": {
   "alreadyElite": {
-    "title": "Vous êtes membre Kitroom ÉLITE !",
+    "title": "Vous êtes membre Kitoya ÉLITE !",
     "backButton": "Retour à l'application"
   },
   "errors": {
@@ -576,7 +576,7 @@
     "toastDeletedTitle": "Maillot supprimé",
     "toastDeletedMessage": "Le maillot a été retiré de votre collection."
   },
-  "shareMessage": "Découvrez ce maillot de ma collection ! 👕✨ Rejoignez-moi sur KITROOM pour créer et exposer votre vestiaire de football ultime : https://kitroom.app",
+  "shareMessage": "Découvrez ce maillot de ma collection ! 👕✨ Rejoignez-moi sur KITOYA pour créer et exposer votre vestiaire de football ultime : https://kitoya.app",
   "shareTitle": "Découvrez ce maillot de foot !"
 },
 "kitOfTheDay": {

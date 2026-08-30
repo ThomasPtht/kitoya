@@ -69,7 +69,7 @@ export const useSubscription = () => {
       const { customerInfo } = await Purchases.purchasePackage(pkg);
       setCustomerInfo(customerInfo);
 
-      if (customerInfo.entitlements.active["kitroom_elite"]) {
+      if (customerInfo.entitlements.active["kitoya_elite"]) {
         Alert.alert("Success", "Your subscription is now active. Thank you!");
       }
     } catch (e: any) {
@@ -100,7 +100,7 @@ export const useSubscription = () => {
   };
 
   const isElite =
-    customerInfo?.entitlements.active["kitroom_elite"] !== undefined;
+    customerInfo?.entitlements.active["kitoya_elite"] !== undefined;
 
   return {
     packages,
