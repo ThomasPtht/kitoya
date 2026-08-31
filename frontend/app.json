@@ -4,22 +4,17 @@
     "slug": "kitoya",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/splash-icon.png",
     "scheme": "kitoya",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -30,10 +25,25 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
+      "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+            [
+        "expo-splash-screen",
+        {
+          "ios": {
+            "backgroundColor": "#000000",
+            "image": "./assets/images/splash-icon.png",
+            "resizeMode": "cover"
+          },
+          "android": {
+            "backgroundColor": "#000000",
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 150
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
