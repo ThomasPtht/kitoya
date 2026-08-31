@@ -63,7 +63,8 @@ export default function KitOfTheDayModal({
           <View style={styles.metaRow}>
             <View style={styles.metaInfo}>
               <Text style={styles.seasonTypeHeader}>
-                {jersey.season} / {jersey.type?.toUpperCase()}
+                {jersey.season} /{" "}
+                {t(`addJersey.types.${jersey.type}`).toUpperCase()}
               </Text>
               <Text style={styles.clubName}>{jersey.club.name}</Text>
 
@@ -73,10 +74,10 @@ export default function KitOfTheDayModal({
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.badgesContainer}
               >
-                {jersey.type && (
+                {jersey.version && (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>
-                      {jersey.type.toUpperCase()}
+                      {t(`addJersey.versions.${jersey.version}`).toUpperCase()}
                     </Text>
                   </View>
                 )}

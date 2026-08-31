@@ -4,6 +4,43 @@ import { generateJerseyStory } from './kotd-helper';
 import { R2Service } from '../r2/r2.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
+const TRANSLATIONS = {
+  en: {
+    types: {
+      HOME: 'home',
+      AWAY: 'away',
+      THIRD: 'third',
+      FOURTH: 'fourth',
+      GOALKEEPER: 'goalkeeper',
+      SPECIAL: 'special',
+      TRAINING: 'training',
+    },
+    versions: {
+      REPLICA: 'replica',
+      AUTHENTIC: 'authentic',
+      FAN: 'fan',
+      PLAYER_ISSUE: 'player issue',
+      MATCH_WORN: 'match worn',
+    },
+  },
+  fr: {
+    types: {
+      HOME: 'domicile',
+      AWAY: 'extérieur',
+      THIRD: 'third',
+      FOURTH: 'fourth',
+      GOALKEEPER: 'gardien',
+      SPECIAL: 'spécial',
+      TRAINING: 'entraînement',
+    },
+    versions: {
+      REPLICA: 'replica',
+      AUTHENTIC: 'authentique',
+      PLAYER_ISSUE: 'version pro',
+      MATCH_WORN: 'porté en match',
+    },
+  },
+};
 @Injectable()
 export class KotdService {
   constructor(
@@ -77,13 +114,26 @@ export class KotdService {
       );
     }
 
+    const tTypes = TRANSLATIONS[locale]?.types || TRANSLATIONS.en.types;
+    const tVersions =
+      TRANSLATIONS[locale]?.versions || TRANSLATIONS.en.versions;
+
+    const formattedType =
+      tTypes[jerseyOfTheDay.type?.toUpperCase()] ||
+      jerseyOfTheDay.type?.toLowerCase() ||
+      '';
+    const formattedVersion =
+      tVersions[jerseyOfTheDay.version?.toUpperCase()] ||
+      jerseyOfTheDay.version?.toLowerCase() ||
+      '';
+
     console.log('Locale utilisée pour generateJerseyStory:', locale);
     const story = generateJerseyStory(
       {
         clubName: jerseyOfTheDay.club.name,
         season: jerseyOfTheDay.season as string,
-        type: jerseyOfTheDay.type,
-        version: jerseyOfTheDay.version,
+        type: formattedType,
+        version: formattedVersion,
         playerName: jerseyOfTheDay.playerName,
       },
       locale,

@@ -269,14 +269,15 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           {jersey.type && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>
-                {jersey.type.replace(/_/g, " ")}
+                {t(`addJersey.types.${jersey.type}`)}
               </Text>
             </View>
           )}
-          {jersey.condition && (
+          {jersey.version && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>
-                {formatText(jersey.condition)}
+                {" "}
+                {t(`addJersey.versions.${jersey.version}`)}
               </Text>
             </View>
           )}
@@ -325,15 +326,19 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           {jersey.version && (
             <View style={styles.row}>
               <Text style={styles.label}>{t("jerseyDetail.version")}</Text>
-              <Text style={styles.value}>{formatText(jersey.version)}</Text>
+              <Text style={styles.value}>
+                {t(`addJersey.versions.${jersey.version}`, {
+                  defaultValue: formatText(jersey.version),
+                })}
+              </Text>
             </View>
           )}
           <View style={styles.row}>
             <Text style={styles.label}>{t("jerseyDetail.condition")}</Text>
             <Text style={styles.value}>
-              {jersey.condition
-                ? formatText(jersey.condition)
-                : t("jerseyDetail.na")}
+              {t(`addJersey.conditions.${jersey.condition}`, {
+                defaultValue: formatText(jersey.condition || ""),
+              })}
             </Text>
           </View>
           <View style={styles.row}>
