@@ -213,6 +213,7 @@ export default function TabAddScreen() {
           setFrontImage("");
           setBackImage(null);
           setSelectedClubId("");
+          setClubSearchInput("");
           setSuggestions([]);
           setIsDropdownVisible(false);
           setIsBrandDropdownVisible(false);
@@ -279,6 +280,7 @@ export default function TabAddScreen() {
       setFrontImage("");
       setBackImage(null);
       setSelectedClubId("");
+      setClubSearchInput("");
     }
   }, [jerseyId]);
 

@@ -65,16 +65,22 @@ export class JerseysService {
       const teams = await this.FootballService.searchTeams(clubData.name);
 
       // search for the team with the exact name (case-insensitive), if not found, take the first one
-      const targetTeam =
-        teams.find(
-          (t) => t.name.toLowerCase() === clubData.name.toLowerCase(),
-        ) || teams[0];
+      const targetTeam = teams.find(
+        (t) => t.name.toLowerCase() === clubData.name.toLowerCase(),
+      );
+
+      // If no exact match is found, refuse the creation instead of using the raw user input
+      if (!targetTeam) {
+        throw new BadRequestException(
+          'No matching team found for the provided club name. Please provide a valid club name.',
+        );
+      }
 
       // if api doesnt find any team, create the club with the name provided by the user and no logo
 
       club = await this.prisma.club.create({
         data: {
-          name: targetTeam?.name || clubData.name,
+          name: targetTeam.name,
           sportId: clubData.sportId,
           logoUrl: targetTeam?.logo || null,
         },
