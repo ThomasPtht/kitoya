@@ -101,7 +101,7 @@
     "optional": "(Optional)",
     "change": "Change",
     "clubLabel": "Club / National Team *",
-        "clubPlaceholder": "Type and select from the list",
+    "clubPlaceholder": "Type and select from the list",
     "seasonLabel": "Season *",
     "seasonPlaceholder": "e.g., 1998, 2004-2005",
     "brandLabel": "Brand *",
@@ -139,7 +139,9 @@
       "successTitle": "Jersey added",
       "successMessage": "The jersey has been added to your collection.",
       "errorTitle": "Error adding jersey",
-      "errorMessage": "There was an error adding the jersey. Please try again."
+      "errorMessage": "There was an error adding the jersey. Please try again.",
+      "updateSuccessTitle": "Jersey updated",
+      "updateSuccessMessage": "The jersey has been updated successfully."
     },
     "validation": {
       "clubRequired": "Club or Country name is required",

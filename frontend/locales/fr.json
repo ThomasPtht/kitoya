@@ -140,7 +140,9 @@
       "successTitle": "Maillot ajouté",
       "successMessage": "Le maillot a été ajouté à votre collection.",
       "errorTitle": "Erreur lors de l'ajout",
-      "errorMessage": "Une erreur est survenue lors de l'ajout du maillot. Veuillez réessayer."
+      "errorMessage": "Une erreur est survenue lors de l'ajout du maillot. Veuillez réessayer.",
+      "updateSuccessTitle": "Maillot mis à jour",
+      "updateSuccessMessage": "Le maillot a été mis à jour avec succès."
     },
     "validation": {
       "clubRequired": "Le nom du club ou pays est requis",
