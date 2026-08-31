@@ -12,7 +12,6 @@ import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { useColorScheme } from "@/components/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StripeProvider } from "@stripe/stripe-react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   useFonts,
@@ -42,14 +41,14 @@ SplashScreen.preventAutoHideAsync();
 // Les composants qui définissent leur propre fontFamily (ex: les titres en Outfit)
 // écrasent naturellement ce défaut via l'ordre du tableau de styles.
 // @ts-ignore - on patche le rendu interne du composant Text
-const oldRender = RNText.render;
+// const oldRender = RNText.render;
 // @ts-ignore
-RNText.render = function (...args: any[]) {
-  const origin = oldRender.call(this, ...args);
-  return React.cloneElement(origin, {
-    style: [{ fontFamily: "Inter_400Regular" }, origin.props.style],
-  });
-};
+// RNText.render = function (...args: any[]) {
+//   const origin = oldRender.call(this, ...args);
+//   return React.cloneElement(origin, {
+//     style: [{ fontFamily: "Inter_400Regular" }, origin.props.style],
+//   });
+// };
 
 const queryClient = new QueryClient();
 
@@ -92,82 +91,75 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <StripeProvider
-      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
-    >
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(auth)/register"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="(auth)/forgot-password"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="(auth)/reset-password"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="(auth)/change-password"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="locker/[username]"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="settings"
-            options={{
-              headerShown: false,
-              animation: "slide_from_right", // Force the slide animation for the settings screen
-            }}
-          />
-          <Stack.Screen
-            name="exportCollection"
-            options={{
-              headerShown: false,
-              animation: "slide_from_right",
-            }}
-          />
-          <Stack.Screen
-            name="analytics"
-            options={{
-              headerShown: false,
-              animation: "slide_from_right",
-            }}
-          />
-          <Stack.Screen
-            name="help"
-            options={{
-              headerShown: false,
-              animation: "slide_from_right",
-            }}
-          />
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(auth)/forgot-password"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(auth)/reset-password"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(auth)/change-password"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="locker/[username]"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="settings"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right", // Force the slide animation for the settings screen
+          }}
+        />
+        <Stack.Screen
+          name="exportCollection"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen
+          name="analytics"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen
+          name="help"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
 
-          <Stack.Screen
-            name="subscription"
-            options={{
-              headerShown: false,
-              animation: "slide_from_right",
-            }}
-          />
-          <Stack.Screen
-            name="upgrade"
-            options={{
-              headerShown: false,
-              animation: "slide_from_right",
-            }}
-          />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal", headerShown: false }}
-          />
-        </Stack>
-      </ThemeProvider>
-    </StripeProvider>
+        <Stack.Screen
+          name="subscription"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen
+          name="upgrade"
+          options={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen
+          name="modal"
+          options={{ presentation: "modal", headerShown: false }}
+        />
+      </Stack>
+    </ThemeProvider>
   );
 }
