@@ -101,7 +101,7 @@
     "optional": "(Optionnel)",
     "change": "Changer",
     "clubLabel": "Club / Équipe nationale *",
-    "clubPlaceholder": "ex: France, Real Madrid, Arsenal",
+    "clubPlaceholder": "Saisir et choisissez dans la liste",
     "seasonLabel": "Saison *",
     "seasonPlaceholder": "ex: 1998, 2004-2005",
     "brandLabel": "Marque *",
@@ -123,6 +123,8 @@
     "submit": "Ajouter au vestiaire",
     "saveChanges": "Mettre à jour",
     "submitting": "Envoi en cours...",
+    "clubNotFound": "Aucun club trouvé. Veuillez vérifier l'orthographe ou essayer un autre nom.",
+    "selectClubFromList": "Veuillez sélectionner un club dans la liste",
     "alerts": {
       "addImageTitle": "Ajouter une image",
       "addImageMessage": "Choisissez une source d'image",

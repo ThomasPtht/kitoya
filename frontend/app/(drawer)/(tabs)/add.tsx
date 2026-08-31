@@ -130,7 +130,7 @@ export default function TabAddScreen() {
   const debouncedClubSearch = useDebounce(clubSearchInput, 500);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [brandSuggestions, setBrandSuggestions] = useState<string[]>([]);
   const [isBrandDropdownVisible, setIsBrandDropdownVisible] = useState(false);
@@ -556,6 +556,7 @@ export default function TabAddScreen() {
                 onChange(text);
                 setClubSearchInput(text);
                 setSelectedClubId(""); // Reset selected club ID when user types
+                setIsLoading(true); // Start loading when user types
               }}
             />
           )}
@@ -564,21 +565,38 @@ export default function TabAddScreen() {
           <Text style={styles.errorText}>{errors.clubName.message}</Text>
         )}
 
+        {/* if no club is found, show a message to the user */}
+        {!errors.clubName &&
+          !isLoading &&
+          clubSearchInput === debouncedClubSearch &&
+          clubSearchInput.trim().length >= 3 &&
+          suggestions.length === 0 &&
+          !selectedClubId && (
+            <Text style={styles.errorText}>{t("addJersey.clubNotFound")}</Text>
+          )}
+
         {isDropdownVisible && suggestions.length > 0 && (
           <View style={styles.dropdown}>
-            {suggestions.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.dropdownItem}
-                onPress={() => {
-                  setValue("clubName", item.name);
-                  setSelectedClubId(item.id);
-                  setIsDropdownVisible(false);
-                }}
-              >
-                <Text style={styles.dropdownText}>{item.name}</Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={true}
+            >
+              {suggestions.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setValue("clubName", item.name);
+                    setSelectedClubId(item.id);
+                    setIsDropdownVisible(false);
+                  }}
+                >
+                  <Text style={styles.dropdownText}>{item.name}</Text>
+                  <Text style={styles.dropdownChevron}>›</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         )}
 
@@ -868,9 +886,9 @@ export default function TabAddScreen() {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            isPending && styles.submitButtonDisabled,
+            (isPending || !selectedClubId) && styles.submitButtonDisabled,
           ]}
-          disabled={isPending}
+          disabled={isPending || !selectedClubId}
           onPress={handleSubmit((data) => onSubmit(data))}
         >
           <Text style={styles.submitButtonText}>
@@ -960,7 +978,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   submitButtonText: { color: "#000000", fontSize: 16, fontWeight: "700" },
-  submitButtonDisabled: { backgroundColor: "#A0CFFF", opacity: 0.6 },
+  submitButtonDisabled: { opacity: 0.2 },
   imagePickerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -1002,12 +1020,24 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dropdownItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#2C2C2E",
   },
-  dropdownText: { color: "#FFFFFF" },
+  dropdownText: {
+    fontSize: 16,
+    color: "#ffffff",
+    flex: 1,
+  },
+  dropdownChevron: {
+    fontSize: 20,
+    color: "#C7C7CC",
+    marginLeft: 8,
+  },
   imagePickerFilled: {
     borderWidth: 1,
     borderColor: Colors.theme.primary,
