@@ -395,7 +395,7 @@
     },
     "publicView": {
       "title": "Aperçu du profil public",
-      "subtitle": "Voir comment les autres collectionneurs voient votre vestiaire"
+      "subtitle": "Affichage public de votre vestiaire"
     },
     "security": {
       "changeLanguage": "Langue",

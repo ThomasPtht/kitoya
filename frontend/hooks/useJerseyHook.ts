@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jerseyService } from "@/services/jersey.service";
 import { sportsService } from "@/services/sport.service";
 import { kotdService } from "@/services/kotd.service";
+import i18n from "@/lib/i18n";
 
 // Get all jerseys query hook
 export const useJerseys = () => {
@@ -56,7 +57,7 @@ export const useSports = () => {
 
 export const useJerseyOfTheDay = () => {
   return useQuery({
-    queryKey: ["kotd"],
+    queryKey: ["kotd", i18n.language],
     queryFn: kotdService.getJerseyOfTheDay,
   });
 };
