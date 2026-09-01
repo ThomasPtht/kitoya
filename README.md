@@ -1,4 +1,4 @@
-## KITADIUM
+## KITOYA
 
 This is a React Native application built with Expo, to allow users to easily manage their sports jerseys collection. The app features a sleek and modern design, with a focus on user experience and ease of use.
 
@@ -42,7 +42,7 @@ This is a React Native application built with Expo, to allow users to easily man
 
 - Cloudflare R2 (image storage)
 - Sharp (image compression and resizing)
-- RemoveBG (background removal)
+- RemoveBG (background removal) eventually to be replaced by FAPIHUB
 
 #### Testing
 
@@ -96,9 +96,28 @@ first connection with server name and password
 - create .env file with environment variables for backend
 - build and run backend docker container
 - configure neon database and set DATABASE_URL in .env file
-- configure an OVH DNS A record pointing the custom domain (api.kitoyaapp.com) to the VPS IP address
+- configure an OVH DNS A record pointing the custom domain (api.kitoya.com) to the VPS IP address
 - configure Nginx as a reverse proxy to route incoming traffic securely to the backend container
 - install and configure Certbot with Nginx plugin to issue a Let's Encrypt SSL certificate, enabling HTTPS and automated background renewal
+
+## Staging environment
+
+A separate staging environment runs alongside production on the same VPS, sharing the same codebase but with isolated data and configuration.
+
+- create a Neon database branch ("staging") from production, with no auto-delete
+- create a separate Cloudflare R2 bucket ("kitoya-staging") for staging file storage
+- create a .env.staging file in ~/kitoya/backend with staging-specific values (DATABASE_URL, R2_BUCKET_NAME, R2_PUBLIC_URL, GOOGLE_CALLBACK_URL), without quotes around values (Docker --env-file does not strip them)
+- add an OVH DNS A record for api-staging.kitoya.com pointing to the same VPS IP address
+- create a new Nginx server block (kitoya-staging-apiserver) proxying api-staging.kitoya.com to localhost:3001
+- issue a separate Let's Encrypt SSL certificate for api-staging.kitoya.com via Certbot
+- build a separate Docker image (kitoya-backend-staging) and run it on port 3001, using .env.staging
+
+| | Production | Staging |
+|---|---|---|
+| URL | `api.kitoya.com` | `api-staging.kitoya.com` |
+| Port | 3000 | 3001 |
+| Database | Neon `production` branch | Neon `staging` branch |
+| R2 bucket | `kitoya` | `kitoya-staging` |
 
 ### Useful commands
 
