@@ -225,7 +225,8 @@
       "help": "Help & feedback"
     },
     "eliteBadge": "ELITE",
-    "logout": "Log out"
+    "logout": "Log out",
+     
   },
   "publicLocker": {
     "badge": "PUBLIC LOCKER",
@@ -443,6 +444,11 @@
       "currencyError": "Failed to update currency",
       "profileError": "An error occurred while updating the profile",
       "deleteError": "An error occurred while deleting the account"
+    },
+    "legal": {
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "legalNotice":  "Legal Notice"
     }
   },
   "subscription": {
@@ -566,7 +572,7 @@
   "purchasePrice": "Purchase Price",
   "shareCard": "Generating card...",
   "shareKit": "Share",
-  "deleteButton": "Delete from collection",
+  "deleteButton": "Delete",
   "editButton": "Edit",
   "alerts": {
     "deleteTitle": "Delete",

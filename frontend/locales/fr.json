@@ -210,7 +210,7 @@
   },
   "drawer": {
     "pro": {
-      "badge": "kITOYA ELITE",
+      "badge": "KITOYA ELITE",
       "title": "Débloquez l'archive complète",
       "feature1": "• Stockage de maillots illimité",
       "feature2": "• Stats et analyses de collection",
@@ -225,7 +225,12 @@
       "help": "Aide & feedback"
     },
     "eliteBadge": "ELITE",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "legal": {
+      "privacyPolicy": "Politique de confidentialité",
+      "termsOfService": "Conditions d'utilisation",
+      "legalNotice": "Mentions légales"
+    }
   },
   "publicLocker": {
     "badge": "CASIER PUBLIC",
@@ -443,6 +448,11 @@
       "currencyError": "Échec de la mise à jour de la devise",
       "profileError": "Une erreur est survenue lors de la mise à jour du profil",
       "deleteError": "Une erreur est survenue lors de la suppression du compte"
+    },
+    "legal": {
+      "privacyPolicy": "Confidentialité",
+      "termsOfService": "Conditions d'utilisation",
+      "legalNotice":  "Mentions légales"
     }
   },
   "subscription": {

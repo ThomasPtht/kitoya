@@ -15,6 +15,7 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -67,6 +68,26 @@ export default function SettingsScreen() {
     { code: "en", label: "English" },
     { code: "fr", label: "Français" },
   ];
+
+  const LEGAL_URLS = {
+    legal: {
+      en: "https://kitoya.com/legal-notice.html",
+      fr: "https://kitoya.com/mentions-legales",
+    },
+    terms: {
+      en: "https://kitoya.com/terms-of-service",
+      fr: "https://kitoya.com/conditions-generales-utilisation",
+    },
+    privacy: {
+      en: "https://kitoya.com/privacy-policy",
+      fr: "https://kitoya.com/politique-de-confidentialite",
+    },
+  };
+
+  const openLegalLink = (type: "legal" | "terms" | "privacy") => {
+    const lang = i18n.language === "fr" ? "fr" : "en";
+    Linking.openURL(LEGAL_URLS[type][lang]);
+  };
 
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 
@@ -538,6 +559,27 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Legal Links */}
+        <View style={styles.legalLinksContainer}>
+          <TouchableOpacity onPress={() => openLegalLink("legal")}>
+            <Text style={styles.legalLink}>
+              {t("settings.legal.legalNotice")}
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.legalSeparator}>·</Text>
+          <TouchableOpacity onPress={() => openLegalLink("terms")}>
+            <Text style={styles.legalLink}>
+              {t("settings.legal.termsOfService")}
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.legalSeparator}>·</Text>
+          <TouchableOpacity onPress={() => openLegalLink("privacy")}>
+            <Text style={styles.legalLink}>
+              {t("settings.legal.privacyPolicy")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Username Modal */}
@@ -787,7 +829,6 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
-      {/* Language Modal */}
       {/* Language Modal */}
       <Modal
         visible={isLanguageModalVisible}
@@ -1078,5 +1119,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     marginTop: 12,
+  },
+  legalLinksContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+    marginBottom: 16,
+    gap: 8,
+  },
+  legalLink: {
+    fontSize: 12,
+    color: "#888888",
+  },
+  legalSeparator: {
+    fontSize: 12,
+    color: "#888888",
   },
 });
