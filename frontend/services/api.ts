@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 export const apiClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.15:3000",
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
 });
 
 // L'intercepteur : Il ajoute le token automatiquement à chaque requête
