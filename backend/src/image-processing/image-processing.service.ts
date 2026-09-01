@@ -1,21 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { removeBackgroundFromImageBase64 } from 'remove.bg';
+import axios from 'axios';
+import FormData from 'form-data';
 import sharp from 'sharp';
 
 @Injectable()
 export class ImageProcessingService {
   async removeBackground(buffer: Buffer): Promise<Buffer> {
-    if (!process.env.REMOVE_BG_API_KEY) {
-      throw new Error('REMOVE_BG_API_KEY is missing');
+    if (!process.env.FAPIHUB_API_KEY) {
+      throw new Error('FAPIHUB_API_KEY is missing');
     }
-    // Detouring the image using the remove.bg API
+
     try {
-      const result = await removeBackgroundFromImageBase64({
-        base64img: buffer.toString('base64'),
-        apiKey: process.env.REMOVE_BG_API_KEY,
-        size: 'auto',
-      });
-      const detouredBuffer = Buffer.from(result.base64img, 'base64');
+      const formData = new FormData();
+      formData.append('image', buffer, { filename: 'image.jpg' });
+      formData.append('model', 'falcon');
+
+      const response = await axios.post(
+        'https://fapihub.com/v2/rembg/',
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+            ApiKey: process.env.FAPIHUB_API_KEY,
+          },
+          responseType: 'arraybuffer',
+          validateStatus: () => true, // on gère nous-même le statut
+        },
+      );
+
+      if (response.status !== 200) {
+        if (response.status === 401) {
+          throw new Error('Clé API FAPIhub invalide');
+        }
+        if (response.status === 429) {
+          throw new Error('Quota FAPIhub atteint pour ce mois');
+        }
+        throw new Error(`Erreur API FAPIhub: ${response.status}`);
+      }
+
+      const detouredBuffer = Buffer.from(response.data);
 
       // Transforming the image using sharp to ensure it fits within a 600x600 box while maintaining aspect ratio
       return await sharp(detouredBuffer)
