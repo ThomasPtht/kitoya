@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#05C785",
     padding: 16,
     borderRadius: 16,
-    gap: 10,
+    gap: 2,
     marginTop: 10,
     shadowColor: "rgba(5, 199, 133, 0.4)",
     shadowOffset: { width: 0, height: 4 },

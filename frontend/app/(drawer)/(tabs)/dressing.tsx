@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 
 import { useFilterStore } from "@/stores/useFilterStore";
 import FilterModal from "@/components/FilterModal";
+import { Colors } from "@/constants/Colors";
 
 export default function TabDressingScreen() {
   const { t } = useTranslation();
@@ -250,7 +251,7 @@ export default function TabDressingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
+    backgroundColor: Colors.theme.background,
     paddingHorizontal: 20,
     paddingTop: 10,
   },
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "900",
     color: "white",
   },

@@ -913,10 +913,10 @@ export default function TabAddScreen() {
 // ==========================================
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.theme.background },
-  scrollContent: { paddingHorizontal: 20, paddingTop: 25, paddingBottom: 40 },
+  scrollContent: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 40 },
   heading: {
     color: "#FFFFFF",
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "900",
     marginBottom: 25,
     letterSpacing: 1,
