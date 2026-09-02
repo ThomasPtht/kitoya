@@ -112,12 +112,12 @@ A separate staging environment runs alongside production on the same VPS, sharin
 - issue a separate Let's Encrypt SSL certificate for api-staging.kitoya.com via Certbot
 - build a separate Docker image (kitoya-backend-staging) and run it on port 3001, using .env.staging
 
-| | Production | Staging |
-|---|---|---|
-| URL | `api.kitoya.com` | `api-staging.kitoya.com` |
-| Port | 3000 | 3001 |
-| Database | Neon `production` branch | Neon `staging` branch |
-| R2 bucket | `kitoya` | `kitoya-staging` |
+|           | Production               | Staging                  |
+| --------- | ------------------------ | ------------------------ |
+| URL       | `api.kitoya.com`         | `api-staging.kitoya.com` |
+| Port      | 3000                     | 3001                     |
+| Database  | Neon `production` branch | Neon `staging` branch    |
+| R2 bucket | `kitoya`                 | `kitoya-staging`         |
 
 ### Useful commands
 
@@ -131,6 +131,18 @@ A separate staging environment runs alongside production on the same VPS, sharin
   sudo docker build -t kitoya-backend .
   sudo docker stop kitoya-backend && sudo docker rm kitoya-backend
   sudo docker run -d --name kitoya-backend -p 3000:3000 --env-file .env --restart unless-stopped kitoya-backend
+
+### ==> script created to automate this: `~/kitoya/deploy-prod.sh`
+
+#### for staging:
+
+sudo docker build -t kitoya-backend-staging .
+sudo docker stop kitoya-backend-staging
+sudo docker rm kitoya-backend-staging
+sudo docker run -d --name kitoya-backend-staging -p 3001:3000 --env-file .env.staging kitoya-backend-staging
+
+### ==> script created to automate this: `~/kitoya/deploy-staging.sh`
+
 - check firewall rules: `sudo ufw status`
 - check banned IPs: `sudo fail2ban-client status sshd`
 
