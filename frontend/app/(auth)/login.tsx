@@ -11,13 +11,13 @@ import {
   Text,
   StyleSheet,
   Platform,
-  Keyboard,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
-import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
+import { KeyboardAvoidingView } from "react-native";
 import Toast from "react-native-toast-message";
 import z from "zod";
 import { useTranslation } from "react-i18next";
@@ -85,12 +85,16 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.inner}>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={styles.inner}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header */}
           <View style={styles.logoContainer}>
             <Text style={styles.title}>KITOYA</Text>
@@ -207,9 +211,9 @@ export default function LoginScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -218,17 +222,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.theme.background,
   },
-  inner: {
+  keyboardView: {
     flex: 1,
+  },
+  inner: {
+    flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: 24,
-    paddingTop: 40,
     paddingBottom: 40,
   },
   logoContainer: {
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 40,
+    marginBottom: 20,
   },
   title: {
     fontSize: 32,
@@ -293,6 +298,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   footerText: {
     color: Colors.theme.textDark,
