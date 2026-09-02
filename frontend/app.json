@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "kitoya",
+    "name": "Kitoya",
     "slug": "kitoya",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splash-icon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "kitoya",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -39,7 +39,8 @@
           "ios": {
             "backgroundColor": "#000000",
             "image": "./assets/images/splash-icon.png",
-            "resizeMode": "cover"
+            "resizeMode": "contain",
+            "imageWidth": 200
           },
           "android": {
             "backgroundColor": "#000000",
