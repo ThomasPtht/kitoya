@@ -272,8 +272,18 @@
       "brandMix": "RÉPARTITION DES MARQUES",
       "kitTypes": "TYPES DE MAILLOTS",
       "editionMix": "ÉDITIONS",
-      "conditionMix": "ÉTATS"
-    }
+      "conditionMix": "ÉTATS",
+          "crownJewel": "PIÈCE MAÎTRESSE",
+      "acquisitionsTimeline": "CHRONOLOGIE DES ACQUISITIONS"
+    },
+"tabs": {
+    "overview": "APERÇU",
+    "mix": "MIX",
+    "timeline": "CHRONOLOGIE"
+  },
+  "crownJewel": {
+    "mostValuable": "PLUS PRÉCIEUX"
+  }
   },
   "export": {
     "loading": "Chargement...",

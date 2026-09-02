@@ -1,35 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  Image,
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCollectionAnalytics } from "@/hooks/useJerseyHook";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useTranslation } from "react-i18next";
+import DonutChart from "@/components/DonutChart";
 
-interface AnalyticsProps {
-  onClose?: () => void;
-  stats?: {
-    totalKits: number;
-    uniqueClubs: number;
-    erasCovered: number;
-    brandsCount: number;
-    totalInvested: number;
-    avgPrice: number;
-    topClubs: { name: string; count: number; maxCount: number }[];
-    eras: { name: string; count: number; maxCount: number }[];
-    brands: { name: string; count: number }[];
-    variants: { name: string; count: number; maxCount: number }[];
-    conditions: { name: string; count: number; maxCount: number }[];
-  };
+interface CrownJewelData {
+  clubName: string;
+  season: string;
+  type: string;
+  price: number;
+  frontImageUrl: string;
 }
+
+const CHART_COLORS = ["#05C785", "#0A8F5C", "#7FCEAF", "#3DB88A", "#1FA872"];
+
+type TabKey = "overview" | "mix" | "timeline";
 
 const formatLabel = (text: string) => {
   if (!text) return "";
@@ -37,11 +34,12 @@ const formatLabel = (text: string) => {
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
 };
 
-export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
+export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
   const { t } = useTranslation();
   const router = useRouter();
   const { data: userMe, isLoading: isUserLoading } = useUserMe();
   const { data, isLoading, error } = useCollectionAnalytics();
+  const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
@@ -59,11 +57,8 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
   const currencySymbol = CURRENCY_SYMBOLS[userMe?.currency ?? "EUR"] ?? "€";
 
   const handleBack = () => {
-    if (onClose) {
-      onClose();
-    } else {
-      router.back();
-    }
+    if (onClose) onClose();
+    else router.back();
   };
 
   if (isUserLoading) {
@@ -112,6 +107,46 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
     );
   }
 
+  const brandDonutData = (data?.brands ?? []).map((b, i) => ({
+    name: b.name,
+    count: b.count,
+    color: CHART_COLORS[i % CHART_COLORS.length],
+  }));
+
+  const conditionDonutData = (data?.conditions ?? []).map((c, i) => ({
+    name: formatLabel(c.name),
+    count: c.count,
+    color: CHART_COLORS[i % CHART_COLORS.length],
+  }));
+
+  const renderLegend = (
+    items: { name: string; count: number }[],
+    total: number,
+  ) =>
+    items.map((item, index) => {
+      const percent = total > 0 ? Math.round((item.count / total) * 100) : 0;
+      return (
+        <View key={index} style={styles.legendRow}>
+          <View style={styles.legendLeft}>
+            <View
+              style={[
+                styles.legendDot,
+                { backgroundColor: CHART_COLORS[index % CHART_COLORS.length] },
+              ]}
+            />
+            <Text style={styles.legendName}>{item.name}</Text>
+          </View>
+          <View style={styles.legendRight}>
+            <Text style={styles.legendPercent}>{percent}%</Text>
+            <Text style={styles.legendCount}>{item.count}</Text>
+          </View>
+        </View>
+      );
+    });
+
+  const acquisitionsData = data?.acquisitionsByYear ?? [];
+  const maxAcquisitions = Math.max(...acquisitionsData.map((d) => d.count), 1);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -126,264 +161,347 @@ export default function AnalyticsScreen({ onClose }: AnalyticsProps) {
         </View>
       </View>
 
+      {/* Tabs */}
+      <View style={styles.tabsRow}>
+        <TouchableOpacity
+          onPress={() => setActiveTab("overview")}
+          style={[styles.tab, activeTab === "overview" && styles.tabActive]}
+        >
+          <Feather
+            name="bar-chart-2"
+            size={13}
+            color={activeTab === "overview" ? "#05C785" : "#888888"}
+          />
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "overview" && styles.tabTextActive,
+            ]}
+          >
+            {t("analytics.tabs.overview")}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setActiveTab("mix")}
+          style={[styles.tab, activeTab === "mix" && styles.tabActive]}
+        >
+          <MaterialIcons
+            name="donut-large"
+            size={14}
+            color={activeTab === "mix" ? "#05C785" : "#888888"}
+          />
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "mix" && styles.tabTextActive,
+            ]}
+          >
+            {t("analytics.tabs.mix")}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setActiveTab("timeline")}
+          style={[styles.tab, activeTab === "timeline" && styles.tabActive]}
+        >
+          <Feather
+            name="trending-up"
+            size={13}
+            color={activeTab === "timeline" ? "#05C785" : "#888888"}
+          />
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "timeline" && styles.tabTextActive,
+            ]}
+          >
+            {t("analytics.tabs.timeline")}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.gridRow}>
-          <View style={styles.smallCard}>
-            <View style={styles.cardHeaderRow}>
-              <Feather name="shopping-bag" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>
-                {t("analytics.cards.totalKits")}
-              </Text>
-            </View>
-            <Text style={styles.cardValue}>{data?.totalKits ?? 0}</Text>
-          </View>
+        {/* ================= OVERVIEW TAB ================= */}
+        {activeTab === "overview" && (
+          <>
+            <View style={styles.gridRow}>
+              <View style={styles.smallCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Feather name="shopping-bag" size={13} color="#05C785" />
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.totalKits")}
+                  </Text>
+                </View>
+                <Text style={styles.cardValue}>{data?.totalKits ?? 0}</Text>
+              </View>
 
-          <View style={styles.smallCard}>
-            <View style={styles.cardHeaderRow}>
-              <Feather name="shield" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>
-                {t("analytics.cards.uniqueClubs")}
-              </Text>
+              <View style={styles.smallCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Feather name="shield" size={13} color="#05C785" />
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.uniqueClubs")}
+                  </Text>
+                </View>
+                <Text style={styles.cardValue}>{data?.uniqueClubs ?? 0}</Text>
+              </View>
             </View>
-            <Text style={styles.cardValue}>{data?.uniqueClubs ?? 0}</Text>
-          </View>
-        </View>
 
-        <View style={styles.gridRow}>
-          <View style={styles.smallCard}>
-            <View style={styles.cardHeaderRow}>
-              <Feather name="calendar" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>
-                {t("analytics.cards.erasCovered")}
-              </Text>
-            </View>
-            <Text style={styles.cardValue}>{data?.erasCovered ?? 0}</Text>
-          </View>
+            <View style={styles.gridRow}>
+              <View style={styles.smallCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Feather name="calendar" size={13} color="#05C785" />
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.erasCovered")}
+                  </Text>
+                </View>
+                <Text style={styles.cardValue}>{data?.erasCovered ?? 0}</Text>
+              </View>
 
-          <View style={styles.smallCard}>
-            <View style={styles.cardHeaderRow}>
-              <Feather name="tag" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>
-                {t("analytics.cards.brands")}
-              </Text>
+              <View style={styles.smallCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Feather name="tag" size={13} color="#05C785" />
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.brands")}
+                  </Text>
+                </View>
+                <Text style={styles.cardValue}>{data?.brandsCount ?? 0}</Text>
+              </View>
             </View>
-            <Text style={styles.cardValue}>{data?.brandsCount ?? 0}</Text>
-          </View>
-        </View>
 
-        <View style={styles.gridRow}>
-          <View style={styles.smallCard}>
-            <View style={styles.cardHeaderRow}>
-              <Feather name="credit-card" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>
-                {t("analytics.cards.totalInvested")}
-              </Text>
+            <View style={styles.gridRow}>
+              <View style={styles.smallCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Feather name="credit-card" size={13} color="#05C785" />
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.totalInvested")}
+                  </Text>
+                </View>
+                <Text style={styles.cardValueMoney}>
+                  {data?.totalInvested ?? 0} {currencySymbol}
+                </Text>
+              </View>
+
+              <View style={styles.smallCard}>
+                <View style={styles.cardHeaderRow}>
+                  <Feather name="trending-up" size={13} color="#05C785" />
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.avgPrice")}
+                  </Text>
+                </View>
+                <Text style={styles.cardValueMoney}>
+                  {data?.avgPrice ?? 0} {currencySymbol}
+                </Text>
+              </View>
             </View>
-            <Text style={styles.cardValueMoney}>
-              {data?.totalInvested ?? 0} {currencySymbol}
+
+            {data?.crownJewel && (
+              <>
+                <Text style={styles.sectionHeader}>
+                  {t("analytics.sections.crownJewel")}
+                </Text>
+                <View style={styles.crownJewelCard}>
+                  <Image
+                    source={{ uri: data.crownJewel.frontImageUrl }}
+                    style={styles.crownJewelImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.crownJewelInfo}>
+                    <Text style={styles.crownJewelBadge}>
+                      {t("analytics.crownJewel.mostValuable")}
+                    </Text>
+                    <Text style={styles.crownJewelName}>
+                      {data.crownJewel.clubName}
+                    </Text>
+                    <Text style={styles.crownJewelMeta}>
+                      {data.crownJewel.season} ·{" "}
+                      {formatLabel(data.crownJewel.type)}
+                    </Text>
+                    <Text style={styles.crownJewelPrice}>
+                      {data.crownJewel.price} {currencySymbol}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.topClubs")}
             </Text>
-          </View>
-
-          <View style={styles.smallCard}>
-            <View style={styles.cardHeaderRow}>
-              <Feather name="trending-up" size={13} color="#05C785" />
-              <Text style={styles.cardLabel}>
-                {t("analytics.cards.avgPrice")}
-              </Text>
+            <View style={styles.sectionCard}>
+              {(data?.topClubs ?? []).map((club, index, array) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.barItemContainer,
+                    index !== array.length - 1 && styles.itemSeparator,
+                  ]}
+                >
+                  <View style={styles.barItemHeader}>
+                    <Text style={styles.barItemName}>{club.name}</Text>
+                    <Text style={styles.barItemCount}>{club.count}</Text>
+                  </View>
+                  <View style={styles.statBarTrack}>
+                    <View
+                      style={[
+                        styles.statBarFill,
+                        {
+                          width: `${
+                            club.maxCount
+                              ? (club.count / club.maxCount) * 100
+                              : 0
+                          }%`,
+                        },
+                      ]}
+                    />
+                  </View>
+                </View>
+              ))}
             </View>
-            <Text style={styles.cardValueMoney}>
-              {data?.avgPrice ?? 0} {currencySymbol}
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.kitTypes")}
             </Text>
-          </View>
-        </View>
-
-        <Text style={styles.sectionHeader}>
-          {t("analytics.sections.topClubs")}
-        </Text>
-        <View style={styles.sectionCard}>
-          {(data?.topClubs ?? []).map((club, index, array) => (
-            <View
-              key={index}
-              style={[
-                styles.barItemContainer,
-                index !== array.length - 1 && styles.itemSeparator,
-              ]}
-            >
-              <View style={styles.barItemHeader}>
-                <Text style={styles.barItemName}>{club.name}</Text>
-                <Text style={styles.barItemCount}>{club.count}</Text>
-              </View>
-              <View style={styles.statBarTrack}>
+            <View style={styles.sectionCard}>
+              {(data?.variants ?? []).map((variant, index, array) => (
                 <View
+                  key={index}
                   style={[
-                    styles.statBarFill,
-                    {
-                      width: `${
-                        club.maxCount ? (club.count / club.maxCount) * 100 : 0
-                      }%`,
-                    },
+                    styles.barItemContainer,
+                    index !== array.length - 1 && styles.itemSeparator,
                   ]}
+                >
+                  <View style={styles.barItemHeader}>
+                    <Text style={styles.barItemName}>
+                      {formatLabel(variant.name)}
+                    </Text>
+                    <Text style={styles.barItemCount}>{variant.count}</Text>
+                  </View>
+                  <View style={styles.statBarTrack}>
+                    <View
+                      style={[
+                        styles.statBarFill,
+                        {
+                          width: `${
+                            variant.maxCount
+                              ? (variant.count / variant.maxCount) * 100
+                              : 0
+                          }%`,
+                        },
+                      ]}
+                    />
+                  </View>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* ================= MIX TAB ================= */}
+        {activeTab === "mix" && (
+          <>
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.brandMix")}
+            </Text>
+            <View style={styles.donutCard}>
+              <View style={styles.donutContainer}>
+                <DonutChart
+                  data={brandDonutData}
+                  centerLabel={t("analytics.cards.brands")}
                 />
               </View>
-            </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionHeader}>
-          {t("analytics.sections.kitsByEra")}
-        </Text>
-        <View style={styles.sectionCard}>
-          {(data?.eras ?? []).map((era, index, array) => (
-            <View
-              key={index}
-              style={[
-                styles.barItemContainer,
-                index !== array.length - 1 && styles.itemSeparator,
-              ]}
-            >
-              <View style={styles.barItemHeader}>
-                <Text style={styles.barItemName}>{era.name}</Text>
-                <Text style={styles.barItemCount}>{era.count}</Text>
+              <View style={styles.legendContainer}>
+                {renderLegend(data?.brands ?? [], data?.brandsCount ?? 0)}
               </View>
-              <View style={styles.statBarTrack}>
-                <View
-                  style={[
-                    styles.statBarFill,
-                    {
-                      width: `${
-                        era.maxCount ? (era.count / era.maxCount) * 100 : 0
-                      }%`,
-                    },
-                  ]}
+            </View>
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.conditionMix")}
+            </Text>
+            <View style={styles.donutCard}>
+              <View style={styles.donutContainer}>
+                <DonutChart
+                  data={conditionDonutData}
+                  centerLabel={t("analytics.cards.totalKits")}
                 />
               </View>
-            </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionHeader}>
-          {t("analytics.sections.brandMix")}
-        </Text>
-        <View style={styles.pillsRow}>
-          {(data?.brands ?? []).map((brand, index) => (
-            <View key={index} style={styles.pill}>
-              <Text style={styles.pillText}>
-                {brand.name} <Text style={styles.pillCount}>{brand.count}</Text>
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionHeader}>
-          {t("analytics.sections.kitTypes")}
-        </Text>
-        <View style={styles.sectionCard}>
-          {(data?.variants ?? []).map((variant, index, array) => (
-            <View
-              key={index}
-              style={[
-                styles.barItemContainer,
-                index !== array.length - 1 && styles.itemSeparator,
-              ]}
-            >
-              <View style={styles.barItemHeader}>
-                <Text style={styles.barItemName}>
-                  {formatLabel(variant.name)}
-                </Text>
-                <Text style={styles.barItemCount}>{variant.count}</Text>
+              <View style={styles.legendContainer}>
+                {renderLegend(
+                  (data?.conditions ?? []).map((c) => ({
+                    name: formatLabel(c.name),
+                    count: c.count,
+                  })),
+                  data?.totalKits ?? 0,
+                )}
               </View>
-              <View style={styles.statBarTrack}>
+            </View>
+          </>
+        )}
+
+        {/* ================= TIMELINE TAB ================= */}
+        {activeTab === "timeline" && (
+          <>
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.acquisitionsTimeline")}
+            </Text>
+            <View style={styles.timelineCard}>
+              <View style={styles.timelineRow}>
+                {acquisitionsData.map((item, index) => (
+                  <View key={index} style={styles.timelineColumn}>
+                    <Text style={styles.timelineCount}>{item.count}</Text>
+                    <View
+                      style={[
+                        styles.timelineBar,
+                        {
+                          height: Math.max(
+                            (item.count / maxAcquisitions) * 100,
+                            20,
+                          ),
+                        },
+                      ]}
+                    />
+                    <Text style={styles.timelineYear}>{item.year}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.kitsByEra")}
+            </Text>
+            <View style={styles.sectionCard}>
+              {(data?.eras ?? []).map((era, index, array) => (
                 <View
+                  key={index}
                   style={[
-                    styles.statBarFill,
-                    {
-                      width: `${
-                        variant.maxCount
-                          ? (variant.count / variant.maxCount) * 100
-                          : 0
-                      }%`,
-                    },
+                    styles.barItemContainer,
+                    index !== array.length - 1 && styles.itemSeparator,
                   ]}
-                />
-              </View>
+                >
+                  <View style={styles.barItemHeader}>
+                    <Text style={styles.barItemName}>{era.name}</Text>
+                    <Text style={styles.barItemCount}>{era.count}</Text>
+                  </View>
+                  <View style={styles.statBarTrack}>
+                    <View
+                      style={[
+                        styles.statBarFill,
+                        {
+                          width: `${
+                            era.maxCount ? (era.count / era.maxCount) * 100 : 0
+                          }%`,
+                        },
+                      ]}
+                    />
+                  </View>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionHeader}>
-          {t("analytics.sections.editionMix")}
-        </Text>
-        <View style={styles.sectionCard}>
-          {(data?.versions ?? []).map((version, index, array) => (
-            <View
-              key={index}
-              style={[
-                styles.barItemContainer,
-                index !== array.length - 1 && styles.itemSeparator,
-              ]}
-            >
-              <View style={styles.barItemHeader}>
-                <Text style={styles.barItemName}>
-                  {formatLabel(version.name)}
-                </Text>
-                <Text style={styles.barItemCount}>{version.count}</Text>
-              </View>
-              <View style={styles.statBarTrack}>
-                <View
-                  style={[
-                    styles.statBarFill,
-                    {
-                      width: `${
-                        version.maxCount
-                          ? (version.count / version.maxCount) * 100
-                          : 0
-                      }%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionHeader}>
-          {t("analytics.sections.conditionMix")}
-        </Text>
-        <View style={styles.sectionCard}>
-          {(data?.conditions ?? []).map((condition, index, array) => (
-            <View
-              key={index}
-              style={[
-                styles.barItemContainer,
-                index !== array.length - 1 && styles.itemSeparator,
-              ]}
-            >
-              <View style={styles.barItemHeader}>
-                <Text style={styles.barItemName}>
-                  {formatLabel(condition.name)}
-                </Text>
-                <Text style={styles.barItemCount}>{condition.count}</Text>
-              </View>
-              <View style={styles.statBarTrack}>
-                <View
-                  style={[
-                    styles.statBarFill,
-                    {
-                      width: `${
-                        condition.maxCount
-                          ? (condition.count / condition.maxCount) * 100
-                          : 0
-                      }%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-          ))}
-        </View>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -403,7 +521,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 15,
   },
   backButton: {
     marginRight: 15,
@@ -469,6 +587,35 @@ const styles = StyleSheet.create({
     color: "#121212",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  tabsRow: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    gap: 8,
+    marginBottom: 15,
+  },
+  tab: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#262626",
+  },
+  tabActive: {
+    borderColor: "#05C785",
+    backgroundColor: "rgba(5, 199, 133, 0.1)",
+  },
+  tabText: {
+    fontSize: 11,
+    fontWeight: "bold",
+    color: "#888888",
+    letterSpacing: 0.5,
+  },
+  tabTextActive: {
+    color: "#05C785",
   },
   scrollContent: {
     padding: 20,
@@ -559,26 +706,138 @@ const styles = StyleSheet.create({
     backgroundColor: "#05C785",
     borderRadius: 2,
   },
-  pillsRow: {
+  crownJewelCard: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  pill: {
     backgroundColor: "#161616",
     borderWidth: 1,
     borderColor: "rgba(127, 206, 175, 0.3)",
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
+    borderRadius: 16,
+    padding: 14,
+    alignItems: "center",
+    gap: 14,
+    marginBottom: 5,
   },
-  pillText: {
+  crownJewelIconContainer: {
+    width: 70,
+    height: 90,
+    borderRadius: 10,
+    backgroundColor: "#0A0A0A",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  crownJewelInfo: {
+    flex: 1,
+  },
+  crownJewelBadge: {
+    color: "#05C785",
+    fontSize: 10,
+    fontWeight: "bold",
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  crownJewelName: {
     color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 2,
+  },
+  crownJewelMeta: {
+    color: "#888888",
     fontSize: 12,
+    marginBottom: 6,
+  },
+  crownJewelPrice: {
+    color: "#05C785",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  donutCard: {
+    backgroundColor: "#161616",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 16,
+    padding: 20,
+    alignItems: "center",
+  },
+  donutContainer: {
+    marginBottom: 20,
+  },
+  legendContainer: {
+    width: "100%",
+    gap: 10,
+  },
+  legendRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  legendLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  legendName: {
+    color: "#FFFFFF",
+    fontSize: 14,
     fontWeight: "500",
   },
-  pillCount: {
+  legendRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  legendPercent: {
+    color: "#888888",
+    fontSize: 13,
+  },
+  legendCount: {
     color: "#05C785",
+    fontSize: 14,
     fontWeight: "bold",
+  },
+  timelineCard: {
+    backgroundColor: "#161616",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 16,
+    padding: 20,
+  },
+  timelineRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-end",
+    height: 140,
+  },
+  timelineColumn: {
+    alignItems: "center",
+    flex: 1,
+  },
+  timelineCount: {
+    color: "#05C785",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  timelineBar: {
+    width: "70%",
+    backgroundColor: "#05C785",
+    borderRadius: 8,
+    minHeight: 20,
+  },
+  timelineYear: {
+    color: "#888888",
+    fontSize: 12,
+    marginTop: 8,
+  },
+  crownJewelImage: {
+    width: 70,
+    height: 90,
+    borderRadius: 10,
+    backgroundColor: "#0A0A0A",
   },
 });
