@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "version": ">= 23.2.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+            "EXPO_PUBLIC_API_URL": "http://192.168.1.15:3000"
+      }
+    },
+     "staging": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-staging.kitoya.com"
+      }
+     },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

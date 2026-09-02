@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kitoya.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,11 +29,11 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-      "plugins": [
+    "plugins": [
       "expo-router",
       "expo-secure-store",
       "expo-localization",
-            [
+      [
         "expo-splash-screen",
         {
           "ios": {
@@ -47,6 +51,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "63a5af18-decf-42af-a98b-fa1b774a5b6e"
+      }
     }
   }
 }
