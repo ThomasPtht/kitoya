@@ -259,6 +259,8 @@ export class JerseysService {
         variants: [],
         versions: [],
         conditions: [],
+        crownJewel: null,
+        acquisitionsByYear: [],
       };
     }
 
@@ -300,12 +302,35 @@ export class JerseysService {
         : 0;
     const pricedKitsCount = jerseysWithPrice.length;
 
-    // --- TOP CLUBS ---
-    const clubCounts: Record<string, { name: string; count: number }> = {};
+    // --- CROWN JEWEL (most expensive jersey) ---
+    const sortedByPrice = [...jerseysWithPrice].sort(
+      (a, b) => Number(b.purchasePrice) - Number(a.purchasePrice),
+    );
+    const crownJewelJersey = sortedByPrice[0] || null;
+    const crownJewel = crownJewelJersey
+      ? {
+          id: crownJewelJersey.id,
+          clubName: crownJewelJersey.club?.name || 'Unknown',
+          season: crownJewelJersey.season,
+          type: crownJewelJersey.type,
+          price: Number(crownJewelJersey.purchasePrice),
+          frontImageUrl: crownJewelJersey.frontImageUrl,
+        }
+      : null;
+
+    // --- TOP CLUBS (avec logo) ---
+    const clubCounts: Record<
+      string,
+      { name: string; count: number; logo?: string | null }
+    > = {};
     jerseys.forEach((j) => {
       const clubName = j.club?.name || 'Unknown';
       if (!clubCounts[j.clubId]) {
-        clubCounts[j.clubId] = { name: clubName, count: 0 };
+        clubCounts[j.clubId] = {
+          name: clubName,
+          count: 0,
+          logo: j.club?.logoUrl ?? null,
+        };
       }
       clubCounts[j.clubId].count += 1;
     });
@@ -318,6 +343,7 @@ export class JerseysService {
       name: c.name,
       count: c.count,
       maxCount: maxClubCount,
+      logo: c.logo,
     }));
 
     // --- KITS BY ERA ---
@@ -403,6 +429,16 @@ export class JerseysService {
       maxCount: maxConditionCount,
     }));
 
+    // --- ACQUISITIONS TIMELINE ---
+    const acquisitionsByYearMap: Record<string, number> = {};
+    jerseys.forEach((j) => {
+      const year = j.createdAt.getFullYear().toString();
+      acquisitionsByYearMap[year] = (acquisitionsByYearMap[year] || 0) + 1;
+    });
+    const acquisitionsByYear = Object.entries(acquisitionsByYearMap)
+      .map(([year, count]) => ({ year, count }))
+      .sort((a, b) => a.year.localeCompare(b.year));
+
     return {
       totalKits,
       uniqueClubs,
@@ -417,9 +453,10 @@ export class JerseysService {
       variants,
       conditions,
       versions,
+      crownJewel,
+      acquisitionsByYear,
     };
   }
-
   async updateJersey(
     jerseyId: string,
     userId: string,
