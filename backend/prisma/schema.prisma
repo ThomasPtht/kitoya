@@ -53,6 +53,7 @@ model User {
   resetCodeExpiry DateTime? // optionnal, used for password reset
   expoPushToken   String? // optionnal, used for push notifications
   currency        String    @default("EUR") // "EUR", "USD", "GBP"...
+  language        String    @default("en") 
 
   // Stripe integration
   stripeCustomerId String? // optionnal, used for Stripe integration
