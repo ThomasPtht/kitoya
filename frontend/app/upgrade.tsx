@@ -32,8 +32,8 @@ export default function UpgradeScreen() {
     (pkg) => pkg.identifier === "elite_annual",
   );
 
-  const monthlyPrice = monthlyPackage?.product.priceString || "4.99€";
-  const annualPrice = annualPackage?.product.priceString || "39.99€";
+  const monthlyPrice = monthlyPackage?.product.priceString || "3.99€";
+  const annualPrice = annualPackage?.product.priceString || "29.99€";
 
   // Annual price per month calculation for display purposes
   const annualPricePerMonth = annualPackage
@@ -41,7 +41,7 @@ export default function UpgradeScreen() {
         style: "currency",
         currency: annualPackage.product.currencyCode,
       }).format(annualPackage.product.price / 12)
-    : "3.33€";
+    : "2.50€";
 
   // If the user is already an Elite member, show a message and a back button
   if (isElite) {

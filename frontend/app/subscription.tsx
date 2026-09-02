@@ -39,11 +39,11 @@ export default function SubscriptionScreen() {
   const monthlyPackage = packages.find(
     (pkg) => pkg.identifier === "elite_monthly",
   );
-  const eliteMonthlyPrice = monthlyPackage?.product.priceString || "4.99€";
+  const eliteMonthlyPrice = monthlyPackage?.product.priceString || "3.99€";
   const annualPackage = packages.find(
     (pkg) => pkg.identifier === "elite_annual",
   );
-  const eliteAnnualPrice = annualPackage?.product.priceString || "39.99€";
+  const eliteAnnualPrice = annualPackage?.product.priceString || "29.99€";
 
   const plansConfig: PlanConfig[] = [
     {

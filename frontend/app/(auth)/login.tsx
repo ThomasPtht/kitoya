@@ -220,14 +220,15 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingHorizontal: 24,
-    paddingTop: 80,
+    paddingTop: 40,
     paddingBottom: 40,
   },
   logoContainer: {
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 40,
   },
   title: {
     fontSize: 32,

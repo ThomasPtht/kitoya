@@ -14,6 +14,7 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { KeyboardAvoidingView, TouchableWithoutFeedback } from "react-native";
 import z from "zod";
@@ -309,9 +310,8 @@ export default function RegisterScreen() {
                     {t("auth.register.acceptPrivacy")}{" "}
                     <Text
                       style={styles.privacyLink}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        router.push("/(auth)/privacy-policy");
+                      onPress={() => {
+                        Linking.openURL("https://kitoya.com/privacy-policy");
                       }}
                     >
                       {t("auth.register.privacyPolicyLink")}
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingHorizontal: 24,
     paddingTop: 80,
     paddingBottom: 40,
@@ -381,6 +381,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 40,
   },
   title: {
     fontSize: 32,
