@@ -21,15 +21,6 @@ const SIDE_OFFSET = SCREEN_WIDTH * 0.2;
 
 type PlanKey = "FREE" | "ELITE";
 
-const { packages } = useSubscription();
-
-const monthlyPackage = packages.find(
-  (pkg) => pkg.identifier === "elite_monthly",
-);
-const eliteMonthlyPrice = monthlyPackage?.product.priceString || "4.99€";
-const annualPackage = packages.find((pkg) => pkg.identifier === "elite_annual");
-const eliteAnnualPrice = annualPackage?.product.priceString || "39.99€";
-
 interface PlanConfig {
   key: PlanKey;
   nameKey: string;
@@ -43,6 +34,16 @@ interface PlanConfig {
 export default function SubscriptionScreen() {
   const { t } = useTranslation();
   const [activePlan, setActivePlan] = useState<PlanKey>("ELITE");
+  const { packages } = useSubscription();
+
+  const monthlyPackage = packages.find(
+    (pkg) => pkg.identifier === "elite_monthly",
+  );
+  const eliteMonthlyPrice = monthlyPackage?.product.priceString || "4.99€";
+  const annualPackage = packages.find(
+    (pkg) => pkg.identifier === "elite_annual",
+  );
+  const eliteAnnualPrice = annualPackage?.product.priceString || "39.99€";
 
   const plansConfig: PlanConfig[] = [
     {
