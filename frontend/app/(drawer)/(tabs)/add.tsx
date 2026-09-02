@@ -541,6 +541,10 @@ export default function TabAddScreen() {
           </TouchableOpacity>
         </View>
 
+        {errors.frontImageUri && (
+          <Text style={styles.errorText}>{errors.frontImageUri.message}</Text>
+        )}
+
         {/* Club input & Dropdown */}
         <Text style={styles.label}>{t("addJersey.clubLabel")}</Text>
         <Controller
