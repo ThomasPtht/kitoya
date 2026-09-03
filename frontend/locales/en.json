@@ -273,8 +273,18 @@
       "brandMix": "BRAND MIX",
       "kitTypes": "KIT TYPES",
       "editionMix": "EDITION MIX",
-      "conditionMix": "CONDITION MIX"
-    }
+      "conditionMix": "CONDITION MIX",
+      "crownJewel": "CROWN JEWEL",
+      "acquisitionsTimeline": "ACQUISITIONS TIMELINE"
+    },
+"tabs": {
+    "overview": "APERÇU",
+    "mix": "MIX",
+    "timeline": "CHRONOLOGIE"
+  },
+  "crownJewel": {
+    "mostValuable": "PLUS PRÉCIEUX"
+  }
   },
   "export": {
     "loading": "Loading...",
