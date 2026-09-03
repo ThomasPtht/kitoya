@@ -95,6 +95,13 @@ export default function SettingsScreen() {
     await i18n.changeLanguage(code);
     await AsyncStorage.setItem("userLanguage", code);
     setIsLanguageModalVisible(false);
+
+    try {
+      await authService.updateProfile({ language: code });
+      queryClient.invalidateQueries({ queryKey: ["userMe"] });
+    } catch (error) {
+      console.error("Failed to sync language with backend:", error);
+    }
   };
 
   const verifyUsername = async (username: string) => {
