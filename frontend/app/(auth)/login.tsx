@@ -21,6 +21,7 @@ import { KeyboardAvoidingView } from "react-native";
 import Toast from "react-native-toast-message";
 import z from "zod";
 import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 
 export default function LoginScreen() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -55,6 +56,7 @@ export default function LoginScreen() {
     try {
       setIsLoggingIn(true);
       await authService.login(data.email, data.password);
+      await authService.updateProfile({ language: i18n.language });
       router.replace("/(drawer)/(tabs)");
     } catch (error) {
       Alert.alert("Authentification failed", "Invalid email or password");

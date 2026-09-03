@@ -73,4 +73,9 @@ export const jerseyService = {
     });
     return data;
   },
+
+  deleteJersey: async (id: string) => {
+    const { data } = await apiClient.delete(`/jerseys/${id}`);
+    return data;
+  }
 };

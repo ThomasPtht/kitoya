@@ -22,6 +22,7 @@ import z from "zod";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
 import { googleAuthService } from "@/services/google.service";
+import i18n from "@/lib/i18n";
 
 export default function RegisterScreen() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -92,6 +93,7 @@ export default function RegisterScreen() {
     try {
       setIsUsernameAvailable(null);
       await authService.register(data.username, data.email, data.password);
+      await authService.updateProfile({ language: i18n.language });
       router.push("/(drawer)/(tabs)");
     } catch (error: any) {
       if (error?.response?.status === 409) {
