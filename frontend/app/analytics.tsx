@@ -15,6 +15,7 @@ import { useCollectionAnalytics } from "@/hooks/useJerseyHook";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useTranslation } from "react-i18next";
 import DonutChart from "@/components/DonutChart";
+import AreaChart from "@/components/AreaChart";
 
 interface CrownJewelData {
   clubName: string;
@@ -472,28 +473,31 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
         {activeTab === "timeline" && (
           <>
             <Text style={styles.sectionHeader}>
-              {t("analytics.sections.acquisitionsTimeline")}
+              {t("analytics.sections.collectionGrowth")}
             </Text>
-            <View style={styles.timelineCard}>
-              <View style={styles.timelineRow}>
-                {acquisitionsData.map((item, index) => (
-                  <View key={index} style={styles.timelineColumn}>
-                    <Text style={styles.timelineCount}>{item.count}</Text>
-                    <View
-                      style={[
-                        styles.timelineBar,
-                        {
-                          height: Math.max(
-                            (item.count / maxAcquisitions) * 100,
-                            20,
-                          ),
-                        },
-                      ]}
-                    />
-                    <Text style={styles.timelineYear}>{item.year}</Text>
-                  </View>
-                ))}
-              </View>
+            <View style={styles.chartCard}>
+              <AreaChart
+                data={(data?.collectionGrowth ?? []).map((d) => ({
+                  month: d.month,
+                  value: d.count,
+                }))}
+                color="#05C785"
+                unit={t("analytics.units.kits")}
+              />
+            </View>
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.cumulativeSpend")}
+            </Text>
+            <View style={styles.chartCard}>
+              <AreaChart
+                data={(data?.cumulativeSpend ?? []).map((d) => ({
+                  month: d.month,
+                  value: d.amount,
+                }))}
+                color="#05C785"
+                unit={currencySymbol}
+              />
             </View>
 
             <Text style={styles.sectionHeader}>
@@ -866,5 +870,12 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 10,
     backgroundColor: "#0A0A0A",
+  },
+  chartCard: {
+    backgroundColor: "#161616",
+    borderWidth: 1,
+    borderColor: "rgba(127, 206, 175, 0.2)",
+    borderRadius: 16,
+    padding: 8,
   },
 });

@@ -275,8 +275,13 @@
       "editionMix": "ÉDITIONS",
       "conditionMix": "ÉTATS",
       "crownJewel": "PIÈCE MAÎTRESSE",
-      "acquisitionsTimeline": "Ajouts par année"
+      "acquisitionsTimeline": "Ajouts par année",
+        "collectionGrowth": "CROISSANCE DE LA COLLECTION",
+  "cumulativeSpend": "DÉPENSES CUMULÉES"
     },
+    "units": {
+  "kits": "maillots"
+},
 "tabs": {
     "overview": "APERÇU",
     "mix": "MIX",

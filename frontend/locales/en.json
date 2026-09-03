@@ -277,8 +277,13 @@
       "conditionMix": "CONDITION MIX",
       "typeMix": "TYPE MIX",
       "crownJewel": "CROWN JEWEL",
-      "acquisitionsTimeline": "Kits added by year"
+      "acquisitionsTimeline": "Kits added by year",
+        "collectionGrowth": "COLLECTION GROWTH",
+  "cumulativeSpend": "CUMULATIVE SPEND"
     },
+    "units": {
+  "kits": "maillots"
+},
 "tabs": {
     "overview": "OVERVIEW",
     "mix": "MIX",

@@ -261,6 +261,7 @@ export class JerseysService {
         conditions: [],
         crownJewel: null,
         acquisitionsByYear: [],
+        cumulativeSpend: [],
       };
     }
 
@@ -439,6 +440,43 @@ export class JerseysService {
       .map(([year, count]) => ({ year, count }))
       .sort((a, b) => a.year.localeCompare(b.year));
 
+    // --- MONTHLY GROWTH DATA (kits count + cumulative spend, month by month) ---
+    // --- MONTHLY GROWTH DATA (nouveau, kits + dépenses cumulés mois par mois) ---
+    interface MonthlyData {
+      kitsAdded: number;
+      spendAdded: number;
+    }
+
+    const monthlyDataMap: Record<string, MonthlyData> = {};
+
+    jerseys.forEach((j) => {
+      const date = j.createdAt;
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+      if (!monthlyDataMap[monthKey]) {
+        monthlyDataMap[monthKey] = { kitsAdded: 0, spendAdded: 0 };
+      }
+      monthlyDataMap[monthKey].kitsAdded += 1;
+      if (j.purchasePrice) {
+        monthlyDataMap[monthKey].spendAdded += Number(j.purchasePrice);
+      }
+    });
+
+    const sortedMonths = Object.keys(monthlyDataMap).sort();
+
+    let cumulativeKits = 0;
+    let cumulativeSpend = 0;
+
+    const collectionGrowth = sortedMonths.map((month) => {
+      cumulativeKits += monthlyDataMap[month].kitsAdded;
+      return { month, count: cumulativeKits };
+    });
+
+    const cumulativeSpendData = sortedMonths.map((month) => {
+      cumulativeSpend += monthlyDataMap[month].spendAdded;
+      return { month, amount: Math.round(cumulativeSpend * 100) / 100 };
+    });
+
     return {
       totalKits,
       uniqueClubs,
@@ -455,10 +493,11 @@ export class JerseysService {
       versions,
       crownJewel,
       acquisitionsByYear,
+      collectionGrowth,
+      cumulativeSpend: cumulativeSpendData,
     };
   }
 
-  
   async updateJersey(
     jerseyId: string,
     userId: string,
