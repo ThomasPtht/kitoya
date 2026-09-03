@@ -28,12 +28,12 @@
       "connecting": "Connexion...",
       "submit": "Se connecter",
       "noAccount": "Vous n'avez pas de compte ?",
-      "signUpLink": "S'inscrire"
-    },
-    "validation": {
+      "signUpLink": "S'inscrire",
+      "validation": {
         "invalidEmail": "Adresse e-mail invalide",
         "passwordMin": "Le mot de passe doit contenir au moins 6 caractères"
-      },
+      }
+    },
     "changePassword": {
       "title": "Changer le mot de passe",
       "subtitle": "Entrez votre mot de passe actuel et choisissez-en un nouveau.",
