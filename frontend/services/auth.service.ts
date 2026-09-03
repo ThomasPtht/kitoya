@@ -101,6 +101,7 @@ export const authService = {
     isPublic?: boolean;
     location?: string;
     currency?: string;
+    language?: string;
   }) => {
     const response = await apiClient.put("/auth/update-profile", data);
     return response.data;
