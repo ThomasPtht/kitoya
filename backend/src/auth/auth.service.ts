@@ -245,7 +245,7 @@ export class AuthService {
 
   async updateProfile(
     userId: string,
-    dto: { isPublic?: boolean; currency?: string; location?: string },
+    dto: { isPublic?: boolean; currency?: string; location?: string, language?: string },
   ) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -261,6 +261,7 @@ export class AuthService {
         ...(dto.isPublic !== undefined && { isPublic: dto.isPublic }),
         ...(dto.currency !== undefined && { currency: dto.currency }),
         ...(dto.location !== undefined && { location: dto.location }),
+        ...(dto.language !== undefined && { language: dto.language }),
       },
     });
 

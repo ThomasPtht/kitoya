@@ -22,6 +22,14 @@ const TRANSLATIONS = {
       PLAYER_ISSUE: 'player issue',
       MATCH_WORN: 'match worn',
     },
+    notifications: {
+      kotdTitle: 'Kit of the Community! 🌟',
+      kotdBody: (clubName: string) =>
+        `Your ${clubName} jersey has been selected today!`,
+      likeTitle: 'New Like! ❤️',
+      likeBody: (likerName: string, clubName: string) =>
+        `${likerName} liked your ${clubName} shirt!`,
+    },
   },
   fr: {
     types: {
@@ -39,8 +47,17 @@ const TRANSLATIONS = {
       PLAYER_ISSUE: 'version pro',
       MATCH_WORN: 'porté en match',
     },
+    notifications: {
+      kotdTitle: 'Maillot de la communauté ! 🌟',
+      kotdBody: (clubName: string) =>
+        `Votre maillot ${clubName} a été sélectionné aujourd'hui !`,
+      likeTitle: "Nouveau j'aime ! ❤️",
+      likeBody: (likerName: string, clubName: string) =>
+        `${likerName} a aimé votre maillot ${clubName} !`,
+    },
   },
 };
+
 @Injectable()
 export class KotdService {
   constructor(
@@ -50,16 +67,16 @@ export class KotdService {
   ) {}
 
   async getJerseyOfTheDay(currentUserId?: string, locale: 'en' | 'fr' = 'en') {
-    // Fetch shareable jerseys whose owner has a public profile
     const allJerseys = await this.prisma.jersey.findMany({
       include: {
         club: true,
         user: {
           select: {
-            id: true, // identify the user who owns the jersey
+            id: true,
             username: true,
             isPublic: true,
-            expoPushToken: true, // to send notifications if needed
+            expoPushToken: true,
+            language: true, // langue du propriétaire du maillot
           },
         },
         _count: {
@@ -88,7 +105,6 @@ export class KotdService {
     const selectedIndex = seed % allJerseys.length;
     const jerseyOfTheDay = allJerseys[selectedIndex];
 
-    // Try to create a lock for today's jersey notification. This ensures that only one concurrent call will succeed, even in the case of a race condition
     try {
       await this.prisma.dailyKitNotification.create({
         data: {
@@ -97,17 +113,22 @@ export class KotdService {
         },
       });
 
-      // If we come here we are the first to notify for today, so just unique notification is sent.
       if (jerseyOfTheDay.user.expoPushToken) {
+        // Utilise la langue du DESTINATAIRE (propriétaire du maillot), pas du visiteur
+        const recipientLocale =
+          (jerseyOfTheDay.user.language as 'en' | 'fr') || 'en';
+        const notifTranslations =
+          TRANSLATIONS[recipientLocale]?.notifications ||
+          TRANSLATIONS.en.notifications;
+
         await this.notificationsService.sendPushNotification(
           jerseyOfTheDay.user.expoPushToken,
-          'Kit of the Community! 🌟',
-          `Your ${jerseyOfTheDay.club.name} jersey has been selected today!`,
+          notifTranslations.kotdTitle,
+          notifTranslations.kotdBody(jerseyOfTheDay.club.name),
           { type: 'kotd', jerseyId: jerseyOfTheDay.id },
         );
       }
     } catch (error) {
-      // Unique constraint violation means another process has already sent the notification for today, so we do nothing.
       console.error(
         'DailyKitNotification lock creation failed (likely already exists today):',
         error,
@@ -127,7 +148,6 @@ export class KotdService {
       jerseyOfTheDay.version?.toLowerCase() ||
       '';
 
-    console.log('Locale utilisée pour generateJerseyStory:', locale);
     const story = generateJerseyStory(
       {
         clubName: jerseyOfTheDay.club.name,
@@ -188,18 +208,22 @@ export class KotdService {
         },
       });
 
-      //get the jersey to check if the owner has a push token and avoid to send a notification to the liker if they are the owner
       const jersey = await this.prisma.jersey.findUnique({
         where: { id: jerseyId },
         include: {
           club: true,
-          user: { select: { id: true, expoPushToken: true, username: true } },
+          user: {
+            select: {
+              id: true,
+              expoPushToken: true,
+              username: true,
+              language: true, //  langue du propriétaire du maillot
+            },
+          },
         },
       });
 
-      // if the jersey belongs to other user and they have a push token, send a notification
       if (jersey && jersey.userId !== userId && jersey.user.expoPushToken) {
-        // Get the username of the liker to include in the notification message
         const liker = await this.prisma.user.findUnique({
           where: { id: userId },
           select: { username: true },
@@ -207,10 +231,16 @@ export class KotdService {
 
         const likerName = liker?.username || 'Someone';
 
+        // Utilise la langue du DESTINATAIRE (propriétaire du maillot liké)
+        const recipientLocale = (jersey.user.language as 'en' | 'fr') || 'en';
+        const notifTranslations =
+          TRANSLATIONS[recipientLocale]?.notifications ||
+          TRANSLATIONS.en.notifications;
+
         await this.notificationsService.sendPushNotification(
           jersey.user.expoPushToken,
-          'New Like! ❤️',
-          `${likerName} liked your ${jersey.club.name} shirt!`,
+          notifTranslations.likeTitle,
+          notifTranslations.likeBody(likerName, jersey.club.name),
           { type: 'like', jerseyId: jersey.id },
         );
       }
