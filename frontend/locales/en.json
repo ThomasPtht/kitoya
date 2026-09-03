@@ -260,10 +260,11 @@
       "button": "Discover ELITE Plan"
     },
     "cards": {
-      "totalKits": "TOTAL KITS",
+      "totalKits": "CONDITIONS",
       "uniqueClubs": "UNIQUE CLUBS",
       "erasCovered": "ERAS COVERED",
       "brands": "BRANDS",
+      "types": "TYPES",
       "totalInvested": "TOTAL INVESTED",
       "avgPrice": "AVG. PRICE"
     },
@@ -274,16 +275,17 @@
       "kitTypes": "KIT TYPES",
       "editionMix": "EDITION MIX",
       "conditionMix": "CONDITION MIX",
+      "typeMix": "TYPE MIX",
       "crownJewel": "CROWN JEWEL",
-      "acquisitionsTimeline": "ACQUISITIONS TIMELINE"
+      "acquisitionsTimeline": "Kits added by year"
     },
 "tabs": {
-    "overview": "APERÇU",
+    "overview": "OVERVIEW",
     "mix": "MIX",
-    "timeline": "CHRONOLOGIE"
+    "timeline": "TIMELINE"
   },
   "crownJewel": {
-    "mostValuable": "PLUS PRÉCIEUX"
+    "mostValuable": "MOST VALUABLE KIT",
   }
   },
   "export": {

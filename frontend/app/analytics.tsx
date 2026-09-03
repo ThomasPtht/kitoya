@@ -119,6 +119,12 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
     color: CHART_COLORS[i % CHART_COLORS.length],
   }));
 
+  const typeDonutData = (data?.variants ?? []).map((c, i) => ({
+    name: formatLabel(c.name),
+    count: c.count,
+    color: CHART_COLORS[i % CHART_COLORS.length],
+  }));
+
   const renderLegend = (
     items: { name: string; count: number }[],
     total: number,
@@ -431,6 +437,27 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
               <View style={styles.legendContainer}>
                 {renderLegend(
                   (data?.conditions ?? []).map((c) => ({
+                    name: formatLabel(c.name),
+                    count: c.count,
+                  })),
+                  data?.totalKits ?? 0,
+                )}
+              </View>
+            </View>
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.typeMix")}
+            </Text>
+            <View style={styles.donutCard}>
+              <View style={styles.donutContainer}>
+                <DonutChart
+                  data={typeDonutData}
+                  centerLabel={t("analytics.cards.types")}
+                />
+              </View>
+              <View style={styles.legendContainer}>
+                {renderLegend(
+                  (data?.variants ?? []).map((c) => ({
                     name: formatLabel(c.name),
                     count: c.count,
                   })),

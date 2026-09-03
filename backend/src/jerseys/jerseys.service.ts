@@ -457,6 +457,8 @@ export class JerseysService {
       acquisitionsByYear,
     };
   }
+
+  
   async updateJersey(
     jerseyId: string,
     userId: string,

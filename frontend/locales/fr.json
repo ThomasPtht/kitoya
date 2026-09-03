@@ -259,10 +259,11 @@
       "button": "Découvrir l'offre ELITE"
     },
     "cards": {
-      "totalKits": "TOTAL MAILLOTS",
+      "totalKits": "CONDITIONS",
       "uniqueClubs": "CLUBS UNIQUES",
       "erasCovered": "ÉPOQUES COUVERTES",
       "brands": "MARQUES",
+      "types": "TYPES",
       "totalInvested": "TOTAL INVESTI",
       "avgPrice": "PRIX MOYEN"
     },
@@ -274,7 +275,7 @@
       "editionMix": "ÉDITIONS",
       "conditionMix": "ÉTATS",
       "crownJewel": "PIÈCE MAÎTRESSE",
-      "acquisitionsTimeline": "CHRONOLOGIE DES ACQUISITIONS"
+      "acquisitionsTimeline": "Ajouts par année"
     },
 "tabs": {
     "overview": "APERÇU",
