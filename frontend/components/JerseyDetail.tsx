@@ -25,7 +25,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { captureRef } from "react-native-view-shot";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
-import Colors from "@/constants/Colors";
+import { useDeleteJersey } from "@/hooks/useJerseyHook";
 
 interface JerseyDetailProps {
   jersey: JerseyData & { likesCount?: number };
@@ -53,28 +53,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
 
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: (id: string) => apiClient.delete(`/jerseys/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jerseys"] });
-      queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
-      queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
-      onClose();
-      Toast.show({
-        type: "success",
-        text1: t("jerseyDetail.alerts.toastDeletedTitle"),
-        text2: t("jerseyDetail.alerts.toastDeletedMessage"),
-        position: "bottom",
-      });
-    },
-    onError: (error) => {
-      console.error("Error deleting jersey:", error);
-      Alert.alert(
-        t("jerseyDetail.alerts.errorTitle"),
-        t("jerseyDetail.alerts.errorMessage"),
-      );
-    },
-  });
+  const { mutate: deleteJersey, isLoading: isDeleting } = useDeleteJersey();
 
   const handleDelete = () => {
     Alert.alert(
@@ -85,7 +64,26 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         {
           text: t("jerseyDetail.alerts.delete"),
           style: "destructive",
-          onPress: () => mutation.mutate(jersey.id as string),
+          onPress: () => {
+            deleteJersey(jersey.id as string, {
+              onSuccess: () => {
+                onClose();
+                Toast.show({
+                  type: "success",
+                  text1: t("jerseyDetail.alerts.toastDeletedTitle"),
+                  text2: t("jerseyDetail.alerts.toastDeletedMessage"),
+                  position: "bottom",
+                });
+              },
+              onError: (error) => {
+                console.error("Error deleting jersey:", error);
+                Alert.alert(
+                  t("jerseyDetail.alerts.errorTitle"),
+                  t("jerseyDetail.alerts.errorMessage"),
+                );
+              },
+            });
+          },
         },
       ],
     );
@@ -384,7 +382,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         {/* Edit and Delete Buttons Row */}
         <View style={styles.actionButtonsRow}>
           <TouchableOpacity
-            style={[styles.editButton, mutation.isPending && { opacity: 0.5 }]}
+            style={[styles.editButton]}
             onPress={() => {
               onClose();
               router.push({
@@ -392,7 +390,6 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
                 params: { jerseyId: jersey.id },
               });
             }}
-            disabled={mutation.isPending}
           >
             <Feather name="edit-2" size={15} color="#05C785" />
             <Text style={styles.editButtonText}>
@@ -401,12 +398,9 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.deleteButton,
-              mutation.isPending && { opacity: 0.5 },
-            ]}
+            style={[styles.deleteButton, isDeleting && { opacity: 0.5 }]}
             onPress={handleDelete}
-            disabled={mutation.isPending}
+            disabled={isDeleting}
           >
             <Feather name="trash-2" size={15} color="#A66363" />
             <Text style={styles.deleteButtonText}>

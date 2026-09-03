@@ -21,6 +21,7 @@ export const useCreateJersey = () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
       queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
       queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
+      queryClient.invalidateQueries({ queryKey: ["collectionAnalytics"] });
     },
     onError: (error) => {
       console.error("Error creating jersey:", error);
@@ -104,9 +105,26 @@ export const useUpdateJersey = () => {
       queryClient.invalidateQueries({ queryKey: ["jerseys"] });
       queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
       queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
+      queryClient.invalidateQueries({ queryKey: ["collectionsAnalytics"] });
     },
     onError: (error) => {
       console.error("Error updating jersey:", error);
+    },
+  });
+};
+
+export const useDeleteJersey = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => jerseyService.deleteJersey(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jerseys"] });
+      queryClient.invalidateQueries({ queryKey: ["jerseyCount"] });
+      queryClient.invalidateQueries({ queryKey: ["mostRepresentedClub"] });
+      queryClient.invalidateQueries({ queryKey: ["collectionAnalytics"] });
+    },
+    onError: (error) => {
+      console.error("Error deleting jersey:", error);
     },
   });
 };
