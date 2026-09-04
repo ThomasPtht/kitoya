@@ -149,11 +149,11 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               </Text>
             </View>
           )}
-          {jersey.version && (
+          {/* {jersey.version && (
             <Text style={styles.topCode}>
               {String(jersey.version).toUpperCase()}
             </Text>
-          )}
+          )} */}
         </View>
       </View>
 

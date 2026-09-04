@@ -16,6 +16,7 @@ import { useUserMe } from "@/hooks/useAuthHook";
 import { useTranslation } from "react-i18next";
 import DonutChart from "@/components/DonutChart";
 import AreaChart from "@/components/AreaChart";
+import { formatText } from "@/components/JerseyDetail";
 
 interface CrownJewelData {
   clubName: string;
@@ -239,9 +240,7 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
               <View style={styles.smallCard}>
                 <View style={styles.cardHeaderRow}>
                   <Feather name="shopping-bag" size={13} color="#05C785" />
-                  <Text style={styles.cardLabel}>
-                    {t("analytics.cards.totalKits")}
-                  </Text>
+                  <Text style={styles.cardLabel}>{t("ss.totalKits")}</Text>
                 </View>
                 <Text style={styles.cardValue}>{data?.totalKits ?? 0}</Text>
               </View>
@@ -383,7 +382,9 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
                 >
                   <View style={styles.barItemHeader}>
                     <Text style={styles.barItemName}>
-                      {formatLabel(variant.name)}
+                      {t(`analytics.types.${variant.name}`, {
+                        defaultValue: formatText(variant.name),
+                      })}
                     </Text>
                     <Text style={styles.barItemCount}>{variant.count}</Text>
                   </View>
@@ -438,7 +439,9 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
               <View style={styles.legendContainer}>
                 {renderLegend(
                   (data?.conditions ?? []).map((c) => ({
-                    name: formatLabel(c.name),
+                    name: t(`addJersey.conditions.${c.name}`, {
+                      defaultValue: formatLabel(c.name),
+                    }),
                     count: c.count,
                   })),
                   data?.totalKits ?? 0,
@@ -447,19 +450,21 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
             </View>
 
             <Text style={styles.sectionHeader}>
-              {t("analytics.sections.typeMix")}
+              {t("analytics.sections.kitTypes")}
             </Text>
             <View style={styles.donutCard}>
               <View style={styles.donutContainer}>
                 <DonutChart
                   data={typeDonutData}
-                  centerLabel={t("analytics.cards.types")}
+                  centerLabel={t("analytics.cards.totalKits")}
                 />
               </View>
               <View style={styles.legendContainer}>
                 {renderLegend(
                   (data?.variants ?? []).map((c) => ({
-                    name: formatLabel(c.name),
+                    name: t(`analytics.types.${c.name}`, {
+                      defaultValue: formatLabel(c.name),
+                    }),
                     count: c.count,
                   })),
                   data?.totalKits ?? 0,

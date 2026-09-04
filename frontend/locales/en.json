@@ -275,7 +275,6 @@
       "kitTypes": "KIT TYPES",
       "editionMix": "EDITION MIX",
       "conditionMix": "CONDITION MIX",
-      "typeMix": "TYPE MIX",
       "crownJewel": "CROWN JEWEL",
       "acquisitionsTimeline": "Kits added by year",
         "collectionGrowth": "COLLECTION GROWTH",
@@ -291,6 +290,15 @@
   },
   "crownJewel": {
     "mostValuable": "MOST VALUABLE KIT",
+  },
+  "types": {
+    "HOME": "Domicile",
+    "AWAY": "Extérieur",
+    "THIRD": "Third",
+    "FOURTH": "Fourth",
+    "SPECIAL": "Spécial",
+    "GOALKEEPER": "Gardien",
+    "TRAINING": "Entraînement"
   }
   },
   "export": {

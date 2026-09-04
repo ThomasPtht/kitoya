@@ -864,7 +864,7 @@ export default function SettingsScreen() {
 
             <TouchableOpacity
               style={[
-                styles.modalButton,
+                styles.closeButtonStandalone,
                 styles.cancelButton,
                 { marginTop: 12 },
               ]}

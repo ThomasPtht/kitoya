@@ -259,7 +259,7 @@
       "button": "Découvrir l'offre ELITE"
     },
     "cards": {
-      "totalKits": "CONDITIONS",
+      "totalKits": "MAILLOTS",
       "uniqueClubs": "CLUBS UNIQUES",
       "erasCovered": "ÉPOQUES COUVERTES",
       "brands": "MARQUES",
@@ -274,12 +274,13 @@
       "kitTypes": "TYPES DE MAILLOTS",
       "editionMix": "ÉDITIONS",
       "conditionMix": "ÉTATS",
+
       "crownJewel": "PIÈCE MAÎTRESSE",
       "acquisitionsTimeline": "Ajouts par année",
         "collectionGrowth": "CROISSANCE DE LA COLLECTION",
   "cumulativeSpend": "DÉPENSES CUMULÉES"
     },
-    "units": {
+  "units": {
   "kits": "maillots"
 },
 "tabs": {
@@ -289,6 +290,15 @@
   },
   "crownJewel": {
     "mostValuable": "PLUS PRÉCIEUX"
+  }, 
+  "types": {
+    "HOME": "Domicile",
+    "AWAY": "Extérieur",
+    "THIRD": "Third",
+    "FOURTH": "Fourth",
+    "SPECIAL": "Spécial",
+    "GOALKEEPER": "Gardien",
+    "TRAINING": "Entraînement"
   }
   },
   "export": {
