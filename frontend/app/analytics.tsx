@@ -240,7 +240,9 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
               <View style={styles.smallCard}>
                 <View style={styles.cardHeaderRow}>
                   <Feather name="shopping-bag" size={13} color="#05C785" />
-                  <Text style={styles.cardLabel}>{t("ss.totalKits")}</Text>
+                  <Text style={styles.cardLabel}>
+                    {t("analytics.cards.totalKits")}
+                  </Text>
                 </View>
                 <Text style={styles.cardValue}>{data?.totalKits ?? 0}</Text>
               </View>
