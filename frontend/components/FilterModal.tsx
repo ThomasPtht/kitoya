@@ -27,6 +27,11 @@ export default function FilterModal({
   const { t } = useTranslation();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
+  const capitalize = (text: string) => {
+    if (!text) return "";
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  };
+
   const {
     selectedClubs,
     toggleClub,
@@ -384,7 +389,9 @@ export default function FilterModal({
                     size={16}
                     color={isSelected ? "#05C785" : "#555"}
                   />
-                  <Text style={styles.itemText}>{kitType}</Text>
+                  <Text style={styles.itemText}>
+                    {t(`addJersey.types.${kitType}`)}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -411,7 +418,9 @@ export default function FilterModal({
                     size={16}
                     color={isSelected ? "#05C785" : "#555"}
                   />
-                  <Text style={styles.itemText}>{version}</Text>
+                  <Text style={styles.itemText}>
+                    {t(`addJersey.versions.${version}`)}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -438,7 +447,9 @@ export default function FilterModal({
                     size={16}
                     color={isSelected ? "#05C785" : "#555"}
                   />
-                  <Text style={styles.itemText}>{formatLabel(condition)}</Text>
+                  <Text style={styles.itemText}>
+                    {t(`addJersey.conditions.${condition}`)}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -479,7 +490,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#333",
   },
-  itemText: { color: "#fff", fontSize: 16, textTransform: "capitalize" },
+  itemText: { color: "#fff", fontSize: 16 },
   applyButton: {
     backgroundColor: "#05C785",
     padding: 15,
