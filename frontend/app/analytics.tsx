@@ -429,7 +429,7 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
             </View>
 
             <Text style={styles.sectionHeader}>
-              {t("analytics.sections.conditionMix")}
+              {t("analytics.sections.versionMix")}
             </Text>
             <View style={styles.donutCard}>
               <View style={styles.donutContainer}>
@@ -440,8 +440,8 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
               </View>
               <View style={styles.legendContainer}>
                 {renderLegend(
-                  (data?.conditions ?? []).map((c) => ({
-                    name: t(`addJersey.conditions.${c.name}`, {
+                  (data?.versions ?? []).map((c) => ({
+                    name: t(`addJersey.versions.${c.name}`, {
                       defaultValue: formatLabel(c.name),
                     }),
                     count: c.count,
@@ -465,6 +465,29 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
                 {renderLegend(
                   (data?.variants ?? []).map((c) => ({
                     name: t(`analytics.types.${c.name}`, {
+                      defaultValue: formatLabel(c.name),
+                    }),
+                    count: c.count,
+                  })),
+                  data?.totalKits ?? 0,
+                )}
+              </View>
+            </View>
+
+            <Text style={styles.sectionHeader}>
+              {t("analytics.sections.conditionMix")}
+            </Text>
+            <View style={styles.donutCard}>
+              <View style={styles.donutContainer}>
+                <DonutChart
+                  data={conditionDonutData}
+                  centerLabel={t("analytics.cards.totalKits")}
+                />
+              </View>
+              <View style={styles.legendContainer}>
+                {renderLegend(
+                  (data?.conditions ?? []).map((c) => ({
+                    name: t(`addJersey.conditions.${c.name}`, {
                       defaultValue: formatLabel(c.name),
                     }),
                     count: c.count,
@@ -796,6 +819,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     alignItems: "center",
+    marginBottom: 20,
   },
   donutContainer: {
     marginBottom: 20,

@@ -272,9 +272,8 @@
       "kitsByEra": "MAILLOTS PAR ÉPOQUE",
       "brandMix": "RÉPARTITION DES MARQUES",
       "kitTypes": "TYPES DE MAILLOTS",
-      "editionMix": "ÉDITIONS",
+      "versionMix": "VERSIONS",
       "conditionMix": "ÉTATS",
-
       "crownJewel": "PIÈCE MAÎTRESSE",
       "acquisitionsTimeline": "Ajouts par année",
         "collectionGrowth": "CROISSANCE DE LA COLLECTION",
@@ -299,6 +298,13 @@
     "SPECIAL": "Spécial",
     "GOALKEEPER": "Gardien",
     "TRAINING": "Entraînement"
+  }, 
+  "versions": {
+    "REPLICA": "Replica",
+    "AUTHENTIC": "Authentique",
+    "PLAYER_ISSUE": "Préparé pour le joueur",
+    "MATCH_WORN": "Porté en match"
+
   }
   },
   "export": {
