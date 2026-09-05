@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
 import { googleAuthService } from "@/services/google.service";
 import i18n from "@/lib/i18n";
+import { Feather } from "@expo/vector-icons";
 
 export default function RegisterScreen() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -94,7 +95,8 @@ export default function RegisterScreen() {
       setIsUsernameAvailable(null);
       await authService.register(data.username, data.email, data.password);
       await authService.updateProfile({ language: i18n.language });
-      router.push("/(drawer)/(tabs)");
+      // router.push("/(drawer)/(tabs)");
+      router.push("/onboarding");
     } catch (error: any) {
       if (error?.response?.status === 409) {
         setIsUsernameAvailable(false);
@@ -166,6 +168,12 @@ export default function RegisterScreen() {
                       styles.inputErrorBorder,
                   ]}
                 >
+                  <Feather
+                    name="user"
+                    size={18}
+                    color="#8E8E93"
+                    style={styles.inputIcon}
+                  />
                   <TextInput
                     style={styles.input}
                     placeholder={t("auth.register.usernamePlaceholder")}
@@ -240,6 +248,12 @@ export default function RegisterScreen() {
                     errors.email && styles.inputErrorBorder,
                   ]}
                 >
+                  <Feather
+                    name="mail"
+                    size={18}
+                    color="#8E8E93"
+                    style={styles.inputIcon}
+                  />
                   <TextInput
                     style={styles.input}
                     placeholder={t("auth.register.emailPlaceholder")}
@@ -272,6 +286,12 @@ export default function RegisterScreen() {
                     errors.password && styles.inputErrorBorder,
                   ]}
                 >
+                  <Feather
+                    name="lock"
+                    size={18}
+                    color="#8E8E93"
+                    style={styles.inputIcon}
+                  />
                   <TextInput
                     ref={passwordRef}
                     style={styles.input}
@@ -424,6 +444,9 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#FFFFFF",
     fontSize: 16,
+  },
+  inputIcon: {
+    marginRight: 10,
   },
   inputErrorBorder: {
     borderColor: "#E5484D",

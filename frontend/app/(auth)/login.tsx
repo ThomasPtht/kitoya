@@ -22,6 +22,7 @@ import Toast from "react-native-toast-message";
 import z from "zod";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
+import { AntDesign, Feather } from "@expo/vector-icons";
 
 export default function LoginScreen() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -116,6 +117,12 @@ export default function LoginScreen() {
                     errors.email && styles.inputErrorBorder,
                   ]}
                 >
+                  <Feather
+                    name="mail"
+                    size={18}
+                    color="#8E8E93"
+                    style={styles.inputIcon}
+                  />
                   <TextInput
                     style={styles.input}
                     placeholder={t("auth.login.emailPlaceholder")}
@@ -148,6 +155,12 @@ export default function LoginScreen() {
                     errors.password && styles.inputErrorBorder,
                   ]}
                 >
+                  <Feather
+                    name="lock"
+                    size={18}
+                    color="#8E8E93"
+                    style={styles.inputIcon}
+                  />
                   <TextInput
                     ref={passwordRef}
                     style={[styles.input, { letterSpacing: 0 }]}
@@ -190,7 +203,7 @@ export default function LoginScreen() {
                   {t("auth.login.connecting")}
                 </Text>
               ) : (
-                <Text style={styles.buttonText}>{t("auth.login.submit")}</Text>
+                <Text style={styles.buttonText}>{t("auth.login.submit")} </Text>
               )}
             </TouchableOpacity>
 
@@ -270,6 +283,9 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#FFFFFF",
     fontSize: 16,
+  },
+  inputIcon: {
+    marginRight: 10,
   },
   inputErrorBorder: {
     borderColor: "#E5484D",
