@@ -18,9 +18,9 @@ export default function AreaChart({
   color = "#05C785",
   unit = "",
 }: AreaChartProps) {
-  const chartData = data.map((d) => ({
+  const chartData = data.map((d, index) => ({
     value: d.value,
-    label: d.month,
+    label: index === 0 && data.length > 2 ? "" : d.month, // seulement le premier vidé, pas le dernier
   }));
 
   if (data.length === 0) {
@@ -35,10 +35,11 @@ export default function AreaChart({
     <LineChart
       data={chartData}
       height={160}
-      adjustToWidth
+      // adjustToWidth
+      spacing={130}
       color={color}
-      initialSpacing={0}
-      endSpacing={25}
+      initialSpacing={5}
+      endSpacing={5}
       thickness={2}
       areaChart
       startFillColor={color}
@@ -71,11 +72,13 @@ export default function AreaChart({
         pointerVanishDelay: 150,
         pointerLabelComponent: (items: any) => {
           const item = items[0];
+          const pointIndex = chartData.findIndex((d) => d.value === item.value);
+          const originalPoint = data[pointIndex];
           return (
             <View style={styles.tooltip}>
-              <Text style={styles.tooltipMonth}>{item.label}</Text>
+              <Text style={styles.tooltipMonth}>{originalPoint?.month}</Text>
               <Text style={[styles.tooltipValue, { color }]}>
-                {item.value} {unit}
+                {originalPoint?.value} {unit}
               </Text>
             </View>
           );

@@ -42,6 +42,7 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
   const { data: userMe, isLoading: isUserLoading } = useUserMe();
   const { data, isLoading, error } = useCollectionAnalytics();
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const [scrollEnabled, setScrollEnabled] = useState(true);
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
@@ -232,6 +233,7 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={scrollEnabled}
       >
         {/* ================= OVERVIEW TAB ================= */}
         {activeTab === "overview" && (

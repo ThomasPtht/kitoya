@@ -278,7 +278,7 @@ export class JerseysService {
           if (!j.season) return null;
           const year = parseInt(j.season.substring(0, 4));
           if (isNaN(year)) return null;
-          return `${Math.floor(year / 10) * 10}s`;
+          return `${Math.floor(year / 10) * 10}`;
         })
         .filter(Boolean),
     );
@@ -352,7 +352,7 @@ export class JerseysService {
     jerseys.forEach((j) => {
       if (!j.season) return;
       const year = parseInt(j.season.substring(0, 4));
-      const era = isNaN(year) ? 'Other' : `${Math.floor(year / 10) * 10}s`;
+      const era = isNaN(year) ? 'Other' : `${Math.floor(year / 10) * 10}`;
       eraCounts[era] = (eraCounts[era] || 0) + 1;
     });
 
