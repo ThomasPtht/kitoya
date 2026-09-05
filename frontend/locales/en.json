@@ -137,7 +137,6 @@
        "limitReachedTitle": "Limit reached",
   "limitReachedMessage": "The free plan is limited to 15 jerseys. Upgrade to Elite for unlimited storage.",
   "upgrade": "Discover Elite"
-    }
     },
     "toasts": {
       "successTitle": "Jersey added",
@@ -639,6 +638,19 @@
   "from": "From",
   "lockerSuffix": "'s locker",
   "storyTitle": "THE STORY"
+},
+
+"onboarding": {
+  "title": "Welcome to Kitoya",
+  "greeting": "Hey",
+  "subtitle": ", your private football jersey locker is ready.",
+  "step1Title": "Scan or upload",
+  "step1Description": "Snap photos and details of every kit.",
+  "step2Title": "Tell its story",
+  "step2Description": "Season, brand, condition and the memories attached to it.",
+  "step3Title": "Build your collection",
+  "step3Description": "Track every acquisition and watch your collection grow.",
+  "addFirstKit": "Add your first kit"
 }
 }
   

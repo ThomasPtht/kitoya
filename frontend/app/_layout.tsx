@@ -160,6 +160,7 @@ function RootLayoutNav() {
             animation: "slide_from_right",
           }}
         />
+        <Stack.Screen name="onboarding" options={{ animation: "fade" }} />
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", headerShown: false }}
