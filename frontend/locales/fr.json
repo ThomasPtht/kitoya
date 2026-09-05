@@ -134,7 +134,10 @@
       "cameraPermissionTitle": "Permission caméra requise",
       "cameraPermissionMessage": "Veuillez autoriser l'accès à la caméra pour prendre une photo.",
       "galleryPermissionTitle": "Permission galerie requise",
-      "galleryPermissionMessage": "Veuillez autoriser l'accès aux photos pour choisir une image."
+      "galleryPermissionMessage": "Veuillez autoriser l'accès aux photos pour choisir une image.",
+       "limitReachedTitle": "Limite atteinte",
+    "limitReachedMessage": "Le plan gratuit est limité à 15 maillots. Passez à Elite pour un stockage illimité.",
+    "upgrade": "Découvrir Elite"
     },
     "toasts": {
       "successTitle": "Maillot ajouté",

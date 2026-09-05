@@ -438,6 +438,21 @@ export default function TabAddScreen() {
       router.navigate("/(drawer)/(tabs)/dressing");
     } catch (error) {
       const err = error as any;
+      if (err.response?.status === 403) {
+        Alert.alert(
+          t("addJersey.alerts.limitReachedTitle"),
+          t("addJersey.alerts.limitReachedMessage"),
+          [
+            { text: t("addJersey.alerts.cancel"), style: "cancel" },
+            {
+              text: t("addJersey.alerts.upgrade"),
+              onPress: () => router.push("/upgrade"),
+            },
+          ],
+        );
+        return;
+      }
+
       console.log(
         "❌ DÉTAIL ERREUR 400 :",
         JSON.stringify(err.response?.data, null, 2),

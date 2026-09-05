@@ -133,7 +133,11 @@
       "cameraPermissionTitle": "Camera permission required",
       "cameraPermissionMessage": "Please allow camera access to take a photo.",
       "galleryPermissionTitle": "Gallery permission required",
-      "galleryPermissionMessage": "Please allow photo access to choose an image."
+      "galleryPermissionMessage": "Please allow photo access to choose an image.",
+       "limitReachedTitle": "Limit reached",
+  "limitReachedMessage": "The free plan is limited to 15 jerseys. Upgrade to Elite for unlimited storage.",
+  "upgrade": "Discover Elite"
+    }
     },
     "toasts": {
       "successTitle": "Jersey added",

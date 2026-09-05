@@ -50,6 +50,29 @@ export class JerseysService {
     dto: CreateJerseyWithUrls,
     clubData: { name: string; sportId: string },
   ) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { subscription: true },
+    });
+    const isElite =
+      (user?.subscription?.planType === 'ELITE_MONTHLY' ||
+        user?.subscription?.planType === 'ELITE_YEARLY') &&
+      user?.subscription?.status === 'active';
+
+    if (!isElite) {
+      const currentCount = await this.prisma.jersey.count({
+        where: { userId },
+      });
+
+      const FREE_JERSEY_LIMIT = 15;
+
+      if (currentCount >= FREE_JERSEY_LIMIT) {
+        throw new ForbiddenException(
+          `You have reached the limit of ${FREE_JERSEY_LIMIT} jerseys for free users. Please upgrade to an ELITE subscription to add more jerseys.`,
+        );
+      }
+    }
+
     //search for the club in the database first
     let club = await this.prisma.club.findUnique({
       where: {
