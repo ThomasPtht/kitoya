@@ -179,13 +179,25 @@ export class JerseysService {
   }
 
   async getJerseysByUser(userId: string) {
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { subscription: true },  
+    });
+
+    const isElite = (user?.subscription?.planType === 'ELITE_MONTHLY' || user?.subscription?.planType === 'ELITE_YEARLY') && user?.subscription?.status === 'active';
+
     const jerseys = await this.prisma.jersey.findMany({
       where: { userId },
       include: { club: true, sport: true, _count: { select: { likes: true } } },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
     });
 
-    return Promise.all(jerseys.map((jersey) => this.signJersey(jersey)));
+    const visibleJerseys = isElite ? jerseys : jerseys.slice(0, 15); // Limit to 15 for non-elite users
+
+    const sortedJerseys = visibleJerseys.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return Promise.all(sortedJerseys.map((jersey) => this.signJersey(jersey)));
   }
 
   async getJerseyById(id: string) {
