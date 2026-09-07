@@ -4,13 +4,18 @@ import * as Localization from "expo-localization";
 import en from "../locales/en.json";
 import fr from "../locales/fr.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import es from "../locales/es.json";
 
 const initI18n = async () => {
   const savedLanguage = await AsyncStorage.getItem("userLanguage");
   const deviceLanguage = Localization.getLocales()[0]?.languageCode ?? "en";
 
   i18n.use(initReactI18next).init({
-    resources: { en: { translation: en }, fr: { translation: fr } },
+    resources: {
+      en: { translation: en },
+      fr: { translation: fr },
+      es: { translation: es },
+    },
     lng: savedLanguage || deviceLanguage,
     fallbackLng: "en",
     interpolation: { escapeValue: false },

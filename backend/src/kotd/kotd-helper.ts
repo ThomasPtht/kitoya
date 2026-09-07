@@ -6,7 +6,7 @@ export interface JerseyStoryContext {
   playerName?: string | null;
 }
 
-export type StoryLocale = 'en' | 'fr';
+export type StoryLocale = 'en' | 'fr' | 'es';
 
 // --- ENGLISH ---
 
@@ -116,6 +116,60 @@ const SPECIAL_TEMPLATES_FR: Array<(ctx: JerseyStoryContext) => string> = [
     `C'est exactement le genre de pièce graal qui fait tourner les têtes : le ${ctx.clubName} ${ctx.type} ${ctx.season} floqué au nom et numéro de ${ctx.playerName}. Du lourd !`,
 ];
 
+// --- ESPAÑOL ---
+
+const STANDARD_TEMPLATES_ES: Array<(ctx: JerseyStoryContext) => string> = [
+  (ctx) =>
+    `Hoy destacamos una pieza magnífica directamente del ${ctx.clubName}: descubre su camiseta ${ctx.type} ${ctx.season}, en edición ${ctx.version}.`,
+
+  (ctx) =>
+    `Imprescindible para todo coleccionista serio. Aquí tienes el ${ctx.clubName} ${ctx.season} en versión ${ctx.type}, compartido con orgullo por la comunidad!`,
+
+  (ctx) =>
+    `Un diseño que nunca envejece. Hoy nos desviamos hacia el ${ctx.clubName} para admirar esta magnífica camiseta ${ctx.type} ${ctx.season} (${ctx.version}).`,
+
+  (ctx) =>
+    `Foco en el vestuario del ${ctx.clubName} hoy! Nos centramos en la versión ${ctx.version} de su camiseta ${ctx.type} ${ctx.season}.`,
+
+  (ctx) =>
+    `Una joya salida directamente de los casilleros de la comunidad: estamos completamente enamorados de esta camiseta ${ctx.clubName} ${ctx.type} ${ctx.season} en acabado ${ctx.version}.`,
+
+  (ctx) =>
+    `Algunas camisetas son unánimes a primera vista: la ${ctx.clubName} ${ctx.type} ${ctx.season} (${ctx.version}) es claramente una de ellas.`,
+
+  (ctx) =>
+    `Un pequeño desvío hacia el ${ctx.clubName} para descubrir su camiseta ${ctx.type} ${ctx.season}, presentada aquí en una bonita versión ${ctx.version}.`,
+
+  (ctx) =>
+    `Una magnífica pieza de colección en el foco de hoy! Admira el trabajo en esta ${ctx.clubName} ${ctx.type} ${ctx.season} (${ctx.version}).`,
+
+  (ctx) =>
+    `Repasando el archivo del día, encontramos la ${ctx.clubName} ${ctx.type} ${ctx.season} (${ctx.version}). Una estética tan depurada.`,
+
+  (ctx) =>
+    `Porque los clásicos siempre tienen su lugar en una colección de verdad, aquí un merecido foco sobre la ${ctx.clubName} ${ctx.type} ${ctx.season} (${ctx.version}).`,
+];
+
+const SPECIAL_TEMPLATES_ES: Array<(ctx: JerseyStoryContext) => string> = [
+  (ctx) =>
+    `Subimos de nivel con una pieza excepcional: esta camiseta ${ctx.clubName} ${ctx.type} ${ctx.season} lleva el nombre de ${ctx.playerName}, en magnífica versión ${ctx.version}.`,
+
+  (ctx) =>
+    `Un llamado a todos los puristas! Aquí una verdadera rareza: la ${ctx.type} ${ctx.season} del ${ctx.clubName}, con especificaciones profesionales e inmortalizada por ${ctx.playerName}.`,
+
+  (ctx) =>
+    `Pura clase, tanto en el campo como en la colección: descubre esta versión profesional de la ${ctx.type} ${ctx.season} del ${ctx.clubName}, con el nombre de ${ctx.playerName}.`,
+
+  (ctx) =>
+    `Cuando el prestigio del ${ctx.clubName} se encuentra con las especificaciones profesionales: hoy nos centramos en esta ${ctx.type} ${ctx.season} hecha a medida para ${ctx.playerName}.`,
+
+  (ctx) =>
+    `Casi se puede sentir el olor del césped una noche de partido en esta ${ctx.clubName} ${ctx.type} ${ctx.season}, en versión jugador con el nombre de ${ctx.playerName}.`,
+
+  (ctx) =>
+    `Es exactamente el tipo de pieza soñada que hace girar cabezas: la ${ctx.clubName} ${ctx.type} ${ctx.season} con el nombre y número de ${ctx.playerName}. ¡Impresionante!`,
+];
+
 function isSpecial(jersey: JerseyStoryContext): boolean {
   return (
     Boolean(jersey.playerName && jersey.playerName.trim() !== '') ||
@@ -130,14 +184,14 @@ export function generateJerseyStory(
 ): string {
   const special = isSpecial(jersey);
 
-  const templates =
-    locale === 'fr'
-      ? special
-        ? SPECIAL_TEMPLATES_FR
-        : STANDARD_TEMPLATES_FR
-      : special
-        ? SPECIAL_TEMPLATES_EN
-        : STANDARD_TEMPLATES_EN;
+  let templates;
+  if (locale === 'fr') {
+    templates = special ? SPECIAL_TEMPLATES_FR : STANDARD_TEMPLATES_FR;
+  } else if (locale === 'es') {
+    templates = special ? SPECIAL_TEMPLATES_ES : STANDARD_TEMPLATES_ES;
+  } else {
+    templates = special ? SPECIAL_TEMPLATES_EN : STANDARD_TEMPLATES_EN;
+  }
 
   const randomIndex = Math.floor(Math.random() * templates.length);
   return templates[randomIndex](jersey);

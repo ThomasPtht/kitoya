@@ -56,6 +56,31 @@ const TRANSLATIONS = {
         `${likerName} a aimé votre maillot ${clubName} !`,
     },
   },
+  es: {
+    types: {
+      HOME: 'local',
+      AWAY: 'visitante',
+      THIRD: 'tercera',
+      FOURTH: 'cuarta',
+      GOALKEEPER: 'portero',
+      SPECIAL: 'especial',
+      TRAINING: 'entrenamiento',
+    },
+    versions: {
+      REPLICA: 'réplica',
+      AUTHENTIC: 'auténtica',
+      PLAYER_ISSUE: 'versión jugador',
+      MATCH_WORN: 'usada en partido',
+    },
+    notifications: {
+      kotdTitle: '¡Kit de la comunidad! 🌟',
+      kotdBody: (clubName: string) =>
+        `¡Tu camiseta del ${clubName} ha sido seleccionada hoy!`,
+      likeTitle: '¡Nuevo me gusta! ❤️',
+      likeBody: (likerName: string, clubName: string) =>
+        `¡A ${likerName} le gustó tu camiseta del ${clubName}!`,
+    },
+  },
 };
 
 @Injectable()
@@ -66,7 +91,10 @@ export class KotdService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async getJerseyOfTheDay(currentUserId?: string, locale: 'en' | 'fr' = 'en') {
+  async getJerseyOfTheDay(
+    currentUserId?: string,
+    locale: 'en' | 'fr' | 'es' = 'en',
+  ) {
     const allJerseys = await this.prisma.jersey.findMany({
       include: {
         club: true,
@@ -116,7 +144,7 @@ export class KotdService {
       if (jerseyOfTheDay.user.expoPushToken) {
         // Utilise la langue du DESTINATAIRE (propriétaire du maillot), pas du visiteur
         const recipientLocale =
-          (jerseyOfTheDay.user.language as 'en' | 'fr') || 'en';
+          (jerseyOfTheDay.user.language as 'en' | 'fr' | 'es') || 'en';
         const notifTranslations =
           TRANSLATIONS[recipientLocale]?.notifications ||
           TRANSLATIONS.en.notifications;
@@ -248,6 +276,4 @@ export class KotdService {
       return { liked: true };
     }
   }
-
-  
 }

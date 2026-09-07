@@ -1,0 +1,663 @@
+{
+  "auth": {
+    "register": {
+      "subtitle": "Regístrate para añadir tus camisetas y gestionar tu vestuario.",
+      "usernamePlaceholder": "Nombre de usuario",
+      "emailPlaceholder": "Correo electrónico",
+      "passwordPlaceholder": "Contraseña",
+      "acceptPrivacy": "Acepto la",
+      "privacyPolicyLink": "Política de privacidad",
+      "submit": "Registrarse",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signInLink": "Iniciar sesión",
+      "errors": {
+        "usernameTaken": "Este nombre de usuario ya está en uso"
+      },
+      "validation": {
+        "usernameMin": "El nombre de usuario debe tener al menos 3 caracteres",
+        "invalidEmail": "Correo electrónico inválido",
+        "passwordMin": "La contraseña debe tener al menos 6 caracteres",
+        "acceptPrivacy": "Debes aceptar la política de privacidad para registrarte"
+      }
+    },
+    "login": {
+      "subtitle": "Inicia sesión para acceder a tu vestuario.",
+      "emailPlaceholder": "Correo electrónico",
+      "passwordPlaceholder": "Contraseña",
+      "forgotPassword": "¿Has olvidado tu contraseña?",
+      "connecting": "Conectando...",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUpLink": "Registrarse",
+      "validation": {
+        "invalidEmail": "Correo electrónico inválido",
+        "passwordMin": "La contraseña debe tener al menos 6 caracteres"
+      }
+    },
+    "changePassword": {
+      "title": "Cambiar contraseña",
+      "subtitle": "Introduce tu contraseña actual y elige una nueva.",
+      "currentPasswordPlaceholder": "Contraseña actual",
+      "newPasswordPlaceholder": "Nueva contraseña",
+      "confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+      "updating": "Actualizando...",
+      "updateButton": "Actualizar contraseña",
+      "alerts": {
+        "errorTitle": "Error",
+        "successTitle": "Éxito",
+        "fillAllFields": "Por favor, rellena todos los campos",
+        "passwordsMismatch": "Las nuevas contraseñas no coinciden",
+        "passwordMinLength": "La nueva contraseña debe tener al menos 6 caracteres",
+        "successMessage": "Tu contraseña se ha modificado con éxito.",
+        "defaultError": "Error al cambiar la contraseña.",
+        "ok": "OK"
+      }
+    },
+    "forgotPassword": {
+      "title": "RESTABLECER",
+      "subtitle": "Introduce tu dirección de correo electrónico y te enviaremos las instrucciones para restablecer tu contraseña.",
+      "emailPlaceholder": "Correo electrónico",
+      "sending": "Enviando...",
+      "sendButton": "Enviar instrucciones",
+      "alerts": {
+        "errorTitle": "Error",
+        "enterEmail": "Por favor, introduce tu dirección de correo electrónico",
+        "emailSentTitle": "Correo enviado",
+        "emailSentMessage": "Revisa tu bandeja de entrada para ver las instrucciones de restablecimiento.",
+        "sendError": "No se pudo enviar el correo de restablecimiento. Por favor, inténtalo de nuevo."
+      }
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Introduce el código de 6 dígitos recibido por correo electrónico y tu nueva contraseña.",
+      "emailPlaceholder": "Correo electrónico",
+      "codePlaceholder": "123456",
+      "newPasswordPlaceholder": "Nueva contraseña",
+      "confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+      "updating": "Actualizando...",
+      "updateButton": "Restablecer contraseña",
+      "alerts": {
+        "errorTitle": "Error",
+        "successTitle": "Éxito",
+        "fillAllFields": "Por favor, rellena todos los campos",
+        "codeLength": "El código de restablecimiento debe tener 6 dígitos",
+        "passwordsMismatch": "Las contraseñas no coinciden",
+        "successMessage": "Tu contraseña se ha restablecido con éxito.",
+        "defaultError": "Error al restablecer la contraseña. Es posible que el código haya caducado.",
+        "login": "Iniciar sesión"
+      }
+    }
+  },
+  "tabs": {
+    "home": "Inicio",
+    "locker": "Vestuario"
+  },
+  "addJersey": {
+    "title": "Añadir una camiseta",
+    "editTitle": "Modificar camiseta",
+    "imageHint": "Consejo: extiende la camiseta plana sobre una cama o el suelo para conseguir la mejor foto.",
+    "frontView": "Vista frontal *",
+    "backView": "Vista trasera",
+    "optional": "(Opcional)",
+    "change": "Cambiar",
+    "clubLabel": "Club / Selección nacional *",
+    "clubPlaceholder": "Escribe y selecciona de la lista",
+    "seasonLabel": "Temporada *",
+    "seasonPlaceholder": "ej: 1998, 2004-2005",
+    "brandLabel": "Marca *",
+    "brandPlaceholder": "ej: Nike, Adidas",
+    "sizeLabel": "Talla *",
+    "kitTypeLabel": "Tipo de camiseta *",
+    "priceLabel": "Precio de compra (Opcional)",
+    "pricePlaceholder": "ej: 89.99",
+    "playerLabel": "Nombre del jugador (Opcional)",
+    "playerPlaceholder": "ej: Ronaldo, Henry",
+    "numberLabel": "Dorsal (Opcional)",
+    "numberPlaceholder": "ej: 10, 14",
+    "conditionLabel": "Estado *",
+    "versionLabel": "Versión *",
+    "officialLabel": "Producto oficial",
+    "officialSubLabel": "Desactívalo si es una reedición o copia",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Añade tus recuerdos, anécdotas o detalles sobre esta camiseta...",
+    "submit": "Añadir al vestuario",
+    "saveChanges": "Actualizar",
+    "submitting": "Enviando...",
+    "clubNotFound": "No se ha encontrado ningún club. Comprueba la ortografía o prueba con otro nombre.",
+    "selectClubFromList": "Por favor, selecciona un club de la lista",
+    "alerts": {
+      "addImageTitle": "Añadir una imagen",
+      "addImageMessage": "Elige el origen de la imagen",
+      "takePhoto": "Hacer una foto",
+      "chooseGallery": "Elegir de la galería",
+      "cancel": "Cancelar",
+      "cameraPermissionTitle": "Permiso de cámara requerido",
+      "cameraPermissionMessage": "Por favor, permite el acceso a la cámara para hacer una foto.",
+      "galleryPermissionTitle": "Permiso de galería requerido",
+      "galleryPermissionMessage": "Por favor, permite el acceso a las fotos para elegir una imagen.",
+      "limitReachedTitle": "Límite alcanzado",
+      "limitReachedMessage": "El plan gratuito está limitado a 15 camisetas. Pásate a Élite para almacenamiento ilimitado.",
+      "upgrade": "Descubrir Élite"
+    },
+    "toasts": {
+      "successTitle": "Camiseta añadida",
+      "successMessage": "La camiseta se ha añadido a tu colección.",
+      "errorTitle": "Error al añadir",
+      "errorMessage": "Se ha producido un error al añadir la camiseta. Por favor, inténtalo de nuevo.",
+      "updateSuccessTitle": "Camiseta actualizada",
+      "updateSuccessMessage": "La camiseta se ha actualizado con éxito."
+    },
+    "validation": {
+      "clubRequired": "El nombre del club o país es obligatorio",
+      "seasonRequired": "La temporada es obligatoria (ej: 2004)",
+      "sizeRequired": "Por favor, selecciona una talla",
+      "typeRequired": "Por favor, selecciona un tipo de camiseta",
+      "frontImageRequired": "La imagen frontal es obligatoria",
+      "versionRequired": "Por favor, selecciona una versión",
+      "conditionRequired": "Por favor, selecciona un estado",
+      "brandRequired": "Por favor, selecciona una marca"
+    },
+    "types": {
+      "HOME": "Local",
+      "AWAY": "Visitante",
+      "THIRD": "Tercera",
+      "FOURTH": "Cuarta",
+      "SPECIAL": "Especial",
+      "GOALKEEPER": "Portero",
+      "TRAINING": "Entrenamiento"
+    },
+    "conditions": {
+      "NEW_WITH_TAGS": "Nueva con etiqueta",
+      "EXCELLENT": "Excelente",
+      "VERY_GOOD": "Muy buen estado",
+      "GOOD": "Buen estado",
+      "FAIR": "Estado aceptable"
+    },
+    "versions": {
+      "REPLICA": "Réplica",
+      "AUTHENTIC": "Auténtica",
+      "PLAYER_ISSUE": "Versión jugador",
+      "MATCH_WORN": "Usada en partido"
+    }
+  },
+  "tabDressing": {
+    "myLocker": "Mi vestuario",
+    "emptyTitle": "Tu vestuario está vacío",
+    "emptySubtitle": "Empieza a construir tu archivo. Añade tu primera camiseta y desbloquea tu rango de coleccionista.",
+    "addFirstKit": "Añadir tu primera camiseta",
+    "whyArchive": {
+      "title": "¿POR QUÉ ARCHIVAR?",
+      "track": "Haz un seguimiento de todas tus camisetas y tesoros",
+      "levelUp": "Sube de rango a medida que crece tu colección",
+      "export": "Exporta y muestra tu vestuario definitivo"
+    }
+  },
+  "home": {
+    "archiveCard": {
+      "title": "Tu vestuario te espera",
+      "subtitle": "Cada camiseta cuenta una historia, la tuya. Haz crecer tu colección, pieza a pieza.",
+      "button": "Añadir una camiseta"
+    },
+    "lastAdded": "ÚLTIMAS INCORPORACIONES AL VESTUARIO",
+    "empty": {
+      "title": "Tu vestuario está vacío",
+      "subtitle": "Empieza añadiendo tu primera camiseta, con sus fotos, sus historias personales y todos los detalles.",
+      "button": "Subir una camiseta"
+    },
+    "stats": {
+      "title": "DE UN VISTAZO",
+      "totalKits": "Total camisetas",
+      "topTeam": "Equipo principal",
+      "addFirstKit": "Añadir tu primera camiseta"
+    }
+  },
+  "drawer": {
+    "pro": {
+      "badge": "KITOYA ÉLITE",
+      "title": "Desbloquea el acceso completo",
+      "feature1": "• Almacenamiento ilimitado de camisetas",
+      "feature2": "• Estadísticas y análisis de la colección",
+      "feature3": "• Exportación de portfolio",
+      "button": "Actualizar plan"
+    },
+    "nav": {
+      "invite": "Invitar a amigos",
+      "export": "Exportar colección",
+      "stats": "Estadísticas de colección",
+      "settings": "Ajustes",
+      "help": "Ayuda y comentarios"
+    },
+    "eliteBadge": "ÉLITE",
+    "logout": "Cerrar sesión",
+    "legal": {
+      "privacyPolicy": "Política de privacidad",
+      "termsOfService": "Condiciones de uso",
+      "legalNotice": "Aviso legal"
+    }
+  },
+  "publicLocker": {
+    "badge": "ARMARIO PÚBLICO",
+    "notFound": "Armario no encontrado o privado.",
+    "backButton": "Volver",
+    "stats": {
+      "kits": "CAMISETAS",
+      "clubs": "CLUBES"
+    },
+    "collectorRank": "COLECCIONISTA",
+    "sharedKits": "CAMISETAS COMPARTIDAS",
+    "exhibits": "EXHIBICIONES",
+    "shareMessage": "¡Descubre mi colección de camisetas de fútbol en Kitoya! kitoya://locker/{{username}}",
+    "buttons": {
+      "front": "FRONTAL",
+      "back": "ESPALDA"
+    },
+    "likedBy": "Le gusta a",
+    "noLikesYet": "A nadie le gusta esta camiseta todavía"
+  },
+  "analytics": {
+    "loading": "Cargando...",
+    "headerSubtitle": "ESTADÍSTICAS",
+    "headerTitle": "Estadísticas de la colección",
+    "locked": {
+      "title": "Funcionalidad ÉLITE",
+      "description": "Los análisis avanzados de la colección están reservados para los miembros de Kitoya ÉLITE.",
+      "button": "Descubrir la oferta ÉLITE"
+    },
+    "cards": {
+      "totalKits": "CAMISETAS",
+      "uniqueClubs": "CLUBES ÚNICOS",
+      "erasCovered": "ÉPOCAS CUBIERTAS",
+      "brands": "MARCAS",
+      "types": "TIPOS",
+      "totalInvested": "TOTAL INVERTIDO",
+      "avgPrice": "PRECIO MEDIO"
+    },
+    "sections": {
+      "topClubs": "PRINCIPALES CLUBES",
+      "kitsByEra": "CAMISETAS POR ÉPOCA",
+      "brandMix": "DISTRIBUCIÓN DE MARCAS",
+      "kitTypes": "TIPOS DE CAMISETAS",
+      "versionMix": "VERSIONES",
+      "conditionMix": "ESTADOS",
+      "crownJewel": "PIEZA CLAVE",
+      "acquisitionsTimeline": "Adquisiciones por año",
+      "collectionGrowth": "CRECIMIENTO DE LA COLECCIÓN",
+      "cumulativeSpend": "GASTO ACUMULADO"
+    },
+    "units": {
+      "kits": "camisetas"
+    },
+    "tabs": {
+      "overview": "RESUMEN",
+      "mix": "MEZCLA",
+      "timeline": "CRONOLOGÍA"
+    },
+    "crownJewel": {
+      "mostValuable": "MÁS VALIOSA"
+    },
+    "types": {
+      "HOME": "Local",
+      "AWAY": "Visitante",
+      "THIRD": "Tercera",
+      "FOURTH": "Cuarta",
+      "SPECIAL": "Especial",
+      "GOALKEEPER": "Portero",
+      "TRAINING": "Entrenamiento"
+    },
+    "versions": {
+      "REPLICA": "Réplica",
+      "AUTHENTIC": "Auténtica",
+      "PLAYER_ISSUE": "Versión jugador",
+      "MATCH_WORN": "Usada en partido"
+    }
+  },
+  "export": {
+    "loading": "Cargando...",
+    "headerSubtitle": "ARCHIVO",
+    "headerTitle": "Exportar colección",
+    "locked": {
+      "title": "Funcionalidad ÉLITE",
+      "description": "La exportación de tu colección (CSV, JSON, PDF) está reservada para los miembros de Kitoya ÉLITE.",
+      "button": "Descubrir la oferta ÉLITE"
+    },
+    "statCard": {
+      "subtitle": "EN TU ARCHIVO",
+      "kits": "camisetas",
+      "kit": "camiseta"
+    },
+    "sections": {
+      "format": "FORMATO",
+      "include": "INCLUIR"
+    },
+    "formats": {
+      "csvTitle": "Hoja de cálculo CSV",
+      "csvDesc": "Abrir en Excel, Numbers o Sheets",
+      "jsonTitle": "Archivo JSON",
+      "jsonDesc": "Datos completos, ideal para desarrolladores",
+      "pdfTitle": "Portfolio PDF",
+      "pdfDesc": "Resumen imprimible y compartible"
+    },
+    "switches": {
+      "stories": "Historias de las camisetas",
+      "purchaseHistory": "Historial de compras"
+    },
+    "buttons": {
+      "exporting": "Exportando...",
+      "csv": "Exportar en CSV",
+      "json": "Exportar en JSON",
+      "pdf": "Exportar en PDF"
+    },
+    "footer": "Tus datos te pertenecen. Los archivos se descargan directamente en este dispositivo.",
+    "alerts": {
+      "error": "Error",
+      "noData": "No hay datos disponibles para exportar",
+      "sharingNotAvailable": "El uso compartido no está disponible en este dispositivo",
+      "exportFailed": "Error al exportar la colección"
+    }
+  },
+  "help": {
+    "headerSubtitle": " SOPORTE",
+    "headerTitle": "Ayuda y comentarios",
+    "sections": {
+      "quickActions": "ACCIONES RÁPIDAS",
+      "frequentlyAsked": "PREGUNTAS FRECUENTES",
+      "sendFeedback": "ENVIAR COMENTARIO"
+    },
+    "quickActions": {
+      "emailSupport": "Contactar con soporte",
+      "reportBug": "Informar de un error",
+      "suggestFeature": "Sugerir una funcionalidad"
+    },
+    "faqs": {
+      "addKit": {
+        "question": "¿Cómo añadir una nueva camiseta?",
+        "answer": "Pulsa el botón central + en la barra de pestañas, rellena los detalles de la camiseta y añade una foto, ya sea desde tu galería o directamente con tu cámara."
+      },
+      "collectorRank": {
+        "question": "¿Qué es el rango de coleccionista?",
+        "answer": "Tu rango de coleccionista (desde Rookie hasta Hall Of Famer) refleja el número de camisetas de tu colección; cuantas más añadas, más progresas."
+      },
+      "exportCollection": {
+        "question": "¿Puedo exportar mi colección?",
+        "answer": "¡Sí! Puedes exportar los datos de tu colección en cualquier momento en formato CSV, JSON o como portfolio PDF imprimible directamente desde la configuración de tus archivos."
+      },
+      "lockerPublic": {
+        "question": "¿Es público mi vestuario?",
+        "answer": "Por defecto, tu vestuario es público, lo que te permite compartir tu perfil y conseguir 'me gusta' en tus camisetas. Puedes hacerlo privado en cualquier momento desde los ajustes, aunque una camiseta seleccionada para la Camiseta de la comunidad aún podría ser visible ese día."
+      }
+    },
+    "inputs": {
+      "messageLabel": "MENSAJE",
+      "messagePlaceholder": "Cuéntanos qué te preocupa...",
+      "emailLabel": "CORREO ELECTRÓNICO (OPCIONAL)",
+      "emailPlaceholder": "tu@ejemplo.com"
+    },
+    "buttons": {
+      "send": "Enviar comentario"
+    },
+    "alerts": {
+      "error": "Error",
+      "emptyMessage": "Por favor, introduce un mensaje antes de enviar tus comentarios.",
+      "successTitle": "Éxito",
+      "successMessage": "¡Gracias! Tus comentarios se han enviado correctamente.",
+      "sendError": "Se ha producido un error al enviar tus comentarios. Por favor, inténtalo de nuevo más tarde."
+    }
+  },
+  "settings": {
+    "headerTitle": "Ajustes",
+    "sections": {
+      "profile": "Perfil",
+      "preferences": "Preferencias y privacidad",
+      "publicView": "Vista pública",
+      "security": "Seguridad de la cuenta"
+    },
+    "profile": {
+      "username": "Nombre de usuario",
+      "defaultUsername": "Coleccionista",
+      "bio": "Biografía",
+      "noBio": "Sin biografía por ahora",
+      "location": "Ubicación",
+      "noLocation": "No definido",
+      "email": "Correo electrónico",
+      "defaultEmail": "user@kitoya.app",
+      "subscription": "Plan de suscripción"
+    },
+    "preferences": {
+      "pushNotifications": "Notificaciones push",
+      "publicLocker": "Vestuario público por defecto",
+      "publicDesc": "Visible para todo el mundo (Público)",
+      "privateDesc": "Oculto para los demás (Privado)",
+      "currency": "Moneda"
+    },
+    "publicView": {
+      "title": "Vista previa del perfil público",
+      "subtitle": "Visualización pública de tu vestuario"
+    },
+    "security": {
+      "changeLanguage": "Idioma",
+      "languageModalTitle": "Elegir idioma",
+      "changePassword": "Cambiar contraseña",
+      "deleteAccount": "Eliminar cuenta",
+      "languageClose": "Cerrar"
+    },
+    "modals": {
+      "username": {
+        "title": "Cambiar nombre de usuario",
+        "subtitle": "Introduce tu nuevo nombre único (mín. 3 caracteres)",
+        "placeholder": "Nuevo nombre de usuario"
+      },
+      "bio": {
+        "title": "Modificar biografía",
+        "subtitle": "Escribe una breve biografía para tu perfil de coleccionista",
+        "placeholder": "Háblanos de tu colección..."
+      },
+      "location": {
+        "title": "Modificar ubicación",
+        "subtitle": "Introduce tu ubicación (ciudad, país) para indicar dónde te encuentras",
+        "placeholder": "Ubicación (ej: Madrid, España)"
+      },
+      "currency": {
+        "title": "Seleccionar moneda",
+        "subtitle": "Elige la moneda utilizada para mostrar los precios de tu colección"
+      },
+      "delete": {
+        "title": "Eliminar cuenta",
+        "message": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible."
+      }
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "close": "Cerrar",
+      "delete": "Eliminar"
+    },
+    "alerts": {
+      "error": "Error",
+      "success": "Éxito",
+      "usernameLength": "El nombre de usuario debe contener al menos 3 caracteres.",
+      "usernameSuccess": "Nombre de usuario modificado con éxito.",
+      "usernameError": "Error al modificar el nombre de usuario",
+      "bioSuccess": "Biografía actualizada con éxito.",
+      "bioError": "Error al actualizar la biografía",
+      "locationSuccess": "Ubicación actualizada con éxito.",
+      "locationError": "Error al actualizar la ubicación",
+      "currencyError": "Error al actualizar la moneda",
+      "profileError": "Se ha producido un error al actualizar el perfil",
+      "deleteError": "Se ha producido un error al eliminar la cuenta"
+    },
+    "legal": {
+      "privacyPolicy": "Privacidad",
+      "termsOfService": "Condiciones de uso",
+      "legalNotice": "Aviso legal"
+    }
+  },
+  "subscription": {
+    "headerSubtitle": "SUSCRIPCIÓN",
+    "headerTitle": "Elige tu fórmula",
+    "plans": {
+      "free": {
+        "name": "GRATUITO",
+        "period": "/ DE POR VIDA",
+        "subtext": "Seguimiento básico de colección",
+        "cta": "SEGUIR GRATIS",
+        "features": [
+          "✓ Hasta 15 espacios",
+          "✓ Compartir tu colección",
+          "X Filtros avanzados",
+          "X Estadísticas y análisis de colección"
+        ]
+      },
+      "elite": {
+        "name": "ÉLITE",
+        "period": "/ MES",
+        "subtext": "o {{price}}/AÑO",
+        "cta": "PASAR A ÉLITE",
+        "features": [
+          "✓ Espacios ilimitados",
+          "✓ Filtros avanzados",
+          "✓ Estadísticas y análisis de colección",
+          "✓ Exportación del portfolio"
+        ]
+      }
+    }
+  },
+  "upgrade": {
+    "alreadyElite": {
+      "title": "¡Ya eres miembro de Kitoya ÉLITE!",
+      "backButton": "Volver a la aplicación"
+    },
+    "errors": {
+      "packageNotAvailable": "El plan de suscripción no está disponible en este momento.",
+      "defaultPurchaseError": "Se ha producido un error durante la compra"
+    },
+    "headerTitle": "Llega más lejos con tu colección",
+    "subtitle": "Organiza tus camisetas, llena tu vestuario digital y muestra tu pasión sin límites.",
+    "annual": {
+      "title": "Anual",
+      "subtext": "/año",
+      "badge": "Popular"
+    },
+    "monthly": {
+      "title": "Mensual",
+      "subtext": "Cancelable en cualquier momento"
+    },
+    "featuresHeader": "Todo lo que un verdadero coleccionista necesita",
+    "features": {
+      "unlimited": {
+        "title": "Espacios ilimitados",
+        "desc": "Añade todas tus camisetas de local, visitante y tercera equipación a tu vestuario digital."
+      },
+      "stats": {
+        "title": "Estadísticas avanzadas",
+        "desc": "Analiza tu colección de camisetas por clubes, marcas y temporadas."
+      },
+      "export": {
+        "title": "Exportación de colección",
+        "desc": "Un portfolio PDF de tu colección, listo en un clic."
+      }
+    },
+    "restore": "Restaurar compras",
+    "cta": {
+      "loading": "Cargando...",
+      "trial": "Iniciar la prueba gratuita de 7 días",
+      "monthly": "Suscribirse ({{price}}/mes)"
+    },
+    "legal": {
+      "trial": "Prueba gratuita de 7 días, después {{price}}/año. Cancelable en cualquier momento.",
+      "monthly": "Facturado {{price}} al mes. Cancelable en cualquier momento."
+    }
+  },
+  "common": {
+    "searchPlaceholder": "Buscar por club o temporada"
+  },
+  "filterModal": {
+    "title": "Filtros",
+    "sections": {
+      "team": "Equipo",
+      "season": "Temporada",
+      "brand": "Marca",
+      "kitType": "Tipo de camiseta",
+      "version": "Versión",
+      "condition": "Estado"
+    },
+    "apply": "Ver resultados"
+  },
+  "googleButton": {
+    "loading": "Conectando...",
+    "continue": "Continuar con Google"
+  },
+  "jerseyDetail": {
+    "back": "VOLVER",
+    "official": "OFICIAL",
+    "replica": "RÉPLICA / FAN",
+    "noImage": "Ninguna imagen disponible",
+    "front": "Frontal",
+    "backSide": "Espalda",
+    "myCollection": "MI COLECCIÓN",
+    "footballKit": "Camiseta de fútbol",
+    "clubUnknown": "Club desconocido",
+    "likes": "ME GUSTA",
+    "likes_plural": "ME GUSTA",
+    "sizePrefix": "Talla",
+    "storyTitle": "HISTORIA Y DETALLES",
+    "specsTitle": "ESPECIFICACIONES",
+    "player": "Jugador",
+    "number": "Dorsal",
+    "brand": "Marca deportiva",
+    "version": "Versión",
+    "condition": "Estado",
+    "size": "Talla",
+    "na": "N/D",
+    "purchaseInfo": "INFORMACIÓN DE COMPRA",
+    "purchasePrice": "Precio de compra",
+    "shareCard": "Generando tarjeta...",
+    "shareKit": "Compartir",
+    "deleteButton": "Eliminar",
+    "editButton": "Modificar",
+    "likedBy": "Le gusta a",
+    "noLikesYet": "A nadie le gusta esta camiseta todavía",
+    "alerts": {
+      "deleteTitle": "Eliminar camiseta",
+      "deleteMessage": "¿Estás seguro de que quieres eliminar esta camiseta de tu colección?",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "errorTitle": "Error",
+      "errorMessage": "Se ha producido un error al eliminar la camiseta. Por favor, inténtalo de nuevo.",
+      "shareErrorTitle": "Error",
+      "shareErrorMessage": "No se ha podido compartir la imagen de la camiseta.",
+      "toastDeletedTitle": "Camiseta eliminada",
+      "toastDeletedMessage": "La camiseta se ha retirado de tu colección."
+    },
+    "shareMessage": "¡Descubre esta camiseta de mi colección! 👕✨ Únete a mí en KITOYA para crear y mostrar tu vestuario de fútbol definitivo: https://kitoya.app",
+    "shareTitle": "¡Descubre esta camiseta de fútbol!"
+  },
+  "kitOfTheDay": {
+    "headerTitle": "CAMISETA DE LA COMUNIDAD",
+    "noKitTitle": "Ninguna camiseta destacada hoy",
+    "noKitText": "Las camisetas destacadas aparecen cuando el servicio de selección diaria devuelve una camiseta.",
+    "privateLockerTitle": "Vestuario privado",
+    "privateLockerMessage": "El vestuario de este coleccionista es privado.",
+    "viewDetails": "VER DETALLES →",
+    "fromLockerPrefix": "Del vestuario de ",
+    "fromLockerSuffix": ""
+  },
+  "kitOfTheDayModal": {
+    "headerTitle": "CAMISETA DE LA COMUNIDAD",
+    "grail": "GRERIAL",
+    "from": "Del vestuario de",
+    "lockerSuffix": "",
+    "storyTitle": "HISTORIA"
+  },
+  "onboarding": {
+    "title": "Bienvenido a Kitoya",
+    "greeting": "Hola",
+    "subtitle": ", tu vestuario de camisetas de fútbol está listo.",
+    "step1Title": "Añade tus camisetas",
+    "step1Description": "Captura las fotos y los detalles de cada camiseta.",
+    "step2Title": "Cuenta su historia",
+    "step2Description": "Temporada, marca, estado y los recuerdos asociados a ella.",
+    "step3Title": "Construye tu colección",
+    "step3Description": "Haz un seguimiento de cada adquisición y mira cómo crece tu colección.",
+    "addFirstKit": "Añadir tu primera camiseta"
+  }
+}
