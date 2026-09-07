@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ImageProcessingService } from './image-processing.service';
-import { removeBackgroundFromImageBase64 } from 'remove.bg';
+import axios from 'axios';
 import sharp from 'sharp';
 
-jest.mock('remove.bg');
+jest.mock('axios');
 jest.mock('sharp');
 
 describe('ImageProcessingService', () => {
   let service: ImageProcessingService;
-  const mockRemoveBackground = removeBackgroundFromImageBase64 as jest.Mock;
+  const mockedAxios = axios as jest.Mocked<typeof axios>;
   const mockSharp = sharp as unknown as jest.Mock;
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    process.env.REMOVE_BG_API_KEY = 'test-api-key';
+    process.env.FAPIHUB_API_KEY = 'test-api-key';
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [ImageProcessingService],
@@ -23,7 +23,7 @@ describe('ImageProcessingService', () => {
   });
 
   afterEach(() => {
-    delete process.env.REMOVE_BG_API_KEY;
+    delete process.env.FAPIHUB_API_KEY;
   });
 
   it('should be defined', () => {
@@ -31,24 +31,24 @@ describe('ImageProcessingService', () => {
   });
 
   describe('removeBackground', () => {
-    it('should throw if REMOVE_BG_API_KEY is missing', async () => {
-      delete process.env.REMOVE_BG_API_KEY;
+    it('should throw if FAPIHUB_API_KEY is missing', async () => {
+      delete process.env.FAPIHUB_API_KEY;
       const buffer = Buffer.from('fake-image-data');
 
       await expect(service.removeBackground(buffer)).rejects.toThrow(
-        'REMOVE_BG_API_KEY is missing',
+        'FAPIHUB_API_KEY is missing',
       );
 
-      // Ensure no external calls were attempted
-      expect(mockRemoveBackground).not.toHaveBeenCalled();
+      expect(mockedAxios.post).not.toHaveBeenCalled();
     });
 
-    it('should call remove.bg with the base64-encoded buffer and the API key', async () => {
+    it('should call Fapihub via axios with the form data and API key', async () => {
       const inputBuffer = Buffer.from('fake-image-data');
-      const detouredBase64 = Buffer.from('detoured-image').toString('base64');
+      const detouredImageBuffer = Buffer.from('detoured-image');
 
-      mockRemoveBackground.mockResolvedValueOnce({
-        base64img: detouredBase64,
+      mockedAxios.post.mockResolvedValueOnce({
+        status: 200,
+        data: detouredImageBuffer,
       });
 
       const mockToBuffer = jest
@@ -60,19 +60,21 @@ describe('ImageProcessingService', () => {
 
       await service.removeBackground(inputBuffer);
 
-      expect(mockRemoveBackground).toHaveBeenCalledWith({
-        base64img: inputBuffer.toString('base64'),
-        apiKey: 'test-api-key',
-        size: 'auto',
+      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      const [url, formData, config] = mockedAxios.post.mock.calls[0];
+      expect(url).toBe('https://fapihub.com/v2/rembg/');
+      expect(config.headers).toMatchObject({
+        ApiKey: 'test-api-key',
       });
     });
 
     it('should resize the detoured image to fit in a 600x600 transparent box and convert to webp', async () => {
       const inputBuffer = Buffer.from('fake-image-data');
-      const detouredBase64 = Buffer.from('detoured-image').toString('base64');
+      const detouredImageBuffer = Buffer.from('detoured-image');
 
-      mockRemoveBackground.mockResolvedValueOnce({
-        base64img: detouredBase64,
+      mockedAxios.post.mockResolvedValueOnce({
+        status: 200,
+        data: detouredImageBuffer,
       });
 
       const finalBuffer = Buffer.from('final-processed-image');
@@ -93,11 +95,12 @@ describe('ImageProcessingService', () => {
       expect(result).toBe(finalBuffer);
     });
 
-    it('should throw a generic error if remove.bg fails', async () => {
+    it('should throw a generic error if Fapihub returns a non-200 status', async () => {
       const inputBuffer = Buffer.from('fake-image-data');
-      mockRemoveBackground.mockRejectedValueOnce(
-        new Error('remove.bg API error'),
-      );
+      mockedAxios.post.mockResolvedValueOnce({
+        status: 500,
+        data: 'Error',
+      });
 
       await expect(service.removeBackground(inputBuffer)).rejects.toThrow(
         "Le traitement de l'image a échoué. Veuillez réessayer.",
@@ -106,10 +109,11 @@ describe('ImageProcessingService', () => {
 
     it('should throw a generic error if sharp processing fails', async () => {
       const inputBuffer = Buffer.from('fake-image-data');
-      const detouredBase64 = Buffer.from('detoured-image').toString('base64');
+      const detouredImageBuffer = Buffer.from('detoured-image');
 
-      mockRemoveBackground.mockResolvedValueOnce({
-        base64img: detouredBase64,
+      mockedAxios.post.mockResolvedValueOnce({
+        status: 200,
+        data: detouredImageBuffer,
       });
 
       mockSharp.mockImplementation(() => {
