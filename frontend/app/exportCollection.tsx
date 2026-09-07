@@ -19,6 +19,7 @@ import * as Sharing from "expo-sharing";
 import { exportCollectionToPdf } from "../lib/pdf-export";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 
 type ExportFormat = "csv" | "json" | "pdf";
 
@@ -98,7 +99,7 @@ export default function ExportCollectionScreen() {
       setLoading(true);
 
       if (selectedFormat === "pdf") {
-        await exportCollectionToPdf(jerseyData);
+        await exportCollectionToPdf(jerseyData, i18n.language);
         return;
       }
 

@@ -2,12 +2,63 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 
-const KIT_CONDITIONS_MAP: Record<string, string> = {
-  NEW_WITH_TAGS: "New with Tags",
-  EXCELLENT: "Excellent",
-  VERY_GOOD: "Very Good",
-  GOOD: "Good",
-  FAIR: "Fair",
+// Dictionnaires de traduction pour le PDF
+const TRANSLATIONS: Record<string, Record<string, string>> = {
+  fr: {
+    archiveTitle: "Archive de la Collection",
+    totalKits: "Total :",
+    kit: "maillot",
+    kits: "maillots",
+    player: "Joueur",
+    typeAndSize: "Type & Taille",
+    conditionAndVersion: "État & Version",
+    noImage: "Aucune image",
+    footer: "Application Kitoya - Vos données vous appartiennent.",
+    error: "Erreur",
+    shareNotAvailable: "Le partage n'est pas disponible sur cet appareil",
+    failedGen: "Échec de la génération du PDF",
+  },
+  en: {
+    archiveTitle: "Collection Archive",
+    totalKits: "Total:",
+    kit: "kit",
+    kits: "kits",
+    player: "Player",
+    typeAndSize: "Type & Size",
+    conditionAndVersion: "Condition & Version",
+    noImage: "No Image",
+    footer: "Kitoya App - Your data stays yours.",
+    error: "Error",
+    shareNotAvailable: "Sharing is not available on this device",
+    failedGen: "Failed to generate PDF",
+  },
+  es: {
+    archiveTitle: "Archivo de Colección",
+    totalKits: "Total:",
+    kit: "camisetas",
+    kits: "camisetas",
+    player: "Jugador",
+    typeAndSize: "Tipo y Talla",
+    conditionAndVersion: "Estado y Versión",
+    noImage: "Sin imagen",
+    footer: "Aplicación Kitoya - Tus datos son tuyos.",
+    error: "Error",
+    shareNotAvailable:
+      "La función de compartir no está disponible en este dispositivo",
+    failedGen: "Error al generar el PDF",
+  },
+};
+
+const KIT_CONDITIONS_MAP: Record<string, Record<string, string>> = {
+  NEW_WITH_TAGS: {
+    fr: "Neuf avec étiquette",
+    en: "New with Tags",
+    es: "Nuevo con etiquetas",
+  },
+  EXCELLENT: { fr: "Excellent", en: "Excellent", es: "Excelente" },
+  VERY_GOOD: { fr: "Très bon", en: "Very Good", es: "Muy bueno" },
+  GOOD: { fr: "Bon", en: "Good", es: "Bueno" },
+  FAIR: { fr: "Correct", en: "Fair", es: "Regular" },
 };
 
 const KIT_VERSIONS_MAP: Record<string, string> = {
@@ -27,13 +78,24 @@ const JERSEY_TYPES_MAP: Record<string, string> = {
   TRAINING: "Training",
 };
 
-export const exportCollectionToPdf = async (jerseyData: any[]) => {
+// On ajoute 'locale' en paramètre (par défaut 'en', ou 'fr' / 'es')
+export const exportCollectionToPdf = async (
+  jerseyData: any[],
+  locale: string = "en",
+) => {
   try {
-    const generatedDate = new Date().toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    // Sécurise la locale si elle n'existe pas dans nos traductions
+    const lang = TRANSLATIONS[locale] ? locale : "en";
+    const t = TRANSLATIONS[lang];
+
+    const generatedDate = new Date().toLocaleDateString(
+      lang === "fr" ? "fr-FR" : lang === "es" ? "es-ES" : "en-GB",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      },
+    );
 
     const htmlContent = `
       <html>
@@ -128,10 +190,10 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
           <div class="header-container">
             <div>
               <h1>Kitoya <span class="accent">Portfolio</span></h1>
-              <div class="subtitle">Collection Archive Generated on ${generatedDate}</div>
+              <div class="subtitle">${t.archiveTitle} - ${generatedDate}</div>
             </div>
             <div style="text-align: right; font-weight: bold; font-size: 14px; color: #05C785;">
-              Total: ${jerseyData.length} ${jerseyData.length > 1 ? "kits" : "kit"}
+              ${t.totalKits} ${jerseyData.length} ${jerseyData.length > 1 ? t.kits : t.kit}
             </div>
           </div>
           
@@ -148,20 +210,26 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
                   ${
                     jersey.frontImageUrl
                       ? `<img src="${jersey.frontImageUrl}" class="jersey-img" />`
-                      : `<div class="jersey-img" style="display:flex;align-items:center;justify-content:center;color:#ccc;font-size:10px;">No Image</div>`
+                      : `<div class="jersey-img" style="display:flex;align-items:center;justify-content:center;color:#ccc;font-size:10px;">${t.noImage}</div>`
                   }
                   <div class="jersey-info">
+                    ${
+                      jersey.playerName
+                        ? `
                     <div class="info-row">
-                      <span class="info-label">Player</span>
-                      <strong>${jersey.playerName || "Unnamed"} ${jersey.number ? `(#${jersey.number})` : ""}</strong>
+                      <span class="info-label">${t.player}</span>
+                      <strong>${jersey.playerName} ${jersey.number ? `(#${jersey.number})` : ""}</strong>
                     </div>
+                    `
+                        : ""
+                    }
                     <div class="info-row">
-                      <span class="info-label">Type & Size</span>
+                      <span class="info-label">${t.typeAndSize}</span>
                       ${JERSEY_TYPES_MAP[jersey.type] || jersey.type || "-"} • <span style="font-weight:bold;">${jersey.size || "-"}</span>
                     </div>
                     <div class="info-row">
-                      <span class="info-label">Condition & Version</span>
-                      ${KIT_CONDITIONS_MAP[jersey.condition] || jersey.condition || "-"} (${KIT_VERSIONS_MAP[jersey.version] || jersey.version || "Standard"})
+                      <span class="info-label">${t.conditionAndVersion}</span>
+                      ${KIT_CONDITIONS_MAP[jersey.condition]?.[lang] || jersey.condition || "-"} (${KIT_VERSIONS_MAP[jersey.version] || jersey.version || "Standard"})
                     </div>
                   </div>
                 </div>
@@ -171,7 +239,7 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
               .join("")}
           </div>
 
-          <div class="footer">Kitoya App - Your data stays yours.</div>
+          <div class="footer">${t.footer}</div>
         </body>
       </html>
     `;
@@ -179,13 +247,13 @@ export const exportCollectionToPdf = async (jerseyData: any[]) => {
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
 
     if (!(await Sharing.isAvailableAsync())) {
-      Alert.alert("Error", "Sharing is not available on this device");
+      Alert.alert(t.error, t.shareNotAvailable);
       return;
     }
 
     await Sharing.shareAsync(uri, {
       mimeType: "application/pdf",
-      dialogTitle: "Your Kitoya Portfolio PDF",
+      dialogTitle: "Kitoya Portfolio PDF",
       UTI: "com.adobe.pdf",
     });
   } catch (error: any) {
