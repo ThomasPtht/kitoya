@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   searchContainer: {
     flexDirection: "row",

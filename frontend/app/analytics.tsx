@@ -26,7 +26,18 @@ interface CrownJewelData {
   frontImageUrl: string;
 }
 
-const CHART_COLORS = ["#05C785", "#0A8F5C", "#7FCEAF", "#3DB88A", "#1FA872"];
+const CHART_COLORS = [
+  "#05C785",
+  "#5B9BD5",
+  "#E8A33D",
+  "#D97E7E",
+  "#9B8AC4",
+  "#D98CB3",
+  "#4DB6AC",
+  "#C9A063",
+  "#8496D9",
+  "#A8C97F",
+];
 
 type TabKey = "overview" | "mix" | "timeline";
 

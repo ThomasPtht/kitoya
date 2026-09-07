@@ -20,7 +20,7 @@ export default function AreaChart({
 }: AreaChartProps) {
   const chartData = data.map((d, index) => ({
     value: d.value,
-    label: index === 0 && data.length > 2 ? "" : d.month, // seulement le premier vidé, pas le dernier
+    label: d.month,
   }));
 
   if (data.length === 0) {
@@ -31,14 +31,19 @@ export default function AreaChart({
     );
   }
 
+  const maxDataValue = Math.max(...data.map((d) => d.value), 1);
+  const noOfSections = 4; // choisis un nombre qui divise bien tes valeurs réelles
+  const stepValue = Math.ceil(maxDataValue / noOfSections);
+  const maxValue = noOfSections * stepValue; // respecte EXACTEMENT la formule
+
   return (
     <LineChart
       data={chartData}
       height={160}
       // adjustToWidth
-      spacing={130}
+      spacing={85}
       color={color}
-      initialSpacing={5}
+      initialSpacing={18}
       endSpacing={5}
       thickness={2}
       areaChart
@@ -58,7 +63,9 @@ export default function AreaChart({
         color: "#666666",
         fontSize: 9,
       }}
-      noOfSections={3}
+      noOfSections={noOfSections}
+      stepValue={stepValue}
+      maxValue={maxValue}
       pointerConfig={{
         pointerStripHeight: 160,
         pointerStripColor: "rgba(255,255,255,0.2)",
