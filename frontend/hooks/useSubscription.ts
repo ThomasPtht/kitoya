@@ -6,6 +6,8 @@ import Purchases, {
   CustomerInfo,
 } from "react-native-purchases";
 import Constants from "expo-constants";
+import { authService } from "@/services/auth.service";
+import { router } from "expo-router";
 
 const isExpoGo = Constants.appOwnership === "expo";
 
@@ -31,6 +33,11 @@ export const useSubscription = () => {
 
       // RevenueCat gère la clé universelle (que ce soit pour iOS ou Android en test ou prod)
       Purchases.configure({ apiKey });
+
+      const userInfo = await authService.getUserInfo();
+      if (userInfo?.id) {
+        await Purchases.logIn(userInfo.id);
+      }
 
       loadCustomerAndOfferings();
     } catch (e) {
@@ -70,7 +77,9 @@ export const useSubscription = () => {
       setCustomerInfo(customerInfo);
 
       if (customerInfo.entitlements.active["kitoya_elite"]) {
-        Alert.alert("Success", "Your subscription is now active. Thank you!");
+        Alert.alert("Success", "Your subscription is now active. Thank you!", [
+          { text: "OK", onPress: () => router.replace("/(drawer)/(tabs)") },
+        ]);
       }
     } catch (e: any) {
       if (!e.userCancelled) {

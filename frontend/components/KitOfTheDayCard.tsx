@@ -34,7 +34,7 @@ export default function KitOfTheDayCard() {
 
   const { data: userMe } = useUserMe();
 
-  const isOwnJersey = userMe?.username === jersey?.user.username;
+  const isOwnJersey = userMe?.username === jersey?.user?.username;
 
   // State to control modal visibility
   const [isModalVisible, setIsModalVisible] = useState(false);
