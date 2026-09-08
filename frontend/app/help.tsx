@@ -13,6 +13,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { useState } from "react";
 import { feedbackService } from "@/services/feedback.service";

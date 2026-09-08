@@ -31,7 +31,11 @@ export class PasswordResetService {
     });
 
     // send the reset code to the user's email
-    await this.emailService.sendPasswordResetEmail(email, code);
+    await this.emailService.sendPasswordResetEmail(
+      email,
+      code,
+      user.language as 'en' | 'fr' | 'es',
+    );
 
     return { message: 'Instructions sent successfully' };
   }
