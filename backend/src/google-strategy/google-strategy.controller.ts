@@ -1,6 +1,7 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
+import * as express from 'express';
 
 @Controller('auth')
 export class GoogleStrategyController {
@@ -8,13 +9,12 @@ export class GoogleStrategyController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {
-    return this.authService.validateGoogleUser(req.user);
-  }
+  async googleAuth(@Req() req) {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    return this.authService.validateGoogleUser(req.user);
+  async googleAuthRedirect(@Req() req, @Res() res: express.Response) {
+    const result = await this.authService.validateGoogleUser(req.user);
+    res.redirect(`kitoya://auth/callback?token=${result.access_token}`);
   }
 }

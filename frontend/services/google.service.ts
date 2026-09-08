@@ -6,12 +6,12 @@ WebBrowser.maybeCompleteAuthSession();
 export const googleAuthService = {
   loginWithGoogle: async () => {
     // Backend URL for Google OAuth2 authentication
-    const backendAuthUrl = "http://192.168.1.15:3000/auth/google";
+    const backendAuthUrl = "https://api.kitoya.com/auth/google";
 
     // Open the authentication session in a web browser and wait for the result
     const result = await WebBrowser.openAuthSessionAsync(
       backendAuthUrl,
-      "http://192.168.1.15:3000/auth/google/callback",
+      "https://api.kitoya.com/auth/google/callback",
     );
 
     if (result.type === "success" && result.url) {

@@ -24,6 +24,7 @@ import {
 } from "@expo-google-fonts/inter";
 import { authService } from "@/services/auth.service";
 import { useNotificationResponseListener } from "@/services/notifications.service";
+import { Text, View } from "react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -94,10 +95,13 @@ function RootLayoutNav() {
 
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [debugToken, setDebugToken] = useState<string | null>(null); // temporaire
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = await authService.getToken();
+      console.log("=== TOKEN AU DÉMARRAGE ===", token);
+      setDebugToken(token); // temporaire
       setIsAuthenticated(!!token);
       setIsCheckingAuth(false);
     };
@@ -107,7 +111,18 @@ function RootLayoutNav() {
   useNotificationResponseListener();
 
   if (isCheckingAuth) {
-    return null;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#000",
+        }}
+      >
+        <Text style={{ color: "#fff" }}>Checking auth...</Text>
+      </View>
+    );
   }
 
   return (
