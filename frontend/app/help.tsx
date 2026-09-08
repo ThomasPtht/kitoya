@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   Linking,
   Alert,
+  KeyboardAvoidingView,
+  SafeAreaView,
 } from "react-native";
 import { useState } from "react";
 import { feedbackService } from "@/services/feedback.service";
@@ -84,162 +86,176 @@ export default function HelpScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color="#FFFFFF" />
-        </Pressable>
-        <View>
-          <Text style={styles.supportSubtitle}>{t("help.headerSubtitle")}</Text>
-          <Text style={styles.headerTitle}>{t("help.headerTitle")}</Text>
-        </View>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={90} // ajuste selon la hauteur de ton header
       >
-        {/* Quick Actions Section */}
-        <Text style={styles.sectionHeader}>
-          {t("help.sections.quickActions")}
-        </Text>
-        <View style={styles.cardContainer}>
-          <Pressable style={styles.quickActionRow} onPress={handleEmailSupport}>
-            <View style={styles.quickActionLeft}>
-              <Feather name="mail" size={18} color="#05C785" />
-              <Text style={styles.quickActionText}>
-                {t("help.quickActions.emailSupport")}
-              </Text>
-            </View>
-            <Text style={styles.quickActionValue}>hello@kitoya.com</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
+            <Feather name="arrow-left" size={24} color="#FFFFFF" />
           </Pressable>
-
-          <View style={styles.separator} />
-
-          <Pressable
-            style={styles.quickActionRow}
-            onPress={() => setFeedbackType("Bug")}
-          >
-            <View style={styles.quickActionLeft}>
-              <Feather name="alert-octagon" size={18} color="#05C785" />
-              <Text style={styles.quickActionText}>
-                {t("help.quickActions.reportBug")}
-              </Text>
-            </View>
-            <Feather name="chevron-right" size={16} color="#555" />
-          </Pressable>
-
-          <View style={styles.separator} />
-
-          <Pressable
-            style={styles.quickActionRow}
-            onPress={() => setFeedbackType("Feature")}
-          >
-            <View style={styles.quickActionLeft}>
-              <Feather name="life-buoy" size={18} color="#05C785" />
-              <Text style={styles.quickActionText}>
-                {t("help.quickActions.suggestFeature")}
-              </Text>
-            </View>
-            <Feather name="chevron-right" size={16} color="#555" />
-          </Pressable>
+          <View>
+            <Text style={styles.supportSubtitle}>
+              {t("help.headerSubtitle")}
+            </Text>
+            <Text style={styles.headerTitle}>{t("help.headerTitle")}</Text>
+          </View>
         </View>
 
-        {/* Frequently Asked Section */}
-        <Text style={styles.sectionHeader}>
-          {t("help.sections.frequentlyAsked")}
-        </Text>
-
-        {faqs.map((faq, index) => {
-          const isOpen = openFaqIndex === index;
-          return (
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Quick Actions Section */}
+          <Text style={styles.sectionHeader}>
+            {t("help.sections.quickActions")}
+          </Text>
+          <View style={styles.cardContainer}>
             <Pressable
-              key={index}
-              style={[styles.faqCard, isOpen && styles.faqCardActive]}
-              onPress={() => setOpenFaqIndex(isOpen ? null : index)}
+              style={styles.quickActionRow}
+              onPress={handleEmailSupport}
             >
-              <View style={styles.faqHeaderRow}>
-                <Text style={styles.faqQuestion}>{faq.question}</Text>
-                <Feather
-                  name={isOpen ? "chevron-up" : "chevron-down"}
-                  size={18}
-                  color={isOpen ? "#05C785" : "#888"}
-                />
+              <View style={styles.quickActionLeft}>
+                <Feather name="mail" size={18} color="#05C785" />
+                <Text style={styles.quickActionText}>
+                  {t("help.quickActions.emailSupport")}
+                </Text>
               </View>
-              {isOpen && <Text style={styles.faqAnswer}>{faq.answer}</Text>}
+              <Text style={styles.quickActionValue}>hello@kitoya.com</Text>
             </Pressable>
-          );
-        })}
 
-        {/* Send Feedback Section */}
-        <Text style={styles.sectionHeader}>
-          {t("help.sections.sendFeedback")}
-        </Text>
-        <View style={styles.feedbackCard}>
-          {/* Type Selector Tabs */}
-          <View style={styles.tabContainer}>
-            {(["Question", "Bug", "Feature"] as const).map((type) => {
-              const active = feedbackType === type;
-              return (
-                <TouchableOpacity
-                  key={type}
-                  style={[styles.tabButton, active && styles.tabButtonActive]}
-                  onPress={() => setFeedbackType(type)}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={[styles.tabText, active && styles.tabTextActive]}
-                  >
-                    {type}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+            <View style={styles.separator} />
+
+            <Pressable
+              style={styles.quickActionRow}
+              onPress={() => setFeedbackType("Bug")}
+            >
+              <View style={styles.quickActionLeft}>
+                <Feather name="alert-octagon" size={18} color="#05C785" />
+                <Text style={styles.quickActionText}>
+                  {t("help.quickActions.reportBug")}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={16} color="#555" />
+            </Pressable>
+
+            <View style={styles.separator} />
+
+            <Pressable
+              style={styles.quickActionRow}
+              onPress={() => setFeedbackType("Feature")}
+            >
+              <View style={styles.quickActionLeft}>
+                <Feather name="life-buoy" size={18} color="#05C785" />
+                <Text style={styles.quickActionText}>
+                  {t("help.quickActions.suggestFeature")}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={16} color="#555" />
+            </Pressable>
           </View>
 
-          {/* Message Input */}
-          <Text style={styles.inputLabel}>{t("help.inputs.messageLabel")}</Text>
-          <TextInput
-            style={styles.messageInput}
-            placeholder={t("help.inputs.messagePlaceholder")}
-            placeholderTextColor="#555"
-            multiline
-            value={message}
-            onChangeText={setMessage}
-          />
+          {/* Frequently Asked Section */}
+          <Text style={styles.sectionHeader}>
+            {t("help.sections.frequentlyAsked")}
+          </Text>
 
-          {/* Email Input */}
-          <Text style={styles.inputLabel}>{t("help.inputs.emailLabel")}</Text>
-          <TextInput
-            style={styles.emailInput}
-            placeholder={t("help.inputs.emailPlaceholder")}
-            placeholderTextColor="#555"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
+          {faqs.map((faq, index) => {
+            const isOpen = openFaqIndex === index;
+            return (
+              <Pressable
+                key={index}
+                style={[styles.faqCard, isOpen && styles.faqCardActive]}
+                onPress={() => setOpenFaqIndex(isOpen ? null : index)}
+              >
+                <View style={styles.faqHeaderRow}>
+                  <Text style={styles.faqQuestion}>{faq.question}</Text>
+                  <Feather
+                    name={isOpen ? "chevron-up" : "chevron-down"}
+                    size={18}
+                    color={isOpen ? "#05C785" : "#888"}
+                  />
+                </View>
+                {isOpen && <Text style={styles.faqAnswer}>{faq.answer}</Text>}
+              </Pressable>
+            );
+          })}
 
-          {/* Submit Button */}
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={handleSendFeedback}
-            activeOpacity={0.8}
-          >
-            <Feather
-              name="send"
-              size={16}
-              color="#121212"
-              style={{ marginRight: 8 }}
-            />
-            <Text style={styles.submitButtonText}>
-              {t("help.buttons.send")}
+          {/* Send Feedback Section */}
+          <Text style={styles.sectionHeader}>
+            {t("help.sections.sendFeedback")}
+          </Text>
+          <View style={styles.feedbackCard}>
+            {/* Type Selector Tabs */}
+            <View style={styles.tabContainer}>
+              {(["Question", "Bug", "Feature"] as const).map((type) => {
+                const active = feedbackType === type;
+                return (
+                  <TouchableOpacity
+                    key={type}
+                    style={[styles.tabButton, active && styles.tabButtonActive]}
+                    onPress={() => setFeedbackType(type)}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={[styles.tabText, active && styles.tabTextActive]}
+                    >
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Message Input */}
+            <Text style={styles.inputLabel}>
+              {t("help.inputs.messageLabel")}
             </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+            <TextInput
+              style={styles.messageInput}
+              placeholder={t("help.inputs.messagePlaceholder")}
+              placeholderTextColor="#555"
+              multiline
+              value={message}
+              onChangeText={setMessage}
+            />
+
+            {/* Email Input */}
+            <Text style={styles.inputLabel}>{t("help.inputs.emailLabel")}</Text>
+            <TextInput
+              style={styles.emailInput}
+              placeholder={t("help.inputs.emailPlaceholder")}
+              placeholderTextColor="#555"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            {/* Submit Button */}
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleSendFeedback}
+              activeOpacity={0.8}
+            >
+              <Feather
+                name="send"
+                size={16}
+                color="#121212"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={styles.submitButtonText}>
+                {t("help.buttons.send")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
