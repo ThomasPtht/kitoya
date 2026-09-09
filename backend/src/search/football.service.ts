@@ -40,9 +40,6 @@ export class FootballService {
     }
 
     const translatedQuery = this.translateCountryQuery(query);
-    console.log(
-      `DEBUG: Requête originale="${query}" → Traduite="${translatedQuery}"`,
-    ); // ← ajoute ce log
 
     try {
       const response = await axios.get(`${this.baseUrl}/teams`, {

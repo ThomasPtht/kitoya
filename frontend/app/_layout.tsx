@@ -42,7 +42,6 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    console.log("Fonts loaded:", loaded, "Error:", error);
     if (error) throw error;
   }, [error]);
 

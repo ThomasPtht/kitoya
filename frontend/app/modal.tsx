@@ -48,8 +48,6 @@ export default function CameraModal() {
       try {
         const options = { quality: 0.8, skipProcessing: false };
         const photo = await cameraRef.current.takePictureAsync(options);
-        console.log("Picture taken:", photo?.uri);
-
         router.back();
       } catch (error) {
         console.error("Error taking picture:", error);

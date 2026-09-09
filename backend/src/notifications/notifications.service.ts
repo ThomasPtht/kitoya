@@ -24,7 +24,7 @@ export class NotificationsService {
     data?: Record<string, unknown>,
   ) {
     if (!expoPushToken || !Expo.isExpoPushToken(expoPushToken)) {
-      console.log(`Skipping notification: invalid or missing token`);
+      console.warn(`Skipping notification: invalid or missing token`);
       return;
     }
 
@@ -39,8 +39,8 @@ export class NotificationsService {
     ];
 
     try {
-      const ticketChunk = await this.expo.sendPushNotificationsAsync(messages);
-      console.log('Notification sent successfully:', ticketChunk);
+      await this.expo.sendPushNotificationsAsync(messages);
+      
     } catch (error) {
       console.error('Error sending push notification', error);
     }

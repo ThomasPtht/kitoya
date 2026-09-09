@@ -37,7 +37,6 @@ export default function DrawerLayout() {
           await apiClient.post("/notifications/save-token", {
             expoPushToken: token,
           });
-          console.log("Push token successfully saved to backend");
         } catch (error) {
           console.error("Failed to save push token on backend", error);
         }

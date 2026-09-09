@@ -19,7 +19,7 @@ export async function registerForPushNotificationsAsync() {
   let token;
 
   if (!Device.isDevice) {
-    console.log("Must use physical device for Push Notifications");
+    console.warn("Must use physical device for Push Notifications");
     return;
   }
 
@@ -32,7 +32,7 @@ export async function registerForPushNotificationsAsync() {
   }
 
   if (finalStatus !== "granted") {
-    console.log("Failed to get push token for push notification!");
+    console.warn("Failed to get push token for push notification!");
     return;
   }
 
@@ -48,7 +48,6 @@ export async function registerForPushNotificationsAsync() {
     }
 
     token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-    console.log("Expo Push Token:", token);
   } catch (error) {
     console.error("Error fetching push token", error);
   }

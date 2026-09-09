@@ -93,8 +93,6 @@ const getJerseySchema = (t: (key: string) => string) =>
       .min(1, { message: t("addJersey.validation.brandRequired") }),
   });
 
-type JerseyFormValues = z.infer<ReturnType<typeof getJerseySchema>>;
-
 export default function TabAddScreen() {
   const { t } = useTranslation();
   const { jerseyId } = useLocalSearchParams<{ jerseyId?: string }>();
@@ -141,6 +139,7 @@ export default function TabAddScreen() {
   // FORM (React Hook Form & Zod)
   // ==========================================
   const schema = useMemo(() => getJerseySchema(t), [t]);
+  type JerseyFormValues = z.infer<typeof schema>;
 
   const {
     control,
@@ -454,11 +453,6 @@ export default function TabAddScreen() {
         );
         return;
       }
-
-      console.log(
-        "❌ DÉTAIL ERREUR 400 :",
-        JSON.stringify(err.response?.data, null, 2),
-      );
       Toast.show({
         type: "error",
         text1: t("addJersey.toasts.errorTitle"),

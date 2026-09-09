@@ -21,7 +21,6 @@ export interface JerseyOfTheDay {
 
 export const kotdService = {
   getJerseyOfTheDay: async () => {
-    console.log("Langue envoyée:", i18n.language);
     const response = await apiClient.get(`/kotd?locale=${i18n.language}`);
     return response.data;
   },

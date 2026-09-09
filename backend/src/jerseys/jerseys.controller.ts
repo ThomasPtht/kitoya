@@ -64,10 +64,6 @@ export class JerseysController {
       throw new BadRequestException('Authenticated user id is missing');
     }
 
-    if (!createJerseyDto.sportId) {
-      console.log('ATTENTION : sportId est vide dans le DTO');
-    }
-
     const frontImageBuffer = files.frontImage[0].buffer;
     const processedFrontImage =
       await this.imageProcessingService.removeBackground(frontImageBuffer);
@@ -82,23 +78,9 @@ export class JerseysController {
         ? await this.R2Service.uploadFile(files.backImage[0])
         : undefined;
 
-      console.log('Front image uploaded to:', frontUrl);
-      if (backUrl) {
-        console.log('Back image uploaded to:', backUrl);
-      }
 
       const sportId = req.body.sportId || createJerseyDto.sportId;
       const clubName = createJerseyDto.clubName;
-
-      console.log('[JerseyController] resolved sportId:', sportId);
-      console.log('[JerseyController] clubName:', clubName);
-      console.log('[JerseyController] dto values:', {
-        type: createJerseyDto.type,
-        condition: createJerseyDto.condition,
-        version: createJerseyDto.version,
-        isOfficial: createJerseyDto.isOfficial,
-        brand: createJerseyDto.brand,
-      });
 
       if (!sportId) {
         throw new BadRequestException('sportId est manquant dans le FormData');
@@ -130,8 +112,7 @@ export class JerseysController {
     @Query('query') query: string,
     @Query('sportId') sportId: string,
   ) {
-    console.log('DEBUG BACKEND - Query:', query);
-    console.log('DEBUG BACKEND - SportId:', sportId);
+
     if (!query || !sportId) {
       throw new BadRequestException('Query and sportId are required');
     }

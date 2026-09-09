@@ -29,7 +29,6 @@ export class KotdController {
   @Post(':jerseyId/like')
   @UseGuards(AuthGuard('jwt'))
   async toggleLike(@Param('jerseyId') jerseyId: string, @Req() req: Request) {
-    console.log('CONTENU REQ.USER 🔍:', (req as any).user);
     const userId = (req as any).user?.userId;
     return this.kotdService.toggleLike(jerseyId, userId);
   }
