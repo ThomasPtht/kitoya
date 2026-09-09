@@ -37,6 +37,7 @@
     "class-validator": "^0.15.1",
     "expo-server-sdk": "^7.0.0",
     "form-data": "^4.0.6",
+    "i18n-iso-countries": "^7.14.0",
     "multer": "^2.2.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
