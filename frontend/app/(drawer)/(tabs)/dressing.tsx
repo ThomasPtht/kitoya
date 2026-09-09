@@ -67,8 +67,7 @@ export default function TabDressingScreen() {
 
       // Filter by club
       const matchesClub =
-        selectedClubs.length === 0 ||
-        selectedClubs.includes(j.club?.name ?? "");
+        selectedClubs.length === 0 || selectedClubs.includes(j.club?.id ?? "");
 
       //Filter by season
       const matchesSeason =

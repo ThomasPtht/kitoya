@@ -84,8 +84,7 @@ export default function FilterModal({
   const filteredForSeasons = useMemo(() => {
     return jerseys.filter((j) => {
       const matchClub =
-        selectedClubs.length === 0 ||
-        selectedClubs.includes(j.club?.name || "");
+        selectedClubs.length === 0 || selectedClubs.includes(j.club?.id || "");
       const matchType =
         selectedKitTypes.length === 0 ||
         selectedKitTypes.includes(j.type || "");
@@ -113,8 +112,7 @@ export default function FilterModal({
   const filteredForBrands = useMemo(() => {
     return jerseys.filter((j) => {
       const matchClub =
-        selectedClubs.length === 0 ||
-        selectedClubs.includes(j.club?.name || "");
+        selectedClubs.length === 0 || selectedClubs.includes(j.club?.id || "");
       const matchSeason =
         selectedSeasons.length === 0 ||
         selectedSeasons.includes(j.season || "");
@@ -143,8 +141,7 @@ export default function FilterModal({
   const filteredForKitTypes = useMemo(() => {
     return jerseys.filter((j) => {
       const matchClub =
-        selectedClubs.length === 0 ||
-        selectedClubs.includes(j.club?.name || "");
+        selectedClubs.length === 0 || selectedClubs.includes(j.club?.id || "");
       const matchSeason =
         selectedSeasons.length === 0 ||
         selectedSeasons.includes(j.season || "");
@@ -172,8 +169,7 @@ export default function FilterModal({
   const filteredForVersions = useMemo(() => {
     return jerseys.filter((j) => {
       const matchClub =
-        selectedClubs.length === 0 ||
-        selectedClubs.includes(j.club?.name || "");
+        selectedClubs.length === 0 || selectedClubs.includes(j.club?.id || "");
       const matchSeason =
         selectedSeasons.length === 0 ||
         selectedSeasons.includes(j.season || "");
@@ -201,8 +197,7 @@ export default function FilterModal({
   const filteredForConditions = useMemo(() => {
     return jerseys.filter((j) => {
       const matchClub =
-        selectedClubs.length === 0 ||
-        selectedClubs.includes(j.club?.name || "");
+        selectedClubs.length === 0 || selectedClubs.includes(j.club?.id || "");
       const matchSeason =
         selectedSeasons.length === 0 ||
         selectedSeasons.includes(j.season || "");
@@ -229,9 +224,15 @@ export default function FilterModal({
 
   // --- EXTRACTION DES LISTES UNIQUES ---
   const allClubs = useMemo(() => {
-    return Array.from(new Set(filteredForClubs.map((j) => j.club?.name)))
-      .filter((name): name is string => Boolean(name))
-      .sort();
+    const uniqueClubs = new Map<string, string>();
+    filteredForClubs.forEach((j) => {
+      if (j.club?.id && j.club?.name) {
+        uniqueClubs.set(j.club.id, j.club.name);
+      }
+    });
+    return Array.from(uniqueClubs.entries())
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [filteredForClubs]);
 
   const allSeasons = useMemo(() => {
@@ -296,11 +297,11 @@ export default function FilterModal({
             }
           >
             {allClubs.map((club) => {
-              const isSelected = selectedClubs.includes(club);
+              const isSelected = selectedClubs.includes(club.id);
               return (
                 <TouchableOpacity
-                  key={club}
-                  onPress={() => toggleClub(club)}
+                  key={club.id}
+                  onPress={() => toggleClub(club.id)}
                   style={styles.item}
                 >
                   <Feather
@@ -308,7 +309,7 @@ export default function FilterModal({
                     size={16}
                     color={isSelected ? "#05C785" : "#555"}
                   />
-                  <Text style={styles.itemText}>{club}</Text>
+                  <Text style={styles.itemText}>{club.name}</Text>
                 </TouchableOpacity>
               );
             })}

@@ -29,11 +29,11 @@ export const useFilterStore = create<FilterState>((set) => ({
 
   setSearch: (search) => set({ search }),
 
-  toggleClub: (club) =>
+  toggleClub: (clubId: string) =>
     set((state) => ({
-      selectedClubs: state.selectedClubs.includes(club)
-        ? state.selectedClubs.filter((c) => c !== club)
-        : [...state.selectedClubs, club],
+      selectedClubs: state.selectedClubs.includes(clubId)
+        ? state.selectedClubs.filter((c) => c !== clubId)
+        : [...state.selectedClubs, clubId],
     })),
 
   toggleSeason: (season) =>

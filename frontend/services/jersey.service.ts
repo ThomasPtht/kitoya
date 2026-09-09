@@ -17,7 +17,9 @@ export interface JerseyData {
   backImageUri?: string | null;
   backImageUrl?: string | null;
   club?: {
+    id: string;
     name: string;
+    logoUrl: string;
   };
   isOfficial: boolean;
   brand: string;
