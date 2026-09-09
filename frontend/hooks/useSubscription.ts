@@ -8,6 +8,7 @@ import Purchases, {
 import Constants from "expo-constants";
 import { authService } from "@/services/auth.service";
 import { router } from "expo-router";
+import i18n from "@/lib/i18n";
 
 const isExpoGo = Constants.appOwnership === "expo";
 
@@ -31,7 +32,6 @@ export const useSubscription = () => {
         return;
       }
 
-      // RevenueCat gère la clé universelle (que ce soit pour iOS ou Android en test ou prod)
       Purchases.configure({ apiKey });
 
       const userInfo = await authService.getUserInfo();
@@ -65,8 +65,8 @@ export const useSubscription = () => {
   const purchasePackage = async (pkg: PurchasesPackage) => {
     if (isExpoGo) {
       Alert.alert(
-        "Expo Go Mode",
-        "Native in-app purchases do not work in Expo Go. Please create an EAS build to test.",
+        i18n.t("subscription.alerts.expoGoTitle"),
+        i18n.t("subscription.alerts.expoGoPurchaseMessage"),
       );
       return;
     }
@@ -77,13 +77,20 @@ export const useSubscription = () => {
       setCustomerInfo(customerInfo);
 
       if (customerInfo.entitlements.active["Kitroom Pro"]) {
-        Alert.alert("Success", "Your subscription is now active. Thank you!", [
-          { text: "OK", onPress: () => router.replace("/(drawer)/(tabs)") },
-        ]);
+        Alert.alert(
+          i18n.t("subscription.alerts.successTitle"),
+          i18n.t("subscription.alerts.successMessage"),
+          [
+            {
+              text: i18n.t("subscription.alerts.ok"),
+              onPress: () => router.replace("/(drawer)/(tabs)"),
+            },
+          ],
+        );
       }
     } catch (e: any) {
       if (!e.userCancelled) {
-        Alert.alert("Error", e.message);
+        Alert.alert(i18n.t("subscription.alerts.errorTitle"), e.message);
       }
     } finally {
       setIsLoading(false);
@@ -92,7 +99,10 @@ export const useSubscription = () => {
 
   const restorePurchases = async () => {
     if (isExpoGo) {
-      Alert.alert("Expo Go Mode", "Cannot restore purchases inside Expo Go.");
+      Alert.alert(
+        i18n.t("subscription.alerts.expoGoTitle"),
+        i18n.t("subscription.alerts.expoGoRestoreMessage"),
+      );
       return;
     }
 
@@ -100,9 +110,12 @@ export const useSubscription = () => {
     try {
       const info = await Purchases.restorePurchases();
       setCustomerInfo(info);
-      Alert.alert("Success", "Purchases successfully restored.");
+      Alert.alert(
+        i18n.t("subscription.alerts.successTitle"),
+        i18n.t("subscription.alerts.restoreSuccessMessage"),
+      );
     } catch (e: any) {
-      Alert.alert("Error", e.message);
+      Alert.alert(i18n.t("subscription.alerts.errorTitle"), e.message);
     } finally {
       setIsLoading(false);
     }

@@ -494,6 +494,16 @@
     }
   },
   "subscription": {
+      "alerts": {
+    "expoGoTitle": "Mode Expo Go",
+    "expoGoPurchaseMessage": "Les achats intégrés natifs ne fonctionnent pas dans Expo Go. Créez un build EAS pour tester.",
+    "expoGoRestoreMessage": "Impossible de restaurer les achats dans Expo Go.",
+    "successTitle": "Succès",
+    "successMessage": "Votre abonnement est maintenant actif. Merci !",
+    "restoreSuccessMessage": "Achats restaurés avec succès.",
+    "errorTitle": "Erreur",
+    "ok": "OK"
+  },
   "headerSubtitle": "ABONNEMENT",
   "headerTitle": "Choisissez votre formule",
   "plans": {

@@ -488,6 +488,16 @@
     }
   },
   "subscription": {
+    "alerts": {
+    "expoGoTitle": "Expo Go Mode",
+    "expoGoPurchaseMessage": "Native in-app purchases do not work in Expo Go. Please create an EAS build to test.",
+    "expoGoRestoreMessage": "Cannot restore purchases inside Expo Go.",
+    "successTitle": "Success",
+    "successMessage": "Your subscription is now active. Thank you!",
+    "restoreSuccessMessage": "Purchases successfully restored.",
+    "errorTitle": "Error",
+    "ok": "OK"
+  },
   "headerSubtitle": "MEMBERSHIP",
   "headerTitle": "Choose your plan",
   "plans": {

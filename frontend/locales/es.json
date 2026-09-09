@@ -493,6 +493,16 @@
     }
   },
   "subscription": {
+     "alerts": {
+    "expoGoTitle": "Modo Expo Go",
+    "expoGoPurchaseMessage": "Las compras integradas nativas no funcionan en Expo Go. Crea una build EAS para probar.",
+    "expoGoRestoreMessage": "No se pueden restaurar las compras en Expo Go.",
+    "successTitle": "Éxito",
+    "successMessage": "¡Tu suscripción ya está activa. Gracias!",
+    "restoreSuccessMessage": "Compras restauradas con éxito.",
+    "errorTitle": "Error",
+    "ok": "OK"
+  },
     "headerSubtitle": "SUSCRIPCIÓN",
     "headerTitle": "Elige tu fórmula",
     "plans": {
