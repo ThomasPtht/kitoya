@@ -420,7 +420,8 @@
       "noLocation": "No definido",
       "email": "Correo electrónico",
       "defaultEmail": "user@kitoya.app",
-      "subscription": "Plan de suscripción"
+      "subscription": "Plan de suscripción",
+      "manageSubscription": "Gestionar suscripción"
     },
     "preferences": {
       "pushNotifications": "Notificaciones push",

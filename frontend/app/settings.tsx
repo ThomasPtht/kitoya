@@ -392,6 +392,21 @@ export default function SettingsScreen() {
                 </Text>
               </View>
             </View>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => router.push("/upgrade")}
+            >
+              <View style={styles.rowLeft}>
+                <Feather name="credit-card" size={18} color="#05C785" />
+                <Text style={styles.label}>
+                  {t("settings.profile.manageSubscription")}
+                </Text>
+              </View>
+              <View style={styles.planBadge}>
+                <Feather name="chevron-right" size={16} color="#555" />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 

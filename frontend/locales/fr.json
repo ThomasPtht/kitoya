@@ -421,7 +421,8 @@
       "noLocation": "Non défini",
       "email": "Email",
       "defaultEmail": "user@kitoya.app",
-      "subscription": "Plan d'abonnement"
+      "subscription": "Plan d'abonnement",
+      "manageSubscription": "Gérer l'abonnement"
     },
     "preferences": {
       "pushNotifications": "Notifications Push",
