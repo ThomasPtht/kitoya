@@ -525,7 +525,7 @@
   "upgrade": {
   "alreadyElite": {
     "title": "Vous êtes membre Kitoya ÉLITE !",
-    "backButton": "Retour à l'application"
+    "backButton": "Retour"
   },
   "errors": {
     "packageNotAvailable": "Le forfait d'abonnement n'est pas disponible pour le moment.",

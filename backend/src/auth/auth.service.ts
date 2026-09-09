@@ -115,6 +115,7 @@ export class AuthService {
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      include: { subscription: true },
     });
 
     if (!user) {
@@ -245,7 +246,12 @@ export class AuthService {
 
   async updateProfile(
     userId: string,
-    dto: { isPublic?: boolean; currency?: string; location?: string, language?: string },
+    dto: {
+      isPublic?: boolean;
+      currency?: string;
+      location?: string;
+      language?: string;
+    },
   ) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
