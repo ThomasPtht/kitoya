@@ -4,18 +4,34 @@ import { authService } from "@/services/auth.service";
 
 export default function Index() {
   const [isChecking, setIsChecking] = useState(true);
-  const [hasToken, setHasToken] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    authService.getToken().then((token) => {
-      setHasToken(!!token);
-      setIsChecking(false);
-    });
+    const checkAuth = async () => {
+      const token = await authService.getToken();
+
+      if (!token) {
+        setIsAuthenticated(false);
+        setIsChecking(false);
+        return;
+      }
+
+      try {
+        await authService.getUserInfo(); // vérifie que le token est VRAIMENT valide
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+        await authService.logout(); // nettoie le vieux token invalide
+      } finally {
+        setIsChecking(false);
+      }
+    };
+    checkAuth();
   }, []);
 
   if (isChecking) return null;
 
-  return hasToken ? (
+  return isAuthenticated ? (
     <Redirect href="/(drawer)/(tabs)" />
   ) : (
     <Redirect href="/(auth)/login" />

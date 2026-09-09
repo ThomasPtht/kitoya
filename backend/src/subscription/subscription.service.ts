@@ -16,11 +16,11 @@ export class SubscriptionService {
     }
 
     const userId = event.app_user_id; // C'est l'ID de ton utilisateur (que tu as loggé via Purchases.logIn(user.id))
-    const entitlementId = event.entitlement_id; // "kitoya_elite"
+    const entitlementIds = event.entitlement_ids || []; 
     const eventType = event.type; // INITIAL_PURCHASE, RENEWAL, CANCELLATION, EXPIRATION, etc.
 
     // On s'assure que l'événement concerne bien l'abonnement ELITE
-    if (entitlementId !== 'kitoya_elite') {
+    if (!entitlementIds.includes('Kitroom Pro')) {
       return { received: true };
     }
 
