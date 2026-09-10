@@ -44,22 +44,6 @@ export default function UpgradeScreen() {
     : "2.50€";
 
   // If the user is already an Elite member, show a message and a back button
-  if (isElite) {
-    return (
-      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
-        <Feather name="check-circle" size={64} color="#D4AF37" />
-        <Text style={styles.mainTitle}>{t("upgrade.alreadyElite.title")}</Text>
-        <TouchableOpacity
-          style={styles.ctaButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.ctaButtonText}>
-            {t("upgrade.alreadyElite.backButton")}
-          </Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  }
 
   const handleSubscribe = async () => {
     const targetPackage = packages.find((pkg) => {
@@ -105,6 +89,15 @@ export default function UpgradeScreen() {
           <Feather name="x" size={22} color="#FFFFFF" />
         </Pressable>
       </View>
+
+      {isElite && (
+        <View style={styles.alreadyEliteBanner}>
+          <Feather name="check-circle" size={18} color="#D4AF37" />
+          <Text style={styles.alreadyEliteText}>
+            {t("upgrade.alreadyElite.bannerText")}
+          </Text>
+        </View>
+      )}
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -442,5 +435,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: "#666666",
     textAlign: "center",
+  },
+  alreadyEliteBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(212, 175, 55, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(212, 175, 55, 0.3)",
+    borderRadius: 12,
+    padding: 12,
+    marginHorizontal: 20,
+    margin: 10,
+  },
+  alreadyEliteText: {
+    color: "#D4AF37",
+    fontSize: 13,
+    fontWeight: "600",
+    flex: 1,
   },
 });

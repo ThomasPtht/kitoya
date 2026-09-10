@@ -85,6 +85,12 @@ export default function SettingsScreen() {
     },
   };
 
+  const formatPlanType = (planType?: string) => {
+    if (planType === "ELITE_MONTHLY") return t("settings.plans.eliteMonthly");
+    if (planType === "ELITE_YEARLY") return t("settings.plans.eliteYearly");
+    return t("settings.plans.free");
+  };
+
   const openLegalLink = (type: "legal" | "terms" | "privacy") => {
     const lang = i18n.language === "fr" ? "fr" : "en";
     Linking.openURL(LEGAL_URLS[type][lang]);
@@ -386,9 +392,7 @@ export default function SettingsScreen() {
               </View>
               <View style={styles.planBadge}>
                 <Text style={styles.planBadgeText}>
-                  {userInfo?.planType
-                    ? userInfo.planType.toUpperCase()
-                    : "FREE"}
+                  {formatPlanType(userInfo?.subscription?.planType)}
                 </Text>
               </View>
             </View>

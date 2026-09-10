@@ -20,6 +20,10 @@ import { useLocker } from "@/hooks/useLocker";
 import { calculateRank } from "@/lib/ranks";
 import { useTranslation } from "react-i18next";
 import { useUserMe } from "@/hooks/useAuthHook";
+import Toast from "react-native-toast-message";
+import { authService } from "@/services/auth.service";
+import { useQueryClient } from "@tanstack/react-query";
+import * as ImagePicker from "expo-image-picker";
 
 export default function PublicLockerScreen() {
   const { t } = useTranslation();
@@ -71,294 +75,336 @@ export default function PublicLockerScreen() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.theme.primary} />
-      </View>
-    );
-  }
+  const queryClient = useQueryClient();
 
-  if (!profileData) {
+  const handlePickAvatar = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      try {
+        await authService.updateAvatar(result.assets[0].uri);
+        queryClient.invalidateQueries({ queryKey: ["userMe"] });
+        Toast.show({
+          type: "success",
+          text1: t("profile.avatarUpdated"),
+        });
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: t("profile.avatarUpdateFailed"),
+        });
+      }
+    }
+
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.theme.primary} />
+        </View>
+      );
+    }
+
+    if (!profileData) {
+      return (
+        <SafeAreaView style={styles.container}>
+          <View style={styles.errorContainer}>
+            <Ionicons
+              name="alert-circle-outline"
+              size={48}
+              color={Colors.theme.textMuted}
+            />
+            <Text style={styles.errorText}>{t("publicLocker.notFound")}</Text>
+            <TouchableOpacity
+              style={styles.backButtonSimple}
+              onPress={() => router.back()}
+            >
+              <Text style={styles.backButtonText}>
+                {t("publicLocker.backButton")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      );
+    }
+
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={Colors.theme.textMuted}
-          />
-          <Text style={styles.errorText}>{t("publicLocker.notFound")}</Text>
+        {/* Top Bar: Back Button, Share Button + Public Locker Badge */}
+        <View style={styles.topBar}>
           <TouchableOpacity
-            style={styles.backButtonSimple}
+            style={styles.iconButton}
             onPress={() => router.back()}
           >
-            <Text style={styles.backButtonText}>
-              {t("publicLocker.backButton")}
-            </Text>
+            <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
           </TouchableOpacity>
+
+          <View style={styles.rightGroup}>
+            <View style={styles.publicBadge}>
+              <Ionicons
+                name="globe-outline"
+                size={14}
+                color={Colors.theme.primary}
+              />
+              <Text style={styles.publicBadgeText}>
+                {t("publicLocker.badge")}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={handleShare}
+              style={styles.shareIconButton}
+            >
+              <Feather name="share-2" size={16} color={Colors.theme.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </SafeAreaView>
-    );
-  }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Bar: Back Button, Share Button + Public Locker Badge */}
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => router.back()}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
+          {/* Profile Header */}
+          <View style={styles.profileHeader}>
+            <View style={styles.avatarContainer}>
+              {profileData.avatarUrl ? (
+                <Image
+                  source={{ uri: profileData.avatarUrl }}
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Ionicons
+                  name="shirt-outline"
+                  size={36}
+                  color={Colors.theme.primary}
+                />
+              )}
+            </View>
 
-        <View style={styles.rightGroup}>
-          <View style={styles.publicBadge}>
+            <View style={styles.identityContainer}>
+              <Text style={styles.name}>
+                {profileData.fullName || profileData.username}
+              </Text>
+              <Text style={styles.handle}>@{profileData.username}</Text>
+              {profileData.location && (
+                <View style={styles.locationRow}>
+                  <Ionicons
+                    name="location-outline"
+                    size={13}
+                    color={Colors.theme.textMuted}
+                  />
+                  <Text style={styles.locationText}>
+                    {profileData.location}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Bio */}
+          {profileData.bio && <Text style={styles.bio}>{profileData.bio}</Text>}
+
+          {/* Stats Cards (Kits / Clubs) */}
+          <View style={styles.statsRow}>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>
+                {t("publicLocker.stats.kits")}
+              </Text>
+              <Text style={styles.statValue}>{profileData.kitsCount ?? 0}</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>
+                {t("publicLocker.stats.clubs")}
+              </Text>
+              <Text style={styles.statValue}>
+                {profileData.clubsCount ?? 0}
+              </Text>
+            </View>
+          </View>
+
+          {/* Collector Rank Badge */}
+          <View style={styles.rankRow}>
             <Ionicons
-              name="globe-outline"
+              name="trophy-outline"
               size={14}
               color={Colors.theme.primary}
             />
-            <Text style={styles.publicBadgeText}>
-              {t("publicLocker.badge")}
+            <Text style={styles.rankText}>
+              <Text style={styles.rankHighlight}>
+                {currentRank.toUpperCase()}
+              </Text>{" "}
+              {t("publicLocker.collectorRank")}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={handleShare}
-            style={styles.shareIconButton}
-          >
-            <Feather name="share-2" size={16} color={Colors.theme.primary} />
-          </TouchableOpacity>
-        </View>
-      </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Profile Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarContainer}>
-            <Ionicons
-              name="shirt-outline"
-              size={36}
-              color={Colors.theme.primary}
-            />
-          </View>
-
-          <View style={styles.identityContainer}>
-            <Text style={styles.name}>
-              {profileData.fullName || profileData.username}
+          {/* Section Shared Kits */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              {t("publicLocker.sharedKits")}
             </Text>
-            <Text style={styles.handle}>@{profileData.username}</Text>
-            {profileData.location && (
-              <View style={styles.locationRow}>
-                <Ionicons
-                  name="location-outline"
-                  size={13}
-                  color={Colors.theme.textMuted}
-                />
-                <Text style={styles.locationText}>{profileData.location}</Text>
-              </View>
-            )}
-          </View>
-        </View>
-
-        {/* Bio */}
-        {profileData.bio && <Text style={styles.bio}>{profileData.bio}</Text>}
-
-        {/* Stats Cards (Kits / Clubs) */}
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>{t("publicLocker.stats.kits")}</Text>
-            <Text style={styles.statValue}>{profileData.kitsCount ?? 0}</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>
-              {t("publicLocker.stats.clubs")}
+            <Text style={styles.sectionCount}>
+              {profileData.jerseys?.length || 0} {t("publicLocker.exhibits")}
             </Text>
-            <Text style={styles.statValue}>{profileData.clubsCount ?? 0}</Text>
           </View>
-        </View>
 
-        {/* Collector Rank Badge */}
-        <View style={styles.rankRow}>
-          <Ionicons
-            name="trophy-outline"
-            size={14}
-            color={Colors.theme.primary}
-          />
-          <Text style={styles.rankText}>
-            <Text style={styles.rankHighlight}>
-              {currentRank.toUpperCase()}
-            </Text>{" "}
-            {t("publicLocker.collectorRank")}
-          </Text>
-        </View>
+          {/* Jerseys Grid */}
+          <View style={styles.jerseysGrid}>
+            {profileData.jerseys?.map((jersey: any) => {
+              const hasBack = !!(jersey.backImageUrl || jersey.backImage);
+              const isShowingBack = showBackImage[jersey.id] && hasBack;
+              const currentImage = isShowingBack
+                ? jersey.backImageUrl || jersey.backImage
+                : jersey.frontImageUrl || jersey.frontImage;
 
-        {/* Section Shared Kits */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
-            {t("publicLocker.sharedKits")}
-          </Text>
-          <Text style={styles.sectionCount}>
-            {profileData.jerseys?.length || 0} {t("publicLocker.exhibits")}
-          </Text>
-        </View>
+              return (
+                <View key={jersey.id} style={styles.jerseyCard}>
+                  <View style={styles.jerseyImageContainer}>
+                    <Image
+                      source={{ uri: currentImage }}
+                      style={styles.jerseyImage}
+                      resizeMode="cover"
+                    />
 
-        {/* Jerseys Grid */}
-        <View style={styles.jerseysGrid}>
-          {profileData.jerseys?.map((jersey: any) => {
-            const hasBack = !!(jersey.backImageUrl || jersey.backImage);
-            const isShowingBack = showBackImage[jersey.id] && hasBack;
-            const currentImage = isShowingBack
-              ? jersey.backImageUrl || jersey.backImage
-              : jersey.frontImageUrl || jersey.frontImage;
+                    {/* Type tag at the top right of the image */}
+                    <View style={styles.imageTagBadge}>
+                      <Text style={styles.imageTagText}>
+                        {jersey.club?.name
+                          ? jersey.club.name.substring(0, 3).toUpperCase()
+                          : "KIT"}
+                        -{jersey.season?.slice(-2) || "XX"}-
+                        {jersey.type?.charAt(0).toUpperCase() || "H"}
+                      </Text>
+                    </View>
 
-            return (
-              <View key={jersey.id} style={styles.jerseyCard}>
-                <View style={styles.jerseyImageContainer}>
-                  <Image
-                    source={{ uri: currentImage }}
-                    style={styles.jerseyImage}
-                    resizeMode="cover"
-                  />
+                    {/* Button to toggle Front / Back (if a back image exists) */}
+                    {hasBack && (
+                      <TouchableOpacity
+                        style={styles.flipButtonMini}
+                        onPress={() => toggleImageSide(jersey.id)}
+                      >
+                        <Ionicons
+                          name="repeat-outline"
+                          size={13}
+                          color="#FFFFFF"
+                        />
+                        <Text style={styles.flipButtonText}>
+                          {isShowingBack
+                            ? t("publicLocker.buttons.front")
+                            : t("publicLocker.buttons.back")}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
 
-                  {/* Type tag at the top right of the image */}
-                  <View style={styles.imageTagBadge}>
-                    <Text style={styles.imageTagText}>
-                      {jersey.club?.name
-                        ? jersey.club.name.substring(0, 3).toUpperCase()
-                        : "KIT"}
-                      -{jersey.season?.slice(-2) || "XX"}-
-                      {jersey.type?.charAt(0).toUpperCase() || "H"}
-                    </Text>
-                  </View>
-
-                  {/* Button to toggle Front / Back (if a back image exists) */}
-                  {hasBack && (
+                    {/* Like button at the bottom left of the image */}
                     <TouchableOpacity
-                      style={styles.flipButtonMini}
-                      onPress={() => toggleImageSide(jersey.id)}
+                      style={[
+                        styles.likeButtonMini,
+                        jersey.hasLiked ? styles.likedBg : styles.unlikedBg,
+                      ]}
+                      onPress={() => {
+                        if (isOwnLocker) {
+                          setLikesModalJerseyId(jersey.id); // sur son propre locker : ouvre juste la liste
+                        } else {
+                          toggleLike(jersey.id); // sinon, comportement normal de like
+                        }
+                      }}
+                      onLongPress={() => setLikesModalJerseyId(jersey.id)} // appui long : voir la liste, même sur locker des autres
+                      disabled={isOwnLocker && false} // le bouton reste actif pour ouvrir la liste, juste le like est bloqué
                     >
                       <Ionicons
-                        name="repeat-outline"
-                        size={13}
-                        color="#FFFFFF"
+                        name="heart"
+                        size={14}
+                        color={
+                          jersey.hasLiked ? "#05C785" : Colors.theme.textMuted
+                        }
                       />
-                      <Text style={styles.flipButtonText}>
-                        {isShowingBack
-                          ? t("publicLocker.buttons.front")
-                          : t("publicLocker.buttons.back")}
+                      <Text
+                        style={[
+                          styles.likeCountMiniText,
+                          jersey.hasLiked
+                            ? styles.likedTextColor
+                            : styles.unlikedTextColor,
+                        ]}
+                      >
+                        {jersey.likesCount ?? 0}
                       </Text>
                     </TouchableOpacity>
-                  )}
+                  </View>
 
-                  {/* Like button at the bottom left of the image */}
-                  <TouchableOpacity
-                    style={[
-                      styles.likeButtonMini,
-                      jersey.hasLiked ? styles.likedBg : styles.unlikedBg,
-                    ]}
-                    onPress={() => {
-                      if (isOwnLocker) {
-                        setLikesModalJerseyId(jersey.id); // sur son propre locker : ouvre juste la liste
-                      } else {
-                        toggleLike(jersey.id); // sinon, comportement normal de like
-                      }
-                    }}
-                    onLongPress={() => setLikesModalJerseyId(jersey.id)} // appui long : voir la liste, même sur locker des autres
-                    disabled={isOwnLocker && false} // le bouton reste actif pour ouvrir la liste, juste le like est bloqué
-                  >
-                    <Ionicons
-                      name="heart"
-                      size={14}
-                      color={
-                        jersey.hasLiked ? "#05C785" : Colors.theme.textMuted
-                      }
-                    />
-                    <Text
-                      style={[
-                        styles.likeCountMiniText,
-                        jersey.hasLiked
-                          ? styles.likedTextColor
-                          : styles.unlikedTextColor,
-                      ]}
-                    >
-                      {jersey.likesCount ?? 0}
+                  {/* Text info below the card */}
+                  <View style={styles.jerseyInfo}>
+                    <Text style={styles.jerseyClubName} numberOfLines={1}>
+                      {jersey.club?.name}
                     </Text>
-                  </TouchableOpacity>
+                    <Text style={styles.jerseySeasonType}>
+                      {jersey.season}{" "}
+                      {jersey.type
+                        ? `/ ${t(`addJersey.types.${jersey.type.toUpperCase()}`)}`
+                        : ""}
+                    </Text>
+                  </View>
                 </View>
-
-                {/* Text info below the card */}
-                <View style={styles.jerseyInfo}>
-                  <Text style={styles.jerseyClubName} numberOfLines={1}>
-                    {jersey.club?.name}
-                  </Text>
-                  <Text style={styles.jerseySeasonType}>
-                    {jersey.season}{" "}
-                    {jersey.type
-                      ? `/ ${t(`addJersey.types.${jersey.type.toUpperCase()}`)}`
-                      : ""}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      </ScrollView>
-      <Modal
-        visible={!!likesModalJerseyId}
-        onRequestClose={() => setLikesModalJerseyId(null)}
-        transparent
-        animationType="fade"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{t("publicLocker.likedBy")}</Text>
-              <TouchableOpacity onPress={() => setLikesModalJerseyId(null)}>
-                <Ionicons name="close" size={22} color="#FFFFFF" />
-              </TouchableOpacity>
-            </View>
-
-            {isLoadingLikers ? (
-              <ActivityIndicator
-                color={Colors.theme.primary}
-                style={{ marginVertical: 20 }}
-              />
-            ) : (
-              <FlatList
-                data={likersList ?? []}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.likerRow}
-                    onPress={() => handleUserPress(item.username)}
-                  >
-                    <View style={styles.likerAvatar}>
-                      <Ionicons
-                        name="person"
-                        size={16}
-                        color={Colors.theme.primary}
-                      />
-                    </View>
-                    <Text style={styles.likerUsername}>@{item.username}</Text>
-                  </TouchableOpacity>
-                )}
-                ListEmptyComponent={
-                  <Text style={styles.emptyLikesText}>
-                    {t("publicLocker.noLikesYet")}
-                  </Text>
-                }
-              />
-            )}
+              );
+            })}
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
-  );
+        </ScrollView>
+        <Modal
+          visible={!!likesModalJerseyId}
+          onRequestClose={() => setLikesModalJerseyId(null)}
+          transparent
+          animationType="fade"
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {t("publicLocker.likedBy")}
+                </Text>
+                <TouchableOpacity onPress={() => setLikesModalJerseyId(null)}>
+                  <Ionicons name="close" size={22} color="#FFFFFF" />
+                </TouchableOpacity>
+              </View>
+
+              {isLoadingLikers ? (
+                <ActivityIndicator
+                  color={Colors.theme.primary}
+                  style={{ marginVertical: 20 }}
+                />
+              ) : (
+                <FlatList
+                  data={likersList ?? []}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.likerRow}
+                      onPress={() => handleUserPress(item.username)}
+                    >
+                      <View style={styles.likerAvatar}>
+                        <Ionicons
+                          name="person"
+                          size={16}
+                          color={Colors.theme.primary}
+                        />
+                      </View>
+                      <Text style={styles.likerUsername}>@{item.username}</Text>
+                    </TouchableOpacity>
+                  )}
+                  ListEmptyComponent={
+                    <Text style={styles.emptyLikesText}>
+                      {t("publicLocker.noLikesYet")}
+                    </Text>
+                  }
+                />
+              )}
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
+    );
+  };
 }
 
 const styles = StyleSheet.create({
@@ -704,5 +750,10 @@ const styles = StyleSheet.create({
     color: Colors.theme.textMuted,
     textAlign: "center",
     paddingVertical: 20,
+  },
+  avatarImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
   },
 });

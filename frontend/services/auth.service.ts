@@ -111,4 +111,20 @@ export const authService = {
     const response = await apiClient.put("/auth/update-bio", { bio });
     return response.data;
   },
+
+  updateAvatar: async (imageUri: string) => {
+    const formData = new FormData();
+    formData.append("avatar", {
+      uri: imageUri,
+      name: "avatar.jpg",
+      type: "image/jpeg",
+    } as any);
+
+    const { data } = await apiClient.put("/auth/update-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data;
+  },
 };

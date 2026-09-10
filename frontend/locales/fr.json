@@ -424,6 +424,11 @@
       "subscription": "Plan d'abonnement",
       "manageSubscription": "Gérer l'abonnement"
     },
+      "plans": {
+    "free": "GRATUIT",
+    "eliteMonthly": "ELITE MENSUEL",
+    "eliteYearly": "ELITE ANNUEL"
+  },
     "preferences": {
       "pushNotifications": "Notifications Push",
       "publicLocker": "Vestiaire public par défaut",
@@ -535,8 +540,9 @@
 },
   "upgrade": {
   "alreadyElite": {
-    "title": "Vous êtes membre Kitoya ÉLITE !",
-    "backButton": "Retour"
+ "bannerText": "Vous êtes membre Kitoya ELITE !"
+
+
   },
   "errors": {
     "packageNotAvailable": "Le forfait d'abonnement n'est pas disponible pour le moment.",

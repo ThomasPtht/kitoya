@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategyService } from '../google-strategy/google-strategy.service';
 import { GoogleStrategyController } from '../google-strategy/google-strategy.controller';
+import { R2Module } from 'src/r2/r2.module';
 
 @Module({
   // import jwt module and configure it with a secret and expiration time
@@ -18,6 +19,7 @@ import { GoogleStrategyController } from '../google-strategy/google-strategy.con
       signOptions: { expiresIn: '7d' },
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    R2Module,
   ],
   controllers: [AuthController, GoogleStrategyController],
   providers: [AuthService, JwtStrategy, GoogleStrategyService],

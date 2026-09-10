@@ -19,6 +19,7 @@ export class LockerService {
         rank: true,
         location: true,
         bio: true,
+        avatarUrl: true,
       },
     });
 

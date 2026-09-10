@@ -8,6 +8,7 @@ export interface PublicLockerData {
   rank: string | null;
   location: string | null;
   bio: string | null;
+  avatarUrl: string | null;
   kitsCount: number;
   clubsCount: number;
   jerseys: any[];

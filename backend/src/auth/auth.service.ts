@@ -284,4 +284,15 @@ export class AuthService {
     const { password, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
   }
+
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+    });
+
+    const { password, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
+  }
 }

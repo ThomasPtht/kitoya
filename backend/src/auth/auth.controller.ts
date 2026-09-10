@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,7 +8,9 @@ import {
   Post,
   Put,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -17,6 +20,8 @@ import type { Request } from 'express';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ChangeUsernameDto } from './dto/change-username';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { R2Service } from 'src/r2/r2.service';
 
 interface JwtRequest extends Request {
   user: {
@@ -28,7 +33,10 @@ interface JwtRequest extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private r2Service: R2Service,
+  ) {}
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -80,5 +88,21 @@ export class AuthController {
   async updateBio(@Req() req: JwtRequest, @Body('bio') bio: string) {
     const userId = req.user.userId;
     return this.authService.updateBio(bio, userId);
+  }
+
+  @Put('update-avatar')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateAvatar(
+    @Req() req: JwtRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Avatar image is required');
+    }
+
+    const avatarUrl = await this.r2Service.uploadFile(file);
+
+    return this.authService.updateAvatar(req.user.userId, avatarUrl);
   }
 }
