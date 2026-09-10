@@ -32,6 +32,7 @@ import { useFocusEffect } from "expo-router";
 import { BRANDS } from "@/constants/Jerseys";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useTranslation } from "react-i18next";
+import { usePostHog } from "posthog-react-native";
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "XXXL"];
 const JERSEY_TYPE_KEYS = [
@@ -97,6 +98,8 @@ export default function TabAddScreen() {
   const { t } = useTranslation();
   const { jerseyId } = useLocalSearchParams<{ jerseyId?: string }>();
   const isEditing = !!jerseyId;
+
+  const posthog = usePostHog();
 
   // ==========================================
   //  DATA & EXTERNAL HOOKS (API, React Query)
@@ -425,6 +428,16 @@ export default function TabAddScreen() {
         });
       } else {
         await createJersey(formData);
+        posthog?.capture("Jersey Added", {
+          club: data.clubName,
+          brand: data.brand,
+          season: data.season,
+          type: data.type,
+          size: data.size,
+          condition: data.condition,
+          version: data.version,
+          isOfficial: data.isOfficial,
+        });
         Toast.show({
           type: "success",
           text1: t("addJersey.toasts.successTitle"),

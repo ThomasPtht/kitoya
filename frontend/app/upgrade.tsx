@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import {
@@ -13,6 +13,7 @@ import {
 import Toast from "react-native-toast-message";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useTranslation } from "react-i18next";
+import { usePostHog } from "posthog-react-native";
 
 type IntervalKey = "month" | "year";
 
@@ -24,6 +25,12 @@ export default function UpgradeScreen() {
   // Hook RevenueCat
   const { packages, purchasePackage, restorePurchases, isElite } =
     useSubscription();
+
+     const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog?.screen("Upgrade");
+  }, []);
 
   const monthlyPackage = packages.find(
     (pkg) => pkg.identifier === "elite_monthly",

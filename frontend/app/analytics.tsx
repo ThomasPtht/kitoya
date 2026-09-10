@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import DonutChart from "@/components/DonutChart";
 import AreaChart from "@/components/AreaChart";
 import { formatText } from "@/components/JerseyDetail";
+import { usePostHog } from "posthog-react-native";
 
 interface CrownJewelData {
   clubName: string;
@@ -54,6 +55,12 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
   const { data, isLoading, error } = useCollectionAnalytics();
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [scrollEnabled, setScrollEnabled] = useState(true);
+
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog?.screen("Analytics");
+  }, [posthog]);
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =

@@ -24,6 +24,7 @@ import Toast from "react-native-toast-message";
 import { googleAuthService } from "@/services/google.service";
 import i18n from "@/lib/i18n";
 import { Feather } from "@expo/vector-icons";
+import { usePostHog } from "posthog-react-native";
 
 export default function RegisterScreen() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -33,6 +34,7 @@ export default function RegisterScreen() {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
   const { t } = useTranslation();
+  const posthog = usePostHog();
 
   const registerSchema = z.object({
     username: z
@@ -95,6 +97,8 @@ export default function RegisterScreen() {
       setIsUsernameAvailable(null);
       await authService.register(data.username, data.email, data.password);
       await authService.updateProfile({ language: i18n.language });
+
+      posthog?.capture("User Registered", { method: "email" });
       // router.push("/(drawer)/(tabs)");
       router.push("/onboarding");
     } catch (error: any) {

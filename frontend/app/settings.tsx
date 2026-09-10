@@ -21,6 +21,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "../lib/i18n";
 import { useTranslation } from "react-i18next";
+import { usePostHog } from "posthog-react-native";
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -28,6 +29,12 @@ export default function SettingsScreen() {
   const queryClient = useQueryClient();
 
   const [publicLocker, setPublicLocker] = useState(false);
+
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog?.screen("Settings");
+  }, []);
 
   useEffect(() => {
     if (userInfo?.isPublic !== undefined) {

@@ -22,8 +22,8 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
 } from "@expo-google-fonts/inter";
-import { authService } from "@/services/auth.service";
 import { useNotificationResponseListener } from "@/services/notifications.service";
+import { PostHogProvider, usePostHog } from "posthog-react-native";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -56,12 +56,21 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <RootLayoutNav />
-        <Toast />
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <PostHogProvider
+      apiKey={process.env.EXPO_PUBLIC_POSTHOG_API_KEY}
+      options={{
+        host: "https://eu.i.posthog.com",
+        disabled: __DEV__, // Disable PostHog in development mode
+        captureAppLifecycleEvents: true, // Capture app lifecycle events
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <RootLayoutNav />
+          <Toast />
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </PostHogProvider>
   );
 }
 

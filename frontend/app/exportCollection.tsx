@@ -11,7 +11,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useJerseyCount, useJerseys } from "@/hooks/useJerseyHook";
 import { jerseyService } from "@/services/jersey.service";
 import { File, Paths } from "expo-file-system";
@@ -20,6 +20,7 @@ import { exportCollectionToPdf } from "../lib/pdf-export";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
+import { usePostHog } from "posthog-react-native";
 
 type ExportFormat = "csv" | "json" | "pdf";
 
@@ -35,6 +36,12 @@ export default function ExportCollectionScreen() {
 
   const { data: count } = useJerseyCount();
   const { data: jerseyData = [] } = useJerseys();
+
+    const posthog = usePostHog();
+  
+    useEffect(() => {
+      posthog?.screen("Export");
+    }, [posthog]);
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =

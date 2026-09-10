@@ -10,7 +10,7 @@ import {
 
 import { useJerseys } from "@/hooks/useJerseyHook";
 import CardCollection from "@/components/CardCollection";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { JerseyData } from "@/services/jersey.service";
 import JerseyModalWrapper from "@/components/JerseyModalWrapper";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { useFilterStore } from "@/stores/useFilterStore";
 import FilterModal from "@/components/FilterModal";
 import { Colors } from "@/constants/Colors";
+import { usePostHog } from "posthog-react-native";
 
 export default function TabDressingScreen() {
   const { t } = useTranslation();
@@ -31,6 +32,12 @@ export default function TabDressingScreen() {
   const [selectedJersey, setSelectedJersey] = useState<JerseyData | null>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const { width } = useWindowDimensions();
+
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog?.screen("Dressing");
+  }, []);
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =

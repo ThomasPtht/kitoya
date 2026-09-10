@@ -20,7 +20,8 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com"
+        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com",
+        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_AiL69ewBu5vNWsK3hXvRVciNGLyJMaBN8FyzAY7f9JZ3"
       }
     }
   },

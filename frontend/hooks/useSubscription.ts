@@ -9,6 +9,7 @@ import Constants from "expo-constants";
 import { authService } from "@/services/auth.service";
 import { router } from "expo-router";
 import i18n from "@/lib/i18n";
+import { usePostHog } from "posthog-react-native";
 
 const isExpoGo = Constants.appOwnership === "expo";
 
@@ -16,6 +17,8 @@ export const useSubscription = () => {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [packages, setPackages] = useState<PurchasesPackage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const posthog = usePostHog();
 
   useEffect(() => {
     if (!isExpoGo) {
@@ -70,6 +73,9 @@ export const useSubscription = () => {
       );
       return;
     }
+    posthog?.capture("subscription_purchase_started", {
+      package: pkg.identifier,
+    });
 
     setIsLoading(true);
     try {
@@ -77,6 +83,10 @@ export const useSubscription = () => {
       setCustomerInfo(customerInfo);
 
       if (customerInfo.entitlements.active["Kitroom Pro"]) {
+        posthog?.capture("subscription_purchase_completed", {
+          package: pkg.identifier,
+          price: pkg.product.price,
+        });
         Alert.alert(
           i18n.t("subscription.alerts.successTitle"),
           i18n.t("subscription.alerts.successMessage"),
