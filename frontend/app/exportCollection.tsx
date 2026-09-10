@@ -37,11 +37,11 @@ export default function ExportCollectionScreen() {
   const { data: count } = useJerseyCount();
   const { data: jerseyData = [] } = useJerseys();
 
-    const posthog = usePostHog();
-  
-    useEffect(() => {
-      posthog?.screen("Export");
-    }, [posthog]);
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog?.screen("Export Screen");
+  }, [posthog]);
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
