@@ -11,12 +11,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { Prisma } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { R2Service } from 'src/r2/r2.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private r2Service: R2Service,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -285,8 +287,17 @@ export class AuthService {
     return userWithoutPassword;
   }
 
-
   async updateAvatar(userId: string, avatarUrl: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatarUrl: true },
+    });
+
+    // delete the old avatar from storage if it exists and is not the default avatar
+    if (user?.avatarUrl) {
+      await this.r2Service.deleteFile(user.avatarUrl);
+    }
+
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: { avatarUrl },
