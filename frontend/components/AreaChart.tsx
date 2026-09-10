@@ -52,7 +52,7 @@ export default function AreaChart({
       endFillColor={color}
       endOpacity={0.02}
       curved
-      hideDataPoints
+      // hideDataPoints
       rulesColor="rgba(255,255,255,0.05)"
       rulesType="solid"
       yAxisTextStyle={{ color: "#666666", fontSize: 10 }}
