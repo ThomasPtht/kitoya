@@ -27,7 +27,6 @@ export default function SettingsScreen() {
   const { data: userInfo } = useUserMe();
   const queryClient = useQueryClient();
 
-  const [pushNotifications, setPushNotifications] = useState(true);
   const [publicLocker, setPublicLocker] = useState(false);
 
   useEffect(() => {
@@ -420,21 +419,6 @@ export default function SettingsScreen() {
             {t("settings.sections.preferences")}
           </Text>
           <View style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.rowLeft}>
-                <Feather name="bell" size={18} color="#05C785" />
-                <Text style={styles.label}>
-                  {t("settings.preferences.pushNotifications")}
-                </Text>
-              </View>
-              <Switch
-                value={pushNotifications}
-                onValueChange={setPushNotifications}
-                trackColor={{ false: "#222", true: "#05C785" }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
             <View style={styles.separator} />
 
             <View style={styles.row}>

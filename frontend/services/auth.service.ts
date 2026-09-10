@@ -91,7 +91,7 @@ export const authService = {
   },
 
   changeUsername: async (newUsername: string) => {
-    const response = await apiClient.post("/auth/change-username", {
+    const response = await apiClient.put("/auth/change-username", {
       newUsername,
     });
     return response.data;
