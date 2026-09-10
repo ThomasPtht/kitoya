@@ -52,6 +52,8 @@ export default function AreaChart({
       endFillColor={color}
       endOpacity={0.02}
       curved
+      dataPointsColor="#FFFFFF"
+      dataPointsRadius={2}
       // hideDataPoints
       rulesColor="rgba(255,255,255,0.05)"
       rulesType="solid"

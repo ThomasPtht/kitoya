@@ -93,12 +93,12 @@ export default function PublicLockerScreen() {
 
         Toast.show({
           type: "success",
-          text1: t("profile.avatarUpdated"),
+          text1: t("settings.profile.avatarUpdated"),
         });
       } catch (error) {
         Toast.show({
           type: "error",
-          text1: t("profile.avatarUpdateFailed"),
+          text1: t("settings.profile.avatarUpdateFailed"),
         });
       }
     }

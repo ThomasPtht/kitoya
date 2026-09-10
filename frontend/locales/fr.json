@@ -422,7 +422,9 @@
       "email": "Email",
       "defaultEmail": "user@kitoya.app",
       "subscription": "Plan d'abonnement",
-      "manageSubscription": "Gérer l'abonnement"
+      "manageSubscription": "Gérer l'abonnement",
+      "avatarUpdated": "Avatar mis à jour avec succès.",
+      "avatarUpdateFailed": "Échec de la mise à jour de l'avatar"
     },
       "plans": {
     "free": "GRATUIT",

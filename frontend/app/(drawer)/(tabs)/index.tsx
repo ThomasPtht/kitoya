@@ -240,6 +240,7 @@ const styles = StyleSheet.create({
     maxWidth: "48%",
     height: 120,
     overflow: "hidden",
+    marginBottom: 10,
   },
   statLabel: {
     color: Colors.theme.textMuted,

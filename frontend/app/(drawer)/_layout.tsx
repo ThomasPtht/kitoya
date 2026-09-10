@@ -147,41 +147,6 @@ export default function DrawerLayout() {
                 <Text style={styles.navText}>{t("drawer.nav.invite")}</Text>
               </Pressable>
 
-              {/* Export Collection (Réservé ELITE / ADMIN) */}
-              <Pressable
-                style={styles.navItem}
-                onPress={() => {
-                  props.navigation.closeDrawer();
-                  if (hasEliteAccess) {
-                    router.push("/exportCollection");
-                  } else {
-                    router.push("/subscription");
-                  }
-                }}
-              >
-                <Feather
-                  name="download"
-                  size={18}
-                  color={hasEliteAccess ? "#9E9E9E" : "#555555"}
-                />
-                <Text
-                  style={[
-                    styles.navText,
-                    !hasEliteAccess && { color: "#555555" },
-                  ]}
-                >
-                  {t("drawer.nav.export")}
-                </Text>
-                {!hasEliteAccess && (
-                  <View style={styles.lockBadge}>
-                    <Feather name="lock" size={10} color="#05C785" />
-                    <Text style={styles.lockBadgeText}>
-                      {t("drawer.eliteBadge")}
-                    </Text>
-                  </View>
-                )}
-              </Pressable>
-
               {/* Collection Stats (Réservé ELITE / ADMIN) */}
               <Pressable
                 style={styles.navItem}
@@ -206,6 +171,41 @@ export default function DrawerLayout() {
                   ]}
                 >
                   {t("drawer.nav.stats")}
+                </Text>
+                {!hasEliteAccess && (
+                  <View style={styles.lockBadge}>
+                    <Feather name="lock" size={10} color="#05C785" />
+                    <Text style={styles.lockBadgeText}>
+                      {t("drawer.eliteBadge")}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+
+              {/* Export Collection (Réservé ELITE / ADMIN) */}
+              <Pressable
+                style={styles.navItem}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  if (hasEliteAccess) {
+                    router.push("/exportCollection");
+                  } else {
+                    router.push("/subscription");
+                  }
+                }}
+              >
+                <Feather
+                  name="download"
+                  size={18}
+                  color={hasEliteAccess ? "#9E9E9E" : "#555555"}
+                />
+                <Text
+                  style={[
+                    styles.navText,
+                    !hasEliteAccess && { color: "#555555" },
+                  ]}
+                >
+                  {t("drawer.nav.export")}
                 </Text>
                 {!hasEliteAccess && (
                   <View style={styles.lockBadge}>
