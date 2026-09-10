@@ -134,6 +134,12 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
     color: CHART_COLORS[i % CHART_COLORS.length],
   }));
 
+  const versionDonutData = (data?.versions ?? []).map((v, i) => ({
+    name: formatLabel(v.name),
+    count: v.count,
+    color: CHART_COLORS[i % CHART_COLORS.length],
+  }));
+
   const conditionDonutData = (data?.conditions ?? []).map((c, i) => ({
     name: formatLabel(c.name),
     count: c.count,
@@ -454,7 +460,7 @@ export default function AnalyticsScreen({ onClose }: { onClose?: () => void }) {
             <View style={styles.donutCard}>
               <View style={styles.donutContainer}>
                 <DonutChart
-                  data={conditionDonutData}
+                  data={versionDonutData}
                   centerLabel={t("analytics.cards.totalKits")}
                 />
               </View>
