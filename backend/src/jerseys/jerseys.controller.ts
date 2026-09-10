@@ -69,15 +69,24 @@ export class JerseysController {
       await this.imageProcessingService.removeBackground(frontImageBuffer);
 
     try {
-      // Upload
+      // Upload front image to R2 and get the URL
       const frontUrl = await this.R2Service.uploadFile({
         ...files.frontImage[0],
         buffer: processedFrontImage,
       });
-      const backUrl = files.backImage
-        ? await this.R2Service.uploadFile(files.backImage[0])
-        : undefined;
 
+      // process and upload back image if it exists
+      let backUrl: string | undefined;
+      if (files.backImage?.[0]) {
+        const processedBackImage =
+          await this.imageProcessingService.removeBackground(
+            files.backImage[0].buffer,
+          );
+        backUrl = await this.R2Service.uploadFile({
+          ...files.backImage[0],
+          buffer: processedBackImage,
+        });
+      }
 
       const sportId = req.body.sportId || createJerseyDto.sportId;
       const clubName = createJerseyDto.clubName;
@@ -112,7 +121,6 @@ export class JerseysController {
     @Query('query') query: string,
     @Query('sportId') sportId: string,
   ) {
-
     if (!query || !sportId) {
       throw new BadRequestException('Query and sportId are required');
     }
@@ -187,14 +195,25 @@ export class JerseysController {
     const dtoWithUrls: any = { ...updateJerseyDto };
 
     if (files.frontImage?.[0]) {
-      dtoWithUrls.frontImageUrl = await this.R2Service.uploadFile(
-        files.frontImage[0],
-      );
+      const processedFrontImage =
+        await this.imageProcessingService.removeBackground(
+          files.frontImage[0].buffer,
+        );
+      dtoWithUrls.frontImageUrl = await this.R2Service.uploadFile({
+        ...files.frontImage[0],
+        buffer: processedFrontImage,
+      });
     }
+
     if (files.backImage?.[0]) {
-      dtoWithUrls.backImageUrl = await this.R2Service.uploadFile(
-        files.backImage[0],
-      );
+      const processedBackImage =
+        await this.imageProcessingService.removeBackground(
+          files.backImage[0].buffer,
+        );
+      dtoWithUrls.backImageUrl = await this.R2Service.uploadFile({
+        ...files.backImage[0],
+        buffer: processedBackImage,
+     });
     }
 
     // if clubName is provided and clubId is not, create a new club or find existing one, then update the jersey's clubId
