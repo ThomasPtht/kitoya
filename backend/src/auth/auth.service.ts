@@ -190,6 +190,8 @@ export class AuthService {
       where: { email: googleUser.email },
     });
 
+    const isNewUser = !user;
+
     if (!user) {
       const username = await this.generateUniqueUsername(googleUser.email);
 
@@ -216,6 +218,7 @@ export class AuthService {
         isPublic: user.isPublic,
         planType: 'FREE',
       },
+      isNewUser, // Return whether the user is new or existing
     };
   }
 

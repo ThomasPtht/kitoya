@@ -11,20 +11,21 @@ export const googleAuthService = {
     // Open the authentication session in a web browser and wait for the result
     const result = await WebBrowser.openAuthSessionAsync(
       backendAuthUrl,
-      "https://api.kitoya.com/auth/google/callback",
+      "kitoya://auth/callback",
     );
 
     if (result.type === "success" && result.url) {
       // Extract the token from the callback URL
       const urlParams = new URLSearchParams(result.url.split("?")[1]);
       const token = urlParams.get("token");
+      const isNewUser = urlParams.get("isNewUser") === "true";
 
       if (token) {
         // Store the token securely using SecureStore
         await SecureStore.setItemAsync("user_token", token);
-        return true;
+        return { success: true, isNewUser };
       }
     }
-    return false;
+    return { success: false, isNewUser: false };
   },
 };

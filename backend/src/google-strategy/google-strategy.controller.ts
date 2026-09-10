@@ -15,6 +15,8 @@ export class GoogleStrategyController {
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res: express.Response) {
     const result = await this.authService.validateGoogleUser(req.user);
-    res.redirect(`kitoya://auth/callback?token=${result.access_token}`);
+    res.redirect(
+      `kitoya://auth/callback?token=${result.access_token}&isNewUser=${result.isNewUser}`,
+    );
   }
 }

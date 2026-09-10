@@ -23,12 +23,14 @@ import z from "zod";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
 import { AntDesign, Feather } from "@expo/vector-icons";
+import { usePostHog } from "posthog-react-native";
 
 export default function LoginScreen() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const { t } = useTranslation();
+  const posthog = usePostHog();
 
   const loginSchema = z.object({
     email: z
@@ -71,9 +73,13 @@ export default function LoginScreen() {
   const handleGoogleLogin = async () => {
     try {
       setIsGoogleLoading(true);
-      const success = await googleAuthService.loginWithGoogle();
-      if (success) {
-        router.replace("/(drawer)/(tabs)");
+      const result = await googleAuthService.loginWithGoogle();
+      if (result.success) {
+        posthog?.capture(
+          result.isNewUser ? "user_registered" : "user_logged_in",
+          { method: "google" },
+        );
+        router.replace(result.isNewUser ? "/onboarding" : "/(drawer)/(tabs)");
       }
     } catch (error) {
       Toast.show({

@@ -125,9 +125,13 @@ export default function RegisterScreen() {
   const handleGoogleRegister = async () => {
     try {
       setIsGoogleLoading(true);
-      const success = await googleAuthService.loginWithGoogle();
-      if (success) {
-        router.push("/(drawer)/(tabs)");
+      const result = await googleAuthService.loginWithGoogle();
+      if (result.success) {
+        posthog?.capture(
+          result.isNewUser ? "user_registered" : "user_logged_in",
+          { method: "google" },
+        );
+        router.push(result.isNewUser ? "/onboarding" : "/(drawer)/(tabs)");
       }
     } catch (error) {
       Toast.show({
