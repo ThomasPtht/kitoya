@@ -15,13 +15,15 @@ export const googleAuthService = {
     );
 
     if (result.type === "success" && result.url) {
-      // Extract the token from the callback URL
-      const urlParams = new URLSearchParams(result.url.split("?")[1]);
+      // Utilise directement l'objet URL pour un parsing plus fiable
+      const [, queryString] = result.url.split("?");
+      const cleanQueryString = queryString?.split("#")[0]; // retire le fragment avant de parser
+      const urlParams = new URLSearchParams(cleanQueryString);
+
       const token = urlParams.get("token");
       const isNewUser = urlParams.get("isNewUser") === "true";
 
       if (token) {
-        // Store the token securely using SecureStore
         await SecureStore.setItemAsync("user_token", token);
         return { success: true, isNewUser };
       }
