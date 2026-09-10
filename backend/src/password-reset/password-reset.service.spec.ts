@@ -55,7 +55,11 @@ describe('PasswordResetService', () => {
     });
 
     it('should generate a code, store its hash, and send the reset email', async () => {
-      const userFromDb = { id: 'user-id', email: 'thomas@example.com' };
+      const userFromDb = {
+        id: 'user-id',
+        email: 'thomas@example.com',
+        language: 'fr',
+      };
       mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
       mockPrismaService.user.update.mockResolvedValue(userFromDb);
 
@@ -79,6 +83,7 @@ describe('PasswordResetService', () => {
       expect(mockEmailService.sendPasswordResetEmail).toHaveBeenCalledWith(
         'thomas@example.com',
         sentCode,
+        'fr',
       );
     });
   });

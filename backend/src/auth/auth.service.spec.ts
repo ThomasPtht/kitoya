@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { R2Service } from '../r2/r2.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -22,6 +23,12 @@ describe('AuthService', () => {
     },
   };
 
+  const mockR2Service = {
+    uploadFile: jest.fn(),
+    getSignedUrl: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+
   const mockJwtService = {
     signAsync: jest.fn().mockResolvedValue('fake-jwt-token'),
   };
@@ -32,6 +39,7 @@ describe('AuthService', () => {
         AuthService,
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: JwtService, useValue: mockJwtService },
+        { provide: R2Service, useValue: mockR2Service },
       ],
     }).compile();
 

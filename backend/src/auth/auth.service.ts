@@ -11,7 +11,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { Prisma } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { R2Service } from 'src/r2/r2.service';
+import { R2Service } from '../r2/r2.service';
 
 @Injectable()
 export class AuthService {

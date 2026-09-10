@@ -75,7 +75,6 @@ describe('FootballService', () => {
           params: { search: 'Real Madrid' },
           headers: {
             'x-apisports-key': 'fake-api-key',
-            'x-rapidapi-host': 'v3.football.api-sports.io',
           },
         },
       );
