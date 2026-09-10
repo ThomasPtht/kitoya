@@ -423,6 +423,11 @@
       "subscription": "Plan de suscripción",
       "manageSubscription": "Gestionar suscripción"
     },
+       "plans": {
+    "free": "GRATUITO",
+    "eliteMonthly": "ÉLITE MENSUAL",
+    "eliteYearly": "ÉLITE ANUAL"
+  },
     "preferences": {
       "pushNotifications": "Notificaciones push",
       "publicLocker": "Vestuario público por defecto",
