@@ -17,6 +17,16 @@
         "EXPO_PUBLIC_API_URL": "https://api-staging.kitoya.com"
       }
      },
+       "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com",
+        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_AiL69ewBu5vNWsK3hXvRVAY7f9JZ3"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "env": {
