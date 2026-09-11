@@ -13,6 +13,7 @@ This is a React Native application built with Expo, to allow users to easily man
 - Search and filter your collection by team, league, year, and more
 - Like integration to like kit of community jerseys and jerseys on public profiles
 - export your collection in csv/ json / or printable pdf
+- statistics screen to view your collection stats, like most represented team, years, versions, and more
 - settings screen to manage your account, add bio, change password, delete account, and more
 
 ### Technologies Used
@@ -26,7 +27,7 @@ This is a React Native application built with Expo, to allow users to easily man
 
 - NestJS
 - Prisma 6
-- PostgreSQL (Neon)
+- PostgreSQL (Neon in production, local postgres in development)
 
 #### Authentication
 

@@ -22,7 +22,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.kitoya"
+      "package": "com.kitoya.app"
     },
     "web": {
       "bundler": "metro",
