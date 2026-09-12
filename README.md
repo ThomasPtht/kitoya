@@ -45,9 +45,23 @@ This is a React Native application built with Expo, to allow users to easily man
 - Sharp (image compression and resizing)
 - RemoveBG (background removal) eventually to be replaced by FAPIHUB
 
+### Cache & State Management
+
+- Tanstack Query (data fetching and caching)
+- Zustand (client-side filter state for collection search/filtering)
+
 #### Testing
 
 - Jest (unit testing with NestJS)
+
+### Security
+
+- JWT-based authentication with secure token storage (Expo SecureStore)
+- Password hashing with bcrypt
+- backend authorization guards to protect sensitive routes
+- signed, time limited R2 URLs for jersey images to prevent unauthorized access
+- environment based secret manegement
+- google oauth2 as an alternative authentification method for users who prefer it
 
 ### Deployment (Planned)
 
