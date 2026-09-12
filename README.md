@@ -2,7 +2,7 @@
 
 This is a React Native application built with Expo, to allow users to easily manage their sports jerseys collection. The app features a sleek and modern design, with a focus on user experience and ease of use.
 
-<img width="900" height="1195" alt="IMG_9382" src="https://github.com/user-attachments/assets/6acd9271-e72e-4d0a-a1d5-a8301df11f39" />
+<img alt="IMG_9382" src="./frontend/assets/images/screenshots.png" />
 
 ### Features
 
@@ -53,6 +53,44 @@ This is a React Native application built with Expo, to allow users to easily man
 
 - VPS with Docker + Nginx reverse proxy (backend)
 - EAS Build + App Store / Google Play (mobile)
+
+### Project Structure
+
+```
+kitoya/
+├── backend/                 # NestJS API
+│   ├── src/
+│   │   ├── auth/            # Authentication (JWT, Google OAuth)
+|   |   ├── email/           # Email service (password reset)
+│   │   ├── jerseys/         # Jersey CRUD
+│   │   ├── image-processing/# Image compression and background removal
+│   │   ├── feedback/        # User feedback mail
+│   │   ├── google-strategy/ # Google OAuth2 strategy
+│   │   ├── kotd/            # Kit of the Day, likes, jersey stories
+│   │   ├── locker/          # Public profile logic
+│   │   ├── subscription/    # RevenueCat webhook handling
+│   │   ├── password-reset/  # Password reset flow
+│   │   ├── sports/
+│   │   ├── r2/              # Cloudflare R2 storage service
+│   │   ├── search/          # API-Football club search
+│   │   └── prisma/          # Prisma service
+│   └── prisma/
+│       └── schema.prisma
+│
+└── frontend/                 # React Native (Expo)
+    ├── app/                  # Expo Router screens
+    │   ├── (auth)/           # Login, register, password reset
+    │   ├── (drawer)/(tabs)/  # Main app tabs (dressing, add, etc.)
+    │   ├── locker/           # Public profile screen
+    │   └── analytics.tsx     # Elite-only collection stats
+    │   └── screens/          # Other screens (settings, analytics, feedback, etc.)
+    ├── components/           # Reusable UI components
+    ├── hooks/                # Custom React Query hooks
+    ├── lib/                  # PDF export, notifications, upload, i18n, etc.
+    ├── services/             # API clients (auth, jersey, subscription...)
+    ├── stores/               # Zustand stores (filters)
+    └── locales/              # i18n translation files
+```
 
 ## Technical Notes & Troubleshooting
 
