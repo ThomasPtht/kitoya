@@ -77,7 +77,7 @@ model DailyKitNotification {
 model Subscription {
   id     String @id @default(uuid())
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // one-to-one relationship with User
 
   status       String // 'active', 'canceled', 'past_due'
   planType     String // 'ELITE_MONTHLY', 'ELITE_YEARLY', 'FREE'

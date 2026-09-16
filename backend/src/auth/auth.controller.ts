@@ -105,4 +105,9 @@ export class AuthController {
 
     return this.authService.updateAvatar(req.user.userId, avatarUrl);
   }
+
+  @Post('apple')
+  async appleAuth(@Body('identityToken') identityToken: string) {
+    return this.authService.validateAppleUser(identityToken);
+  }
 }

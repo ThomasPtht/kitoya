@@ -127,4 +127,11 @@ export const authService = {
     });
     return data;
   },
+
+  loginWithApple: async (identityToken: string) => {
+    const response = await apiClient.post("/auth/apple", {
+      identityToken,
+    });
+    return response.data;
+  },
 };

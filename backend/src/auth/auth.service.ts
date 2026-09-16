@@ -12,6 +12,7 @@ import { LoginDto } from './dto/login.dto';
 import { Prisma } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { R2Service } from '../r2/r2.service';
+import appleSignin from 'apple-signin-auth';
 
 @Injectable()
 export class AuthService {
@@ -198,6 +199,55 @@ export class AuthService {
       user = await this.prisma.user.create({
         data: {
           email: googleUser.email,
+          username,
+          password: null,
+        },
+      });
+    }
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        isPublic: user.isPublic,
+        planType: 'FREE',
+      },
+      isNewUser, // Return whether the user is new or existing
+    };
+  }
+
+  async validateAppleUser(identityToken: string) {
+    const appleUser = await appleSignin.verifyIdToken(identityToken, {
+      audience: 'com.kitoya.app',
+    });
+
+    const email = appleUser.email;
+
+    if (!email) {
+      throw new UnauthorizedException(
+        'Apple ID token does not contain an email',
+      );
+    }
+
+    let user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    const isNewUser = !user;
+
+    if (!user) {
+      const username = await this.generateUniqueUsername(email);
+
+      user = await this.prisma.user.create({
+        data: {
+          email,
           username,
           password: null,
         },
