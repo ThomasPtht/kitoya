@@ -24,6 +24,8 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { usePostHog } from "posthog-react-native";
+import * as AppleAuthentication from "expo-apple-authentication";
+import * as SecureStore from "expo-secure-store";
 
 export default function LoginScreen() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -90,6 +92,36 @@ export default function LoginScreen() {
       console.error("Google login error:", error);
     } finally {
       setIsGoogleLoading(false);
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (!credential.identityToken) {
+        throw new Error("Apple login failed: No identity token returned");
+      }
+
+      // send the identity token to your backend for verification and login
+      const result = await authService.loginWithApple(credential.identityToken);
+      if (result.access_token) {
+        await SecureStore.setItemAsync("user_token", result.access_token);
+        posthog?.capture(
+          result.isNewUser ? "user_registered" : "user_logged_in",
+          { method: "apple" },
+        );
+        router.replace(result.isNewUser ? "/onboarding" : "/(drawer)/(tabs)");
+      }
+    } catch (e: any) {
+      if (e.code !== "ERR_REQUEST_CANCELED") {
+        Toast.show({ type: "error", text1: "Apple login failed" });
+      }
     }
   };
 
@@ -212,6 +244,21 @@ export default function LoginScreen() {
                 <Text style={styles.buttonText}>{t("auth.login.submit")} </Text>
               )}
             </TouchableOpacity>
+
+            {/* apple button */}
+            {Platform.OS === "ios" && (
+              <AppleAuthentication.AppleAuthenticationButton
+                buttonType={
+                  AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                }
+                buttonStyle={
+                  AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                }
+                cornerRadius={12}
+                style={{ width: "100%", height: 50, marginTop: 12 }}
+                onPress={handleAppleLogin}
+              />
+            )}
 
             {/* google button */}
             <GoogleButton
