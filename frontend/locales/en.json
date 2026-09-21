@@ -255,6 +255,33 @@
      "likedBy": "Aimé par",
   "noLikesYet": "Personne n'a encore aimé ce maillot"
   },
+  "moderation": {
+    "menuLabel": "More options",
+    "reportUser": "Report this profile",
+    "reportKit": "Report this kit",
+    "blockUser": "Block @{{username}}",
+    "reasonTitle": "WHY ARE YOU REPORTING THIS?",
+    "reasons": {
+      "INAPPROPRIATE": "Inappropriate or offensive content",
+      "HARASSMENT": "Harassment or hate",
+      "SPAM": "Spam or advertising",
+      "FAKE": "Fake or misleading",
+      "OTHER": "Something else"
+    },
+    "cancel": "Cancel",
+    "block": "Block",
+    "blockConfirmTitle": "Block @{{username}}?",
+    "blockConfirmMessage": "You will no longer see their profile, kits or likes, and they won't see yours.",
+    "blockedUsersTitle": "Blocked users",
+    "blockedUsersEmpty": "You haven't blocked anyone.",
+    "unblock": "Unblock",
+    "blockedTitle": "User blocked",
+    "blockedMessage": "@{{username}} has been blocked.",
+    "reportSentTitle": "Report sent",
+    "reportSentMessage": "Thank you. Our team will review it within 24 hours.",
+    "errorTitle": "Something went wrong",
+    "errorMessage": "Please try again in a moment."
+  },
   "analytics": {
     "loading": "Loading...",
     "headerSubtitle": "ANALYTICS",

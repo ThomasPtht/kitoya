@@ -24,6 +24,7 @@ import Toast from "react-native-toast-message";
 import { authService } from "@/services/auth.service";
 import { useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
+import ReportBlockMenu from "@/components/ReportBlockMenu";
 
 export default function PublicLockerScreen() {
   const { t } = useTranslation();
@@ -163,6 +164,15 @@ export default function PublicLockerScreen() {
           >
             <Feather name="share-2" size={16} color={Colors.theme.primary} />
           </TouchableOpacity>
+          {!isOwnLocker && (
+            <ReportBlockMenu
+              targetType="USER"
+              targetId={profileData.id}
+              ownerId={profileData.id}
+              ownerUsername={profileData.username}
+              onBlocked={() => router.back()}
+            />
+          )}
         </View>
       </View>
 
@@ -302,6 +312,18 @@ export default function PublicLockerScreen() {
                           : t("publicLocker.buttons.back")}
                       </Text>
                     </TouchableOpacity>
+                  )}
+
+                  {/* Report / block menu at the bottom right of the image */}
+                  {!isOwnLocker && (
+                    <ReportBlockMenu
+                      targetType="JERSEY"
+                      targetId={jersey.id}
+                      ownerId={profileData.id}
+                      ownerUsername={profileData.username}
+                      onBlocked={() => router.back()}
+                      style={styles.jerseyMenuButton}
+                    />
                   )}
 
                   {/* Like button at the bottom left of the image */}
@@ -671,6 +693,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
+  },
+  jerseyMenuButton: {
+    position: "absolute",
+    bottom: 12,
+    right: 12,
   },
   unlikedBg: {
     backgroundColor: "rgba(0, 0, 0, 0.7)",

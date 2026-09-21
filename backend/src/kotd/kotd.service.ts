@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { generateJerseyStory } from './kotd-helper';
 import { R2Service } from '../r2/r2.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { getHiddenUserIds } from '../moderation/blocks.helper';
 
 const TRANSLATIONS = {
   en: {
@@ -132,6 +133,13 @@ export class KotdService {
     }
     const selectedIndex = seed % allJerseys.length;
     const jerseyOfTheDay = allJerseys[selectedIndex];
+
+    // The kit of the day is the same for everyone: a viewer who blocked its owner
+    // (or was blocked by them) just doesn't see it.
+    const hiddenUserIds = await getHiddenUserIds(this.prisma, currentUserId);
+    if (hiddenUserIds.includes(jerseyOfTheDay.user.id)) {
+      return null;
+    }
 
     try {
       await this.prisma.dailyKitNotification.create({

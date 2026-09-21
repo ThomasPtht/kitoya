@@ -254,6 +254,33 @@
     "likedBy": "Le gusta a",
     "noLikesYet": "A nadie le gusta esta camiseta todavía"
   },
+  "moderation": {
+    "menuLabel": "Más opciones",
+    "reportUser": "Denunciar este perfil",
+    "reportKit": "Denunciar esta camiseta",
+    "blockUser": "Bloquear a @{{username}}",
+    "reasonTitle": "¿POR QUÉ DENUNCIAS ESTO?",
+    "reasons": {
+      "INAPPROPRIATE": "Contenido inapropiado u ofensivo",
+      "HARASSMENT": "Acoso u odio",
+      "SPAM": "Spam o publicidad",
+      "FAKE": "Falso o engañoso",
+      "OTHER": "Otro motivo"
+    },
+    "cancel": "Cancelar",
+    "block": "Bloquear",
+    "blockConfirmTitle": "¿Bloquear a @{{username}}?",
+    "blockConfirmMessage": "Ya no verás su perfil, sus camisetas ni sus me gusta, y tampoco verá los tuyos.",
+    "blockedUsersTitle": "Usuarios bloqueados",
+    "blockedUsersEmpty": "No has bloqueado a nadie.",
+    "unblock": "Desbloquear",
+    "blockedTitle": "Usuario bloqueado",
+    "blockedMessage": "@{{username}} ha sido bloqueado.",
+    "reportSentTitle": "Denuncia enviada",
+    "reportSentMessage": "Gracias. Nuestro equipo la revisará en un plazo de 24 horas.",
+    "errorTitle": "Algo salió mal",
+    "errorMessage": "Inténtalo de nuevo en un momento."
+  },
   "analytics": {
     "loading": "Cargando...",
     "headerSubtitle": "ESTADÍSTICAS",

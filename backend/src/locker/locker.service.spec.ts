@@ -13,6 +13,9 @@ describe('LockerService', () => {
     jersey: {
       findMany: jest.fn(),
     },
+    block: {
+      findMany: jest.fn().mockResolvedValue([]),
+    },
   };
 
   const mockR2Service = {
@@ -77,6 +80,25 @@ describe('LockerService', () => {
       await expect(service.getPublicLockerByUsername('thomas')).rejects.toThrow(
         'User not found or locker is private',
       );
+    });
+
+    it('should hide the locker from a user who blocked the owner, or was blocked by them', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(baseUser);
+      mockPrismaService.block.findMany.mockResolvedValueOnce([
+        { blockerId: 'viewer-id', blockedId: 'owner-id' },
+      ]);
+
+      await expect(
+        service.getPublicLockerByUsername('thomas', 'viewer-id'),
+      ).rejects.toThrow('User not found or locker is private');
+
+      mockPrismaService.block.findMany.mockResolvedValueOnce([
+        { blockerId: 'owner-id', blockedId: 'viewer-id' },
+      ]);
+
+      await expect(
+        service.getPublicLockerByUsername('thomas', 'viewer-id'),
+      ).rejects.toThrow('User not found or locker is private');
     });
 
     it('should allow the owner to view their own private locker', async () => {

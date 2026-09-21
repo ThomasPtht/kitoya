@@ -23,6 +23,9 @@ describe('KotdService', () => {
     user: {
       findUnique: jest.fn(),
     },
+    block: {
+      findMany: jest.fn().mockResolvedValue([]),
+    },
   };
 
   const mockR2Service = {
@@ -180,6 +183,21 @@ describe('KotdService', () => {
       const result = await service.getJerseyOfTheDay('current-user-id');
 
       expect(result!.hasLiked).toBe(true);
+    });
+
+    it('should return null when the owner of the kit is blocked by the viewer', async () => {
+      const jersey = buildJersey();
+      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
+      mockPrismaService.block.findMany.mockResolvedValueOnce([
+        { blockerId: 'current-user-id', blockedId: jersey.user.id },
+      ]);
+
+      const result = await service.getJerseyOfTheDay('current-user-id');
+
+      expect(result).toBeNull();
+      expect(
+        mockPrismaService.dailyKitNotification.create,
+      ).not.toHaveBeenCalled();
     });
   });
 

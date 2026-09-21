@@ -254,6 +254,33 @@
      "likedBy": "Aimé par",
   "noLikesYet": "Personne n'a encore aimé ce maillot"
   },
+  "moderation": {
+    "menuLabel": "Plus d'options",
+    "reportUser": "Signaler ce profil",
+    "reportKit": "Signaler ce maillot",
+    "blockUser": "Bloquer @{{username}}",
+    "reasonTitle": "POURQUOI SIGNALEZ-VOUS CECI ?",
+    "reasons": {
+      "INAPPROPRIATE": "Contenu inapproprié ou choquant",
+      "HARASSMENT": "Harcèlement ou haine",
+      "SPAM": "Spam ou publicité",
+      "FAKE": "Faux ou trompeur",
+      "OTHER": "Autre"
+    },
+    "cancel": "Annuler",
+    "block": "Bloquer",
+    "blockConfirmTitle": "Bloquer @{{username}} ?",
+    "blockConfirmMessage": "Vous ne verrez plus son profil, ses maillots ni ses likes, et il ne verra plus les vôtres.",
+    "blockedUsersTitle": "Utilisateurs bloqués",
+    "blockedUsersEmpty": "Vous n'avez bloqué personne.",
+    "unblock": "Débloquer",
+    "blockedTitle": "Utilisateur bloqué",
+    "blockedMessage": "@{{username}} a été bloqué.",
+    "reportSentTitle": "Signalement envoyé",
+    "reportSentMessage": "Merci. Notre équipe l'examinera sous 24 heures.",
+    "errorTitle": "Une erreur est survenue",
+    "errorMessage": "Veuillez réessayer dans un instant."
+  },
   "analytics": {
     "loading": "Chargement...",
     "headerSubtitle": "STATISTIQUES",

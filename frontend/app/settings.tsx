@@ -22,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "../lib/i18n";
 import { useTranslation } from "react-i18next";
 import { usePostHog } from "posthog-react-native";
+import BlockedUsersModal from "@/components/BlockedUsersModal";
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -104,6 +105,8 @@ export default function SettingsScreen() {
   };
 
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
+  const [isBlockedUsersModalVisible, setIsBlockedUsersModalVisible] =
+    useState(false);
 
   const handleChangeLanguage = async (code: string) => {
     await i18n.changeLanguage(code);
@@ -554,6 +557,19 @@ export default function SettingsScreen() {
               </View>
             </TouchableOpacity>
 
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => setIsBlockedUsersModalVisible(true)}
+            >
+              <View style={styles.rowLeft}>
+                <Feather name="slash" size={18} color="#FFFFFF" />
+                <Text style={styles.text}>
+                  {t("moderation.blockedUsersTitle")}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={16} color="#555" />
+            </TouchableOpacity>
+
             {userInfo?.hasPassword && (
               <TouchableOpacity
                 style={styles.menuItem}
@@ -607,6 +623,11 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <BlockedUsersModal
+        visible={isBlockedUsersModalVisible}
+        onClose={() => setIsBlockedUsersModalVisible(false)}
+      />
 
       {/* Username Modal */}
       <Modal

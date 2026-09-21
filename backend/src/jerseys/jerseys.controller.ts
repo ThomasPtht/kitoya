@@ -232,7 +232,7 @@ export class JerseysController {
 
   @Get(':id/likes')
   @UseGuards(JwtAuthGuard)
-  async getJerseyLikes(@Param('id') jerseyId: string) {
-    return this.jerseysService.getJerseyLikes(jerseyId);
+  async getJerseyLikes(@Param('id') jerseyId: string, @Req() req: any) {
+    return this.jerseysService.getJerseyLikes(jerseyId, req.user?.userId);
   }
 }

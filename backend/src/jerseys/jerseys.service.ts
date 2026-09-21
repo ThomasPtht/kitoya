@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateJerseyDto } from './dto/createJersey.dto';
 import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';
+import { getHiddenUserIds } from '../moderation/blocks.helper';
 
 type CreateJerseyWithUrls = CreateJerseyDto & {
   frontImageUrl: string;
@@ -617,9 +618,11 @@ export class JerseysService {
     return this.signJersey(updatedJersey);
   }
 
-  async getJerseyLikes(jerseyId: string) {
+  async getJerseyLikes(jerseyId: string, currentUserId?: string) {
+    const hiddenUserIds = await getHiddenUserIds(this.prisma, currentUserId);
+
     const likes = await this.prisma.jerseyLike.findMany({
-      where: { jerseyId },
+      where: { jerseyId, userId: { notIn: hiddenUserIds } },
       include: {
         user: { select: { id: true, username: true } },
       },
