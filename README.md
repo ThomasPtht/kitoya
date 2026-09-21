@@ -181,6 +181,38 @@ A separate staging environment runs alongside production on the same VPS, sharin
 | Database  | Neon `production` branch | Neon `staging` branch    |
 | R2 bucket | `kitoya`                 | `kitoya-staging`         |
 
+## CI/CD automation
+
+Deployments are now automated via GitHub Actions instead of manual SSH commands.
+
+- created a `staging` branch on GitHub, tracking `origin/staging`
+- workflow file: `.github/workflows/test-and-deploy.yml`
+  - runs backend tests (Jest) on every push/PR to `main` or `staging`
+  - on push to `staging` (after tests pass): SSH into VPS, run `./deploy-staging.sh`
+  - on push to `main` (after tests pass): SSH into VPS, run `./deploy-prod.sh`
+- GitHub repository secrets configured (Settings → Secrets and variables → Actions):
+  - `VPS_HOST` — VPS IP address
+  - `VPS_PORT` — custom SSH port (not default 22)
+  - `VPS_USER` — `ubuntu`
+  - `VPS_SSH_KEY` — private SSH key content 
+- both `deploy-staging.sh` and `deploy-prod.sh` explicitly `git checkout <branch>` before pulling, to avoid deploying stale code if the VPS repo was left on the wrong branch from a manual session
+
+### New workflow
+
+```bash
+git checkout staging
+# ... make changes ...
+git add .
+git commit -m "..."
+git push origin staging
+# → tests + automatic staging deployment
+
+# once validated in staging, merge via GitHub PR (staging → main)
+# → tests + automatic production deployment
+```
+
+No more manual SSH + script execution needed for routine deployments — `deploy-prod.sh`/`deploy-staging.sh` are now only run manually for troubleshooting or the very first setup.
+
 ### Useful commands
 
 - build image: `sudo docker build -t kitoya-backend .`

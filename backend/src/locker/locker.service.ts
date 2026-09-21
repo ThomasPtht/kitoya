@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { R2Service } from '../r2/r2.service';
+import { getHiddenUserIds } from '../moderation/blocks.helper';
 
 @Injectable()
 export class LockerService {
@@ -33,6 +34,14 @@ export class LockerService {
     // if locker is private and the current user is not the owner, throw an error
     if (!user.isPublic && !isOwner) {
       throw new Error('User not found or locker is private');
+    }
+
+    // Hide the locker in both directions when one of the users blocked the other
+    if (!isOwner) {
+      const hiddenUserIds = await getHiddenUserIds(this.prisma, currentUserId);
+      if (hiddenUserIds.includes(user.id)) {
+        throw new Error('User not found or locker is private');
+      }
     }
 
     const jerseys = await this.prisma.jersey.findMany({

@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { formatText } from "./KitOfTheDayCard";
 import { useTranslation } from "react-i18next";
+import ReportBlockMenu from "./ReportBlockMenu";
 
 interface KitOfTheDayModalProps {
   visible: boolean;
@@ -46,9 +47,20 @@ export default function KitOfTheDayModal({
           <Text style={styles.headerTitle}>
             {t("kitOfTheDayModal.headerTitle")}
           </Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Ionicons name="close" size={20} color="#FFFFFF" />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            {!isOwnJersey && jersey.user?.id && (
+              <ReportBlockMenu
+                targetType="JERSEY"
+                targetId={jersey.id}
+                ownerId={jersey.user.id}
+                ownerUsername={jersey.user.username}
+                onBlocked={onClose}
+              />
+            )}
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Ionicons name="close" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -189,6 +201,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     letterSpacing: 1,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   closeButton: {
     backgroundColor: "#151515",

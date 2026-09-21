@@ -25,6 +25,7 @@ import { LockerModule } from './locker/locker.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FeedbackService } from './feedback/feedback.service';
 import { FeedbackModule } from './feedback/feedback.module';
+import { ModerationModule } from './moderation/moderation.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     LockerModule,
     NotificationsModule,
     FeedbackModule,
+    ModerationModule,
   ],
   controllers: [AppController, GoogleStrategyController, LockerController],
   providers: [
