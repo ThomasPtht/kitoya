@@ -1,7 +1,7 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { router } from "expo-router";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 import {
   AntDesign,
   Feather,
@@ -244,16 +244,34 @@ export default function DrawerLayout() {
             <View style={styles.footer}>
               <Pressable
                 style={styles.logoutButton}
-                onPress={async () => {
-                  try {
-                    props.navigation.closeDrawer();
-                    await authService.logout();
-                    queryClient.clear();
-                    router.replace("/(auth)/login");
-                  } catch (error) {
-                    console.error("Logout failed:", error);
-                    router.replace("/(auth)/login");
-                  }
+                onPress={() => {
+                  Alert.alert(
+                    t("drawer.logoutConfirmTitle"),
+                    t("drawer.logoutConfirmMessage"),
+                    [
+                      {
+                        text: t("drawer.logoutCancel"),
+                        style: "cancel",
+                      },
+                      {
+                        text: t("drawer.logoutConfirm"),
+                        style: "destructive",
+
+                        onPress: async () => {
+                          try {
+                            props.navigation.closeDrawer();
+                            await authService.logout();
+                            queryClient.clear();
+                            router.replace("/(auth)/login");
+                          } catch (error) {
+                            console.error("Logout failed:", error);
+                            router.replace("/(auth)/login");
+                          }
+                        },
+                      },
+                    ],
+                    { cancelable: true },
+                  );
                 }}
               >
                 <Feather name="log-out" size={18} color="#ffffff" />

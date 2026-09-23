@@ -229,6 +229,10 @@
     },
     "eliteBadge": "ÉLITE",
     "logout": "Cerrar sesión",
+    "logoutConfirmTitle": "Cerrar sesión",
+  "logoutConfirmMessage": "¿Estás seguro de que quieres cerrar sesión?",
+  "logoutCancel": "Cancelar",
+  "logoutConfirm": "Cerrar sesión",
     "legal": {
       "privacyPolicy": "Política de privacidad",
       "termsOfService": "Condiciones de uso",

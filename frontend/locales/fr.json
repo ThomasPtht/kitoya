@@ -229,6 +229,10 @@
     },
     "eliteBadge": "ELITE",
     "logout": "Se déconnecter",
+     "logoutConfirmTitle": "Déconnexion",
+  "logoutConfirmMessage": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "logoutCancel": "Annuler",
+  "logoutConfirm": "Se déconnecter",
     "legal": {
       "privacyPolicy": "Politique de confidentialité",
       "termsOfService": "Conditions d'utilisation",

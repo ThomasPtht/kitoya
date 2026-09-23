@@ -229,6 +229,10 @@
     },
     "eliteBadge": "ELITE",
     "logout": "Log out",
+     "logoutConfirmTitle": "Log out",
+  "logoutConfirmMessage": "Are you sure you want to log out?",
+  "logoutCancel": "Cancel",
+  "logoutConfirm": "Log out",
     "legal": {
       "privacyPolicy":  "Privacy Policy",
       "termsOfService": "Terms of Service",
