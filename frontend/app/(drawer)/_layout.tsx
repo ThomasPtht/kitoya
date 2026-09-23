@@ -74,7 +74,11 @@ export default function DrawerLayout() {
             {/* User Profile Header Section - Centered */}
             <View style={styles.userProfileSection}>
               <View style={styles.avatarContainer}>
-                <UserAvatar name={userMe?.username} size={64} />
+                <UserAvatar
+                  name={userMe?.username}
+                  avatarUrl={userMe?.avatarUrl}
+                  size={64}
+                />
               </View>
 
               <Text style={styles.userName} numberOfLines={1}>
