@@ -222,6 +222,7 @@
     },
     "nav": {
       "invite": "Invite friends",
+      "weeklyRankings": "Kit of the Week",
       "export": "Export collection",
       "stats": "Collection stats",
       "settings": "Settings",
@@ -692,6 +693,21 @@
   "storyTitle": "THE STORY"
 },
 
+"weeklyRankings": {
+  "headerSubtitle": "WEEKLY RANKINGS",
+  "headerTitle": "Kit of the Week",
+  "podium": {
+    "rank1": "1st",
+    "rank2": "2nd",
+    "rank3": "3rd"
+  },
+  "listSectionTitle": "FULL RANKINGS",
+  "privateLockerNote": "Private locker",
+  "emptyState": {
+    "title": "No likes yet this week",
+    "subtitle": "Be the first to like a kit and watch it climb the weekly rankings!"
+  }
+},
 "onboarding": {
   "title": "Welcome to Kitoya",
   "greeting": "Hey",

@@ -147,6 +147,23 @@ export default function DrawerLayout() {
                 <Text style={styles.navText}>{t("drawer.nav.invite")}</Text>
               </Pressable>
 
+              <Pressable
+                style={styles.navItem}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/weekly-rankings");
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="podium-gold"
+                  size={18}
+                  color="#9E9E9E"
+                />
+                <Text style={styles.navText}>
+                  {t("drawer.nav.weeklyRankings")}
+                </Text>
+              </Pressable>
+
               {/* Collection Stats (Réservé ELITE / ADMIN) */}
               <Pressable
                 style={styles.navItem}

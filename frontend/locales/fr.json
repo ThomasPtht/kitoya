@@ -222,6 +222,7 @@
     },
     "nav": {
       "invite": "Inviter des amis",
+      "weeklyRankings": "Kit de la semaine",
       "export": "Exporter la collection",
       "stats": "Stats de collection",
       "settings": "Paramètres",
@@ -699,6 +700,21 @@
     "from": "Du vestiaire de",
     "lockerSuffix": "",
     "storyTitle": "L'HISTOIRE"
+},
+"weeklyRankings": {
+  "headerSubtitle": "CLASSEMENT HEBDOMADAIRE",
+  "headerTitle": "Kit de la semaine",
+  "podium": {
+    "rank1": "1er",
+    "rank2": "2e",
+    "rank3": "3e"
+  },
+  "listSectionTitle": "CLASSEMENT COMPLET",
+  "privateLockerNote": "Vestiaire privé",
+  "emptyState": {
+    "title": "Aucun j'aime cette semaine",
+    "subtitle": "Soyez le premier à aimer un maillot et voyez-le grimper au classement hebdomadaire !"
+  }
 },
 "onboarding": {
   "title": "Bienvenue sur Kitoya",
