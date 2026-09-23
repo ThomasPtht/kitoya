@@ -34,6 +34,7 @@ export default function RegisterScreen() {
     boolean | null
   >(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { t } = useTranslation();
   const posthog = usePostHog();
@@ -337,7 +338,7 @@ export default function RegisterScreen() {
                     style={styles.input}
                     placeholder={t("auth.register.passwordPlaceholder")}
                     placeholderTextColor="#8E8E93"
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="done"
@@ -347,6 +348,16 @@ export default function RegisterScreen() {
                     onSubmitEditing={handleSubmit(onSubmit)}
                     editable={!isSubmitting}
                   />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword((prev) => !prev)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Feather
+                      name={showPassword ? "eye" : "eye-off"}
+                      size={18}
+                      color="#8E8E93"
+                    />
+                  </TouchableOpacity>
                 </View>
               )}
             />
