@@ -4,6 +4,13 @@ import { generateJerseyStory } from './kotd-helper';
 import { R2Service } from '../r2/r2.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { getHiddenUserIds } from '../moderation/blocks.helper';
+import { RankingsService } from '../rankings/rankings.service';
+
+// A jersey newly entering the weekly top 3 won't be re-notified more than
+// once within this window, even if it oscillates around the #3 boundary as
+// likes come in and roll out of the 7-day window.
+const TOP_WEEKLY_NOTIFICATION_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const TOP_WEEKLY_RANK_THRESHOLD = 3;
 
 const TRANSLATIONS = {
   en: {
@@ -30,6 +37,9 @@ const TRANSLATIONS = {
       likeTitle: 'New Like! ❤️',
       likeBody: (likerName: string, clubName: string) =>
         `${likerName} liked your ${clubName} shirt!`,
+      topWeeklyTitle: "You're on the podium! 🏆",
+      topWeeklyBody: (rank: number, clubName: string) =>
+        `Your ${clubName} shirt is #${rank} in this week's rankings!`,
     },
   },
   fr: {
@@ -55,6 +65,9 @@ const TRANSLATIONS = {
       likeTitle: "Nouveau j'aime ! ❤️",
       likeBody: (likerName: string, clubName: string) =>
         `${likerName} a aimé votre maillot ${clubName} !`,
+      topWeeklyTitle: 'Vous êtes sur le podium ! 🏆',
+      topWeeklyBody: (rank: number, clubName: string) =>
+        `Votre maillot ${clubName} est #${rank} du classement de la semaine !`,
     },
   },
   es: {
@@ -80,6 +93,9 @@ const TRANSLATIONS = {
       likeTitle: '¡Nuevo me gusta! ❤️',
       likeBody: (likerName: string, clubName: string) =>
         `¡A ${likerName} le gustó tu camiseta del ${clubName}!`,
+      topWeeklyTitle: '¡Estás en el podio! 🏆',
+      topWeeklyBody: (rank: number, clubName: string) =>
+        `¡Tu camiseta del ${clubName} es #${rank} en la clasificación de esta semana!`,
     },
   },
 };
@@ -90,6 +106,7 @@ export class KotdService {
     private prisma: PrismaService,
     private readonly r2Service: R2Service,
     private readonly notificationsService: NotificationsService,
+    private readonly rankingsService: RankingsService,
   ) {}
 
   async getJerseyOfTheDay(
@@ -281,7 +298,67 @@ export class KotdService {
         );
       }
 
+      // This like may have just pushed the jersey into the weekly top 3 —
+      // let its owner know, independently of who liked it.
+      if (jersey) {
+        try {
+          await this.notifyIfEnteredWeeklyTop3(jersey);
+        } catch (error) {
+          console.error(
+            `Failed to send weekly top ${TOP_WEEKLY_RANK_THRESHOLD} notification for jersey ${jerseyId}:`,
+            error,
+          );
+        }
+      }
+
       return { liked: true };
     }
+  }
+
+  /**
+   * Notifies a jersey's owner when it enters the weekly top 3, with a
+   * cooldown so a jersey hovering around the #3 boundary doesn't trigger a
+   * push on every single like.
+   */
+  private async notifyIfEnteredWeeklyTop3(jersey: {
+    id: string;
+    lastTopWeeklyNotifiedAt: Date | null;
+    club: { name: string };
+    user: {
+      expoPushToken: string | null;
+      language: string;
+    };
+  }) {
+    if (!jersey.user.expoPushToken) return;
+
+    if (
+      jersey.lastTopWeeklyNotifiedAt &&
+      Date.now() - jersey.lastTopWeeklyNotifiedAt.getTime() <
+        TOP_WEEKLY_NOTIFICATION_COOLDOWN_MS
+    ) {
+      return;
+    }
+
+    const rank = await this.rankingsService.getJerseyWeeklyRank(
+      jersey.id,
+      TOP_WEEKLY_RANK_THRESHOLD,
+    );
+    if (rank === null) return;
+
+    await this.prisma.jersey.update({
+      where: { id: jersey.id },
+      data: { lastTopWeeklyNotifiedAt: new Date() },
+    });
+
+    const recipientLocale = (jersey.user.language as 'en' | 'fr' | 'es') || 'en';
+    const notifTranslations =
+      TRANSLATIONS[recipientLocale]?.notifications || TRANSLATIONS.en.notifications;
+
+    await this.notificationsService.sendPushNotification(
+      jersey.user.expoPushToken,
+      notifTranslations.topWeeklyTitle,
+      notifTranslations.topWeeklyBody(rank, jersey.club.name),
+      { type: 'top_weekly', jerseyId: jersey.id, rank: String(rank) },
+    );
   }
 }

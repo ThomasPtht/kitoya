@@ -1,7 +1,7 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { router } from "expo-router";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 import {
   AntDesign,
   Feather,
@@ -15,7 +15,6 @@ import {
 import { authService } from "@/services/auth.service";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useQueryClient } from "@tanstack/react-query";
-import { calculateRank } from "@/lib/ranks";
 import { useJerseys } from "@/hooks/useJerseyHook";
 import { handleInviteFriends } from "@/lib/invite-friends";
 import { apiClient } from "@/services/api";
@@ -23,6 +22,8 @@ import { useEffect } from "react";
 import { registerForPushNotificationsAsync } from "@/services/notifications.service";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useTranslation } from "react-i18next";
+import { useRankUp } from "@/hooks/useRankUp";
+import RankUpCelebration from "@/components/RankUpCelebration";
 
 export default function DrawerLayout() {
   const { t } = useTranslation();
@@ -47,8 +48,9 @@ export default function DrawerLayout() {
   const displayName = userMe?.name || userMe?.username || "Collector";
   const displayEmail = userMe?.email || "";
 
-  // Dynamic rank and collection count
-  const currentRank = calculateRank(jerseys);
+  // Dynamic rank and collection count (celebrates crossing a new rank threshold)
+  const { rank: currentRank, justRankedUp, dismiss: dismissRankUp } =
+    useRankUp(jerseys);
 
   // Vérification des rôles et abonnements
   const isAdmin = userMe?.role === "ADMIN";
@@ -72,7 +74,11 @@ export default function DrawerLayout() {
             {/* User Profile Header Section - Centered */}
             <View style={styles.userProfileSection}>
               <View style={styles.avatarContainer}>
-                <UserAvatar name={userMe?.username} size={64} />
+                <UserAvatar
+                  name={userMe?.username}
+                  avatarUrl={userMe?.avatarUrl}
+                  size={64}
+                />
               </View>
 
               <Text style={styles.userName} numberOfLines={1}>
@@ -145,6 +151,23 @@ export default function DrawerLayout() {
               >
                 <Feather name="user-plus" size={18} color="#9E9E9E" />
                 <Text style={styles.navText}>{t("drawer.nav.invite")}</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.navItem}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  router.push("/weekly-rankings");
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="podium-gold"
+                  size={18}
+                  color="#9E9E9E"
+                />
+                <Text style={styles.navText}>
+                  {t("drawer.nav.weeklyRankings")}
+                </Text>
               </Pressable>
 
               {/* Collection Stats (Réservé ELITE / ADMIN) */}
@@ -244,16 +267,34 @@ export default function DrawerLayout() {
             <View style={styles.footer}>
               <Pressable
                 style={styles.logoutButton}
-                onPress={async () => {
-                  try {
-                    props.navigation.closeDrawer();
-                    await authService.logout();
-                    queryClient.clear();
-                    router.replace("/(auth)/login");
-                  } catch (error) {
-                    console.error("Logout failed:", error);
-                    router.replace("/(auth)/login");
-                  }
+                onPress={() => {
+                  Alert.alert(
+                    t("drawer.logoutConfirmTitle"),
+                    t("drawer.logoutConfirmMessage"),
+                    [
+                      {
+                        text: t("drawer.logoutCancel"),
+                        style: "cancel",
+                      },
+                      {
+                        text: t("drawer.logoutConfirm"),
+                        style: "destructive",
+
+                        onPress: async () => {
+                          try {
+                            props.navigation.closeDrawer();
+                            await authService.logout();
+                            queryClient.clear();
+                            router.replace("/(auth)/login");
+                          } catch (error) {
+                            console.error("Logout failed:", error);
+                            router.replace("/(auth)/login");
+                          }
+                        },
+                      },
+                    ],
+                    { cancelable: true },
+                  );
                 }}
               >
                 <Feather name="log-out" size={18} color="#ffffff" />
@@ -281,6 +322,12 @@ export default function DrawerLayout() {
           options={{ drawerItemStyle: { display: "none" } }}
         />
       </Drawer>
+
+      <RankUpCelebration
+        visible={justRankedUp}
+        rank={currentRank}
+        onDismiss={dismissRankUp}
+      />
     </GestureHandlerRootView>
   );
 }

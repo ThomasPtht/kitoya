@@ -5,8 +5,12 @@ WebBrowser.maybeCompleteAuthSession();
 
 export const googleAuthService = {
   loginWithGoogle: async () => {
-    // Backend URL for Google OAuth2 authentication
-    const backendAuthUrl = "https://api.kitoya.com/auth/google";
+    // Same backend as the rest of the app (apiClient) — hardcoding this to
+    // production previously meant Google sign-in always authenticated
+    // against prod even on dev/staging builds, issuing a token that the
+    // locally/staging-configured backend couldn't validate (different
+    // JWT_SECRET / database), breaking every authenticated call afterwards.
+    const backendAuthUrl = `${process.env.EXPO_PUBLIC_API_URL}/auth/google`;
 
     // Open the authentication session in a web browser and wait for the result
     const result = await WebBrowser.openAuthSessionAsync(

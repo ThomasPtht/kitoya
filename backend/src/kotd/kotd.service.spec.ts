@@ -3,6 +3,7 @@ import { KotdService } from './kotd.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { R2Service } from '../r2/r2.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { RankingsService } from '../rankings/rankings.service';
 
 describe('KotdService', () => {
   let service: KotdService;
@@ -11,6 +12,7 @@ describe('KotdService', () => {
     jersey: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      update: jest.fn(),
     },
     dailyKitNotification: {
       create: jest.fn(),
@@ -36,6 +38,11 @@ describe('KotdService', () => {
     sendPushNotification: jest.fn(),
   };
 
+  const mockRankingsService = {
+    // Not in the weekly top 3 by default; individual tests override this.
+    getJerseyWeeklyRank: jest.fn().mockResolvedValue(null),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -43,6 +50,7 @@ describe('KotdService', () => {
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: R2Service, useValue: mockR2Service },
         { provide: NotificationsService, useValue: mockNotificationsService },
+        { provide: RankingsService, useValue: mockRankingsService },
       ],
     }).compile();
 
@@ -51,6 +59,7 @@ describe('KotdService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    mockRankingsService.getJerseyWeeklyRank.mockResolvedValue(null);
   });
 
   it('should be defined', () => {
@@ -286,6 +295,111 @@ describe('KotdService', () => {
       expect(
         mockNotificationsService.sendPushNotification,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('toggleLike — weekly top 3 notification', () => {
+    const buildLikedJersey = (overrides = {}) => ({
+      id: 'jersey-1',
+      userId: 'owner-id',
+      club: { name: 'Arsenal' },
+      lastTopWeeklyNotifiedAt: null,
+      user: {
+        id: 'owner-id',
+        expoPushToken: 'push-token-abc',
+        language: 'en',
+      },
+      ...overrides,
+    });
+
+    beforeEach(() => {
+      mockPrismaService.jerseyLike.findUnique.mockResolvedValue(null);
+      mockPrismaService.jerseyLike.create.mockResolvedValue({});
+      mockPrismaService.jersey.update.mockResolvedValue({});
+    });
+
+    it('notifies the owner when the jersey just entered the weekly top 3', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(buildLikedJersey());
+      mockRankingsService.getJerseyWeeklyRank.mockResolvedValue(2);
+
+      await service.toggleLike('jersey-1', 'liker-id');
+
+      expect(mockRankingsService.getJerseyWeeklyRank).toHaveBeenCalledWith(
+        'jersey-1',
+        3,
+      );
+      expect(mockPrismaService.jersey.update).toHaveBeenCalledWith({
+        where: { id: 'jersey-1' },
+        data: { lastTopWeeklyNotifiedAt: expect.any(Date) },
+      });
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).toHaveBeenCalledWith(
+        'push-token-abc',
+        "You're on the podium! 🏆",
+        expect.stringContaining('Arsenal'),
+        { type: 'top_weekly', jerseyId: 'jersey-1', rank: '2' },
+      );
+    });
+
+    it('does NOT notify when the jersey is outside the weekly top 3', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(buildLikedJersey());
+      mockRankingsService.getJerseyWeeklyRank.mockResolvedValue(null);
+
+      // Self-like, so we only exercise the top-3 path (no separate "New Like" push).
+      await service.toggleLike('jersey-1', 'owner-id');
+
+      expect(mockPrismaService.jersey.update).not.toHaveBeenCalled();
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('does NOT re-notify while the cooldown has not elapsed', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(
+        buildLikedJersey({
+          lastTopWeeklyNotifiedAt: new Date(), // just notified
+        }),
+      );
+
+      // Self-like, so we only exercise the top-3 path (no separate "New Like" push).
+      await service.toggleLike('jersey-1', 'owner-id');
+
+      expect(mockRankingsService.getJerseyWeeklyRank).not.toHaveBeenCalled();
+      expect(mockPrismaService.jersey.update).not.toHaveBeenCalled();
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('re-notifies once the cooldown has elapsed', async () => {
+      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+      mockPrismaService.jersey.findUnique.mockResolvedValue(
+        buildLikedJersey({ lastTopWeeklyNotifiedAt: twoDaysAgo }),
+      );
+      mockRankingsService.getJerseyWeeklyRank.mockResolvedValue(1);
+
+      await service.toggleLike('jersey-1', 'liker-id');
+
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).toHaveBeenCalledWith(
+        'push-token-abc',
+        "You're on the podium! 🏆",
+        expect.stringContaining('Arsenal'),
+        { type: 'top_weekly', jerseyId: 'jersey-1', rank: '1' },
+      );
+    });
+
+    it('does NOT crash toggleLike if the weekly rank lookup throws', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(buildLikedJersey());
+      mockRankingsService.getJerseyWeeklyRank.mockRejectedValue(
+        new Error('DB unavailable'),
+      );
+
+      const result = await service.toggleLike('jersey-1', 'liker-id');
+
+      expect(result).toEqual({ liked: true });
     });
   });
 });

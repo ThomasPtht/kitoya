@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jerseyService } from "@/services/jersey.service";
 import { sportsService } from "@/services/sport.service";
 import { kotdService } from "@/services/kotd.service";
+import { rankingsService } from "@/services/rankings.service";
 import i18n from "@/lib/i18n";
 
 // Get all jerseys query hook
@@ -93,6 +94,14 @@ export const useJerseyLikes = (jerseyId: string, enabled: boolean) => {
     queryKey: ["jerseyLikes", jerseyId],
     queryFn: () => jerseyService.getJerseyLikes(jerseyId),
     enabled,
+  });
+};
+
+export const useWeeklyRankings = (limit: number = 10) => {
+  return useQuery({
+    queryKey: ["weeklyRankings", limit],
+    queryFn: () => rankingsService.getWeeklyRankings(limit),
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 };
 

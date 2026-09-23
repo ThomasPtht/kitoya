@@ -4,6 +4,16 @@ export interface JerseyRankItem {
   isOfficial: boolean;
 }
 
+// Ascending order, used to detect rank-ups (index of new rank > index of previous rank).
+export const RANK_ORDER = [
+  "Rookie",
+  "Collector",
+  "Specialist",
+  "Purist",
+  "Legend",
+  "Hall of Famer",
+] as const;
+
 export const calculateRank = (jersey: JerseyRankItem[] | null): string => {
     // if jersey is null, use an empty array to avoid errors
   const safeJerseys = jersey ?? [];

@@ -30,6 +30,7 @@ import * as SecureStore from "expo-secure-store";
 export default function LoginScreen() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { t } = useTranslation();
   const posthog = usePostHog();
@@ -204,7 +205,7 @@ export default function LoginScreen() {
                     style={[styles.input, { letterSpacing: 0 }]}
                     placeholder={t("auth.login.passwordPlaceholder")}
                     placeholderTextColor="#8E8E93"
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="done"
@@ -214,6 +215,16 @@ export default function LoginScreen() {
                     onSubmitEditing={handleSubmit(onSubmit)}
                     editable={!isSubmitting}
                   />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword((prev) => !prev)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Feather
+                      name={showPassword ? "eye" : "eye-off"}
+                      size={18}
+                      color="#8E8E93"
+                    />
+                  </TouchableOpacity>
                 </View>
               )}
             />

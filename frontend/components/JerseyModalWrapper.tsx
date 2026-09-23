@@ -26,7 +26,7 @@ export default function JerseyModalWrapper({
     >
       <View style={styles.container}>
         <View style={styles.content}>
-          <JerseyDetail jersey={jersey} onClose={onClose} />
+          <JerseyDetail jersey={jersey} onClose={onClose} visible={visible} />
         </View>
       </View>
     </Modal>

@@ -222,6 +222,7 @@
     },
     "nav": {
       "invite": "Invitar a amigos",
+      "weeklyRankings": "Kit de la semana",
       "export": "Exportar colección",
       "stats": "Estadísticas de colección",
       "settings": "Ajustes",
@@ -229,6 +230,10 @@
     },
     "eliteBadge": "ÉLITE",
     "logout": "Cerrar sesión",
+    "logoutConfirmTitle": "Cerrar sesión",
+  "logoutConfirmMessage": "¿Estás seguro de que quieres cerrar sesión?",
+  "logoutCancel": "Cancelar",
+  "logoutConfirm": "Cerrar sesión",
     "legal": {
       "privacyPolicy": "Política de privacidad",
       "termsOfService": "Condiciones de uso",
@@ -690,6 +695,24 @@
     "from": "Del vestuario de",
     "lockerSuffix": "",
     "storyTitle": "HISTORIA"
+  },
+  "rankUp": {
+    "title": "NUEVO RANGO DESBLOQUEADO"
+  },
+  "weeklyRankings": {
+    "headerSubtitle": "CLASIFICACIÓN SEMANAL",
+    "headerTitle": "Kit de la semana",
+    "podium": {
+      "rank1": "1º",
+      "rank2": "2º",
+      "rank3": "3º"
+    },
+    "listSectionTitle": "CLASIFICACIÓN COMPLETA",
+    "privateLockerNote": "Armario privado",
+    "emptyState": {
+      "title": "Aún no hay 'me gusta' esta semana",
+      "subtitle": "¡Sé el primero en darle 'me gusta' a una camiseta y verla subir en la clasificación semanal!"
+    }
   },
   "onboarding": {
     "title": "Bienvenido a Kitoya",

@@ -419,6 +419,8 @@ export default function TabAddScreen() {
     }
 
     try {
+      let newlyCreatedId: string | undefined;
+
       if (isEditing) {
         await updateJersey({ id: jerseyId!, data: formData });
         Toast.show({
@@ -427,7 +429,8 @@ export default function TabAddScreen() {
           position: "bottom",
         });
       } else {
-        await createJersey(formData);
+        const createdJersey = await createJersey(formData);
+        newlyCreatedId = createdJersey?.id;
         posthog?.capture("Jersey Added", {
           club: data.clubName,
           brand: data.brand,
@@ -449,7 +452,12 @@ export default function TabAddScreen() {
       setFrontImage("");
       setBackImage(null);
       setSelectedClubId("");
-      router.navigate("/(drawer)/(tabs)/dressing");
+      // Passing the new jersey's id lets the locker screen play a "dropped in
+      // the locker" entrance animation on that specific card.
+      router.navigate({
+        pathname: "/(drawer)/(tabs)/dressing",
+        params: newlyCreatedId ? { justAddedId: newlyCreatedId } : {},
+      });
     } catch (error) {
       const err = error as any;
       if (err.response?.status === 403) {

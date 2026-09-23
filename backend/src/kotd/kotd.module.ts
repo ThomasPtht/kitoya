@@ -4,9 +4,10 @@ import { KotdController } from './kotd.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { R2Service } from '../r2/r2.service';
 import * as notificationsModule from '../notifications/notifications.module';
+import { RankingsModule } from '../rankings/rankings.module';
 
 @Module({
-  imports: [notificationsModule.NotificationsModule],
+  imports: [notificationsModule.NotificationsModule, RankingsModule],
   providers: [KotdService, PrismaService, R2Service],
   controllers: [KotdController],
 })

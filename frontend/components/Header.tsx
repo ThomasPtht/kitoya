@@ -1,9 +1,9 @@
 import Colors from "@/constants/Colors";
-import { AntDesign, Feather } from "@expo/vector-icons";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { UserAvatar } from "./UserAvatar";
 import { useUserMe } from "@/hooks/useAuthHook";
 
@@ -17,6 +17,13 @@ export default function Header() {
 
   return (
     <View style={styles.container}>
+      {/* Subtle floodlight glow instead of a flat background, for separation from the content below */}
+      <LinearGradient
+        colors={["rgba(5, 199, 133, 0.1)", "transparent"]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
       <View style={styles.row}>
         <Text onPress={() => router.push("/")} style={styles.title}>
           KITOYA
@@ -30,7 +37,11 @@ export default function Header() {
             accessibilityRole="button"
             accessibilityLabel="Account"
           >
-            <UserAvatar variant="icon" size={34} />
+            <UserAvatar
+              name={userMe?.username}
+              avatarUrl={userMe?.avatarUrl}
+              size={34}
+            />
           </Pressable>
         </View>
       </View>
@@ -44,6 +55,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     backgroundColor: Colors.dark.background,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.06)",
   },
   row: {
     flexDirection: "row",
@@ -60,9 +73,6 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.25)",
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
     alignItems: "center",
     justifyContent: "center",
   },

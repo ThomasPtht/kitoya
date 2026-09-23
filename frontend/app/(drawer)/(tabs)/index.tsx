@@ -1,5 +1,6 @@
 import CardCollection from "@/components/CardCollection";
 import KitOfTheDayCard from "@/components/KitOfTheDayCard";
+import PullToRefreshBall from "@/components/PullToRefreshBall";
 import { Colors } from "@/constants/Colors";
 import {
   useJerseyCount,
@@ -9,8 +10,10 @@ import {
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import {
   ActivityIndicator,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,16 +25,40 @@ import {
 export default function TabOneScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { data: jerseys, isLoading } = useJerseys();
-  const { data: count } = useJerseyCount();
-  const { data: club, isLoading: isClubLoading } = useMostRepresentedClub();
+  const { data: jerseys, isLoading, refetch: refetchJerseys } = useJerseys();
+  const { data: count, refetch: refetchCount } = useJerseyCount();
+  const {
+    data: club,
+    isLoading: isClubLoading,
+    refetch: refetchClub,
+  } = useMostRepresentedClub();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([refetchJerseys(), refetchCount(), refetchClub()]);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="transparent"
+            colors={["transparent"]}
+            progressBackgroundColor="transparent"
+          />
+        }
       >
+        <PullToRefreshBall refreshing={refreshing} />
         {/* New Archive Acquisition CTA Card */}
         <TouchableOpacity
           style={styles.archiveCard}

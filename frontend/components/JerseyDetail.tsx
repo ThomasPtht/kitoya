@@ -21,7 +21,14 @@ import {
   Feather,
   Ionicons,
 } from "@expo/vector-icons";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
 import { captureRef } from "react-native-view-shot";
@@ -32,6 +39,8 @@ import { useDeleteJersey, useJerseyLikes } from "@/hooks/useJerseyHook";
 interface JerseyDetailProps {
   jersey: JerseyData & { likesCount?: number };
   onClose: () => void;
+  /** Whether the surrounding modal is currently visible — re-triggers the entrance choreography each time it opens. */
+  visible?: boolean;
 }
 
 // Helper function to format strings nicely (e.g. "Very_Good" -> "Very good")
@@ -41,9 +50,46 @@ export const formatText = (text: string) => {
   return clean.charAt(0).toUpperCase() + clean.slice(1);
 };
 
-export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
+export default function JerseyDetail({
+  jersey,
+  onClose,
+  visible = true,
+}: JerseyDetailProps) {
   const { t } = useTranslation();
   const [showBackImage, setShowBackImage] = useState(false);
+
+  // Entrance choreography played each time the sheet becomes visible: the
+  // hero image scales/fades in first, then the header info cascades in.
+  const heroOpacity = useSharedValue(0);
+  const heroScale = useSharedValue(0.94);
+  const headerOpacity = useSharedValue(0);
+  const headerTranslateY = useSharedValue(16);
+
+  useEffect(() => {
+    if (visible) {
+      heroOpacity.value = 0;
+      heroScale.value = 0.94;
+      headerOpacity.value = 0;
+      headerTranslateY.value = 16;
+
+      heroOpacity.value = withTiming(1, { duration: 350 });
+      heroScale.value = withSpring(1, { damping: 15, stiffness: 140 });
+      headerOpacity.value = withDelay(150, withTiming(1, { duration: 300 }));
+      headerTranslateY.value = withDelay(
+        150,
+        withSpring(0, { damping: 16, stiffness: 160 }),
+      );
+    }
+  }, [visible]);
+
+  const heroAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: heroOpacity.value,
+    transform: [{ scale: heroScale.value }],
+  }));
+  const headerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: headerOpacity.value,
+    transform: [{ translateY: headerTranslateY.value }],
+  }));
   const activeImageUrl = showBackImage
     ? jersey.backImageUrl || jersey.frontImageUrl || jersey.frontImageUri
     : jersey.frontImageUrl || jersey.frontImageUri;
@@ -178,7 +224,11 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
         showsVerticalScrollIndicator={false}
       >
         {/* Container of the jersey image with gradient and watermark */}
-        <View ref={cardRef} collapsable={false} style={styles.imageContainer}>
+        <Animated.View
+          ref={cardRef}
+          collapsable={false}
+          style={[styles.imageContainer, heroAnimatedStyle]}
+        >
           <LinearGradient
             colors={["rgba(255, 255, 255, 0.12)", "transparent"]}
             start={{ x: 0.5, y: 0 }}
@@ -251,10 +301,12 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               <Text style={styles.watermarkUrl}>Kitoya.app</Text>
             </View>
           )}
-        </View>
+        </Animated.View>
 
         {/* Header Info: Season, Club & Community Likes */}
-        <View style={styles.headerInfoContainer}>
+        <Animated.View
+          style={[styles.headerInfoContainer, headerAnimatedStyle]}
+        >
           <View style={styles.headerInfo}>
             <Text style={styles.season}>
               {jersey.season ? jersey.season.toUpperCase() : ""}
@@ -279,7 +331,7 @@ export default function JerseyDetail({ jersey, onClose }: JerseyDetailProps) {
               </Text>
             </TouchableOpacity>
           )}
-        </View>
+        </Animated.View>
 
         {/* Badges / Tags row */}
         <View style={styles.badgesRow}>
