@@ -248,7 +248,7 @@
       "kits": "KITS",
       "clubs": "CLUBS"
     },
-    "collectorRank": "COLLECTOR",
+    "collectorRank": "COLLECTIONNEUR",
     "sharedKits": "MAILLOTS PARTAGÉS",
     "exhibits": "EXPOSITIONS",
     "shareMessage": "Découvre ma collection de maillots de foot sur Kitoya ! kitoya://locker/{{username}}",
