@@ -8,7 +8,10 @@ import {
   Pressable,
   type DimensionValue,
 } from "react-native";
+import Animated, { ZoomIn } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export interface CardCollectionProps {
   jersey: {
@@ -21,6 +24,8 @@ export interface CardCollectionProps {
   width?: DimensionValue;
   onPress?: () => void;
   size?: "small" | "normal";
+  /** Plays a "dropped into the locker" pop-in animation — used for a freshly added jersey. */
+  animateIn?: boolean;
 }
 
 export default function CardCollection({
@@ -28,6 +33,7 @@ export default function CardCollection({
   width = "100%",
   onPress,
   size = "normal",
+  animateIn = false,
 }: CardCollectionProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -39,7 +45,13 @@ export default function CardCollection({
   const textSize = size === "small" ? 12 : 14;
 
   return (
-    <Pressable style={[styles.cardContainer, { width }]} onPress={onPress}>
+    <AnimatedPressable
+      style={[styles.cardContainer, { width }]}
+      onPress={onPress}
+      entering={
+        animateIn ? ZoomIn.springify().damping(14).mass(0.8) : undefined
+      }
+    >
       <LinearGradient
         // 1. Utilise un dégradé qui part d'une couleur très légère (plus proche du blanc ou d'un vert très pâle)
         // 2. Transparence forte pour que ça reste subtil
@@ -69,7 +81,7 @@ export default function CardCollection({
           {jersey.season}
         </Text>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 

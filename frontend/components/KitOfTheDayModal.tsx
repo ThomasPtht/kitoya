@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   View,
@@ -9,11 +9,19 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { formatText } from "./KitOfTheDayCard";
 import { useTranslation } from "react-i18next";
 import ReportBlockMenu from "./ReportBlockMenu";
+import AnimatedHeartIcon from "./AnimatedHeartIcon";
 
 interface KitOfTheDayModalProps {
   visible: boolean;
@@ -31,6 +39,27 @@ export default function KitOfTheDayModal({
   isOwnJersey,
 }: KitOfTheDayModalProps) {
   const { t } = useTranslation();
+
+  // "Spotlight" reveal of the hero image each time the modal opens (visible flips to true).
+  const heroOpacity = useSharedValue(0);
+  const heroScale = useSharedValue(0.92);
+
+  useEffect(() => {
+    if (visible) {
+      heroOpacity.value = 0;
+      heroScale.value = 0.92;
+      heroOpacity.value = withDelay(120, withTiming(1, { duration: 400 }));
+      heroScale.value = withDelay(
+        120,
+        withSpring(1, { damping: 15, stiffness: 140 }),
+      );
+    }
+  }, [visible]);
+
+  const heroAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: heroOpacity.value,
+    transform: [{ scale: heroScale.value }],
+  }));
 
   if (!jersey) return null;
 
@@ -65,13 +94,13 @@ export default function KitOfTheDayModal({
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Image grand format */}
-          <View style={styles.imageContainer}>
+          <Animated.View style={[styles.imageContainer, heroAnimatedStyle]}>
             <Image
               source={{ uri: jersey.frontImageUrl || jersey.frontImage }}
               style={styles.image}
               resizeMode="cover"
             />
-          </View>
+          </Animated.View>
 
           {/* Infos principales & Like */}
           <View style={styles.metaRow}>
@@ -153,10 +182,11 @@ export default function KitOfTheDayModal({
                 if (!isOwnJersey) onToggleLike(jersey.id);
               }}
             >
-              <Ionicons
-                name="heart"
+              <AnimatedHeartIcon
+                liked={!!jersey.hasLiked}
                 size={16}
-                color={jersey.hasLiked ? "#05C785" : Colors.theme.textMuted}
+                likedColor="#05C785"
+                mutedColor={Colors.theme.textMuted}
               />
               <Text
                 style={[

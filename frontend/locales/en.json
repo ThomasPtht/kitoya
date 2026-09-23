@@ -693,6 +693,9 @@
   "storyTitle": "THE STORY"
 },
 
+"rankUp": {
+  "title": "NEW RANK UNLOCKED"
+},
 "weeklyRankings": {
   "headerSubtitle": "WEEKLY RANKINGS",
   "headerTitle": "Kit of the Week",

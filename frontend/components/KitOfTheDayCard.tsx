@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useJerseyOfTheDay, useToggleLikeJersey } from "@/hooks/useJerseyHook";
 import KitOfTheDayModal from "./KitOfTheDayModal";
+import AnimatedHeartIcon from "./AnimatedHeartIcon";
 import { useTranslation } from "react-i18next";
 import { useUserMe } from "@/hooks/useAuthHook";
 
@@ -198,10 +199,11 @@ export default function KitOfTheDayCard() {
                 if (!isOwnJersey) toggleLike(jersey.id);
               }}
             >
-              <Ionicons
-                name="heart"
+              <AnimatedHeartIcon
+                liked={!!jersey.hasLiked}
                 size={16}
-                color={jersey.hasLiked ? "#05C785" : Colors.theme.textMuted}
+                likedColor="#05C785"
+                mutedColor={Colors.theme.textMuted}
               />
               <Text
                 style={[

@@ -696,6 +696,9 @@
     "lockerSuffix": "",
     "storyTitle": "HISTORIA"
   },
+  "rankUp": {
+    "title": "NUEVO RANGO DESBLOQUEADO"
+  },
   "weeklyRankings": {
     "headerSubtitle": "CLASIFICACIÓN SEMANAL",
     "headerTitle": "Kit de la semana",

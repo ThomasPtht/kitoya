@@ -6,16 +6,18 @@ import {
   TouchableOpacity,
   View,
   Text,
+  RefreshControl,
 } from "react-native";
 
 import { useJerseys } from "@/hooks/useJerseyHook";
 import CardCollection from "@/components/CardCollection";
+import PullToRefreshBall from "@/components/PullToRefreshBall";
 import React, { useEffect, useMemo, useState } from "react";
 import { JerseyData } from "@/services/jersey.service";
 import JerseyModalWrapper from "@/components/JerseyModalWrapper";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CustomSearchBar } from "@/components/CustomSearchBar";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useTranslation } from "react-i18next";
 
@@ -26,11 +28,12 @@ import { usePostHog } from "posthog-react-native";
 
 export default function TabDressingScreen() {
   const { t } = useTranslation();
-  const { data: jerseys, isLoading } = useJerseys();
+  const { data: jerseys, isLoading, refetch } = useJerseys();
   const { data: userMe } = useUserMe();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJersey, setSelectedJersey] = useState<JerseyData | null>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const { width } = useWindowDimensions();
 
   const posthog = usePostHog();
@@ -38,6 +41,29 @@ export default function TabDressingScreen() {
   useEffect(() => {
     posthog?.screen("Dressing");
   }, []);
+
+  // Id of the jersey just created (passed from the Add screen), so its card
+  // plays a "dropped into the locker" entrance animation instead of just
+  // popping into the grid.
+  const { justAddedId } = useLocalSearchParams<{ justAddedId?: string }>();
+  useEffect(() => {
+    if (!justAddedId) return;
+    // Clear it after the animation has had time to play, so it doesn't
+    // replay later if that card unmounts/remounts (e.g. a filter change).
+    const timeout = setTimeout(() => {
+      router.setParams({ justAddedId: undefined });
+    }, 2000);
+    return () => clearTimeout(timeout);
+  }, [justAddedId]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const isAdmin = userMe?.role === "ADMIN";
   const isElite =
@@ -172,12 +198,23 @@ export default function TabDressingScreen() {
             <CardCollection
               jersey={item}
               width={width / 2 - 30}
+              animateIn={!!item.id && item.id === justAddedId}
               onPress={() => {
                 setSelectedJersey(item);
                 setModalVisible(true);
               }}
             />
           )}
+          ListHeaderComponent={<PullToRefreshBall refreshing={refreshing} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="transparent"
+              colors={["transparent"]}
+              progressBackgroundColor="transparent"
+            />
+          }
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />

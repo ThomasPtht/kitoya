@@ -15,7 +15,6 @@ import {
 import { authService } from "@/services/auth.service";
 import { useUserMe } from "@/hooks/useAuthHook";
 import { useQueryClient } from "@tanstack/react-query";
-import { calculateRank } from "@/lib/ranks";
 import { useJerseys } from "@/hooks/useJerseyHook";
 import { handleInviteFriends } from "@/lib/invite-friends";
 import { apiClient } from "@/services/api";
@@ -23,6 +22,8 @@ import { useEffect } from "react";
 import { registerForPushNotificationsAsync } from "@/services/notifications.service";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useTranslation } from "react-i18next";
+import { useRankUp } from "@/hooks/useRankUp";
+import RankUpCelebration from "@/components/RankUpCelebration";
 
 export default function DrawerLayout() {
   const { t } = useTranslation();
@@ -47,8 +48,9 @@ export default function DrawerLayout() {
   const displayName = userMe?.name || userMe?.username || "Collector";
   const displayEmail = userMe?.email || "";
 
-  // Dynamic rank and collection count
-  const currentRank = calculateRank(jerseys);
+  // Dynamic rank and collection count (celebrates crossing a new rank threshold)
+  const { rank: currentRank, justRankedUp, dismiss: dismissRankUp } =
+    useRankUp(jerseys);
 
   // Vérification des rôles et abonnements
   const isAdmin = userMe?.role === "ADMIN";
@@ -316,6 +318,12 @@ export default function DrawerLayout() {
           options={{ drawerItemStyle: { display: "none" } }}
         />
       </Drawer>
+
+      <RankUpCelebration
+        visible={justRankedUp}
+        rank={currentRank}
+        onDismiss={dismissRankUp}
+      />
     </GestureHandlerRootView>
   );
 }

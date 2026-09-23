@@ -9,6 +9,16 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
+import Animated, {
+  Easing,
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -18,6 +28,8 @@ import type { WeeklyRankingEntry } from "@/services/rankings.service";
 import { Colors } from "@/constants/Colors";
 
 const RANKINGS_LIMIT = 20;
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const MEDAL_STYLES = {
   1: { color: "#FFD700", glow: "rgba(255, 215, 0, 0.35)", icon: "trophy" as const },
@@ -123,6 +135,7 @@ export default function WeeklyRankingsScreen() {
                   <RankingRow
                     key={entry.jersey.id}
                     entry={entry}
+                    index={index}
                     isLast={index === rest.length - 1}
                     onPress={handlePress}
                     t={t}
@@ -154,13 +167,42 @@ function PodiumCard({
   const isLarge = size === "large";
   const clickable = !!entry && entry.owner.isPublic;
 
+  // Builds up to the winner: 3rd appears first, 1st last.
+  const enterDelay = rank === 3 ? 0 : rank === 2 ? 150 : 300;
+
+  // Looping glow, 1st place only.
+  const glow = useSharedValue(0.25);
+  useEffect(() => {
+    if (rank === 1) {
+      glow.value = withRepeat(
+        withSequence(
+          withTiming(0.9, {
+            duration: 900,
+            easing: Easing.inOut(Easing.quad),
+          }),
+          withTiming(0.35, {
+            duration: 900,
+            easing: Easing.inOut(Easing.quad),
+          }),
+        ),
+        -1,
+        false,
+      );
+    }
+  }, [rank]);
+  const glowStyle = useAnimatedStyle(() => ({
+    shadowOpacity: glow.value,
+  }));
+
   const content = (
-    <View
+    <Animated.View
+      entering={FadeInDown.delay(enterDelay).springify().damping(14)}
       style={[
         styles.podiumCard,
         isLarge ? styles.podiumCardLarge : styles.podiumCardMedium,
         { borderColor: medal.color, shadowColor: medal.color },
         !entry && styles.podiumCardEmpty,
+        rank === 1 && glowStyle,
       ]}
     >
       <View style={[styles.medalBadge, { backgroundColor: medal.glow }]}>
@@ -213,7 +255,7 @@ function PodiumCard({
           ]}
         />
       )}
-    </View>
+    </Animated.View>
   );
 
   if (!clickable) return content;
@@ -227,11 +269,13 @@ function PodiumCard({
 
 function RankingRow({
   entry,
+  index,
   isLast,
   onPress,
   t,
 }: {
   entry: WeeklyRankingEntry;
+  index: number;
   isLast: boolean;
   onPress: (entry: WeeklyRankingEntry) => void;
   t: (key: string, options?: any) => string;
@@ -239,7 +283,8 @@ function RankingRow({
   const clickable = entry.owner.isPublic;
 
   return (
-    <Pressable
+    <AnimatedPressable
+      entering={FadeInDown.delay(Math.min(index, 8) * 60).springify().damping(16)}
       disabled={!clickable}
       onPress={() => onPress(entry)}
       style={[styles.rankRow, !isLast && styles.rankRowSeparator]}
@@ -275,7 +320,7 @@ function RankingRow({
           color={Colors.theme.textMuted}
         />
       )}
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 

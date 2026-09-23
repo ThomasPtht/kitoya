@@ -25,6 +25,7 @@ import { authService } from "@/services/auth.service";
 import { useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import ReportBlockMenu from "@/components/ReportBlockMenu";
+import AnimatedHeartIcon from "@/components/AnimatedHeartIcon";
 
 export default function PublicLockerScreen() {
   const { t } = useTranslation();
@@ -342,12 +343,11 @@ export default function PublicLockerScreen() {
                     onLongPress={() => setLikesModalJerseyId(jersey.id)} // appui long : voir la liste, même sur locker des autres
                     disabled={isOwnLocker && false} // le bouton reste actif pour ouvrir la liste, juste le like est bloqué
                   >
-                    <Ionicons
-                      name="heart"
+                    <AnimatedHeartIcon
+                      liked={!!jersey.hasLiked}
                       size={14}
-                      color={
-                        jersey.hasLiked ? "#05C785" : Colors.theme.textMuted
-                      }
+                      likedColor="#05C785"
+                      mutedColor={Colors.theme.textMuted}
                     />
                     <Text
                       style={[
