@@ -156,6 +156,11 @@ model Jersey {
   sport         Sport        @relation(fields: [sportId], references: [id])
   club          Club         @relation(fields: [clubId], references: [id])
   likes         JerseyLike[]
+
+  // Cooldown lock for the "you're in the weekly top 3" push notification,
+  // so a jersey oscillating around the #3 boundary doesn't get re-notified
+  // on every single like.
+  lastTopWeeklyNotifiedAt DateTime?
 }
 
 model JerseyLike {

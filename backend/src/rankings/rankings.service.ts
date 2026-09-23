@@ -6,6 +6,9 @@ import { getHiddenUserIds } from '../moderation/blocks.helper';
 const DEFAULT_LIMIT = 10;
 // Over-fetch candidates since some may belong to hidden/blocked owners and get filtered out.
 const CANDIDATE_BUFFER_MULTIPLIER = 3;
+const ROLLING_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+const getWindowStart = () => new Date(Date.now() - ROLLING_WINDOW_MS);
 
 @Injectable()
 export class RankingsService {
@@ -15,7 +18,7 @@ export class RankingsService {
   ) {}
 
   async getWeeklyRankings(limit: number = DEFAULT_LIMIT, currentUserId?: string) {
-    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const since = getWindowStart();
 
     // Aggregate likes received per jersey over the last 7 rolling days.
     const grouped = await this.prisma.jerseyLike.groupBy({
@@ -100,5 +103,28 @@ export class RankingsService {
         };
       }),
     );
+  }
+
+  /**
+   * Global (viewer-agnostic) rank of a jersey within the rolling 7-day
+   * window, used to trigger the "you're in the weekly top 3" push
+   * notification. Returns null when the jersey isn't in the top `topN`.
+   */
+  async getJerseyWeeklyRank(
+    jerseyId: string,
+    topN: number,
+  ): Promise<number | null> {
+    const since = getWindowStart();
+
+    const grouped = await this.prisma.jerseyLike.groupBy({
+      by: ['jerseyId'],
+      where: { createdAt: { gte: since } },
+      _count: { jerseyId: true },
+      orderBy: { _count: { jerseyId: 'desc' } },
+      take: topN,
+    });
+
+    const index = grouped.findIndex((g) => g.jerseyId === jerseyId);
+    return index === -1 ? null : index + 1;
   }
 }
