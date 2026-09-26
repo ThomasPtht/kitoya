@@ -194,7 +194,7 @@ Deployments are now automated via GitHub Actions instead of manual SSH commands.
   - `VPS_HOST` — VPS IP address
   - `VPS_PORT` — custom SSH port (not default 22)
   - `VPS_USER` — `ubuntu`
-  - `VPS_SSH_KEY` — private SSH key content 
+  - `VPS_SSH_KEY` — private SSH key content
 - both `deploy-staging.sh` and `deploy-prod.sh` explicitly `git checkout <branch>` before pulling, to avoid deploying stale code if the VPS repo was left on the wrong branch from a manual session
 
 ### New workflow
@@ -253,3 +253,31 @@ sudo docker run -d --name kitoya-backend-staging -p 3001:3000 --env-file .env.st
 - Docker caches build steps aggressively; after fixing source files,
   always rebuild with `--no-cache` to make sure the fix is actually
   picked up, not silently reusing a stale cached layer.
+
+## Useful Prisma Commands
+
+### Local (after editing schema.prisma)
+
+```bash
+npx prisma migrate dev --name description_of_change
+npx prisma migrate status
+```
+
+Never use `prisma db push` — it causes migration history drift.
+
+### Deploy (staging or prod, after new code is live)
+
+```bash
+sudo docker exec -it kitoya-backend-staging npx prisma migrate status
+sudo docker exec -it kitoya-backend-staging npx prisma migrate deploy
+```
+
+(use `kitoya-backend` instead of `kitoya-backend-staging` for prod)
+
+### If a migration fails (P3018 / "already exists")
+
+Check what's actually in the DB, and if it already matches the schema, mark it applied without running SQL:
+
+```bash
+sudo docker exec -it kitoya-backend npx prisma migrate resolve --applied "migration_name"
+```

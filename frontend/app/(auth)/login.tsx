@@ -266,7 +266,7 @@ export default function LoginScreen() {
                   AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
                 }
                 cornerRadius={12}
-                style={{ width: "100%", height: 50, marginTop: 12 }}
+                style={{ width: "100%", height: 44, marginTop: 12 }}
                 onPress={handleAppleLogin}
               />
             )}
