@@ -82,6 +82,8 @@ export const useToggleLikeJersey = () => {
       });
       // Invalidate the locker query to refresh the data after toggling like
       queryClient.invalidateQueries({ queryKey: ["locker"] });
+      // A like can change the weekly ranking, so drop the cached podium
+      queryClient.invalidateQueries({ queryKey: ["weeklyRankings"] });
     },
     onError: (error) => {
       console.error("Error toggling like:", error);
