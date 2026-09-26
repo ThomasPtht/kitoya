@@ -25,11 +25,31 @@ import { useTranslation } from "react-i18next";
 import { useRankUp } from "@/hooks/useRankUp";
 import RankUpCelebration from "@/components/RankUpCelebration";
 
+const SYNCABLE_LANGUAGES = ["en", "fr", "es"];
+
 export default function DrawerLayout() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: userMe } = useUserMe();
   const { data: jerseys } = useJerseys();
   const queryClient = useQueryClient();
+
+  // Push notifications are translated server-side using the language stored
+  // on the user. It used to be updated only when changing the language in
+  // Settings, so anyone using the app in French/Spanish by default (device
+  // language) kept the "en" default and got English notifications.
+  useEffect(() => {
+    if (!userMe) return;
+    const appLanguage = i18n.language?.split("-")[0];
+    if (!SYNCABLE_LANGUAGES.includes(appLanguage)) return;
+    if (userMe.language === appLanguage) return;
+
+    authService
+      .updateProfile({ language: appLanguage })
+      .then(() => queryClient.invalidateQueries({ queryKey: ["userMe"] }))
+      .catch((error) =>
+        console.error("Failed to sync language with backend:", error),
+      );
+  }, [userMe?.language, i18n.language]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(async (token) => {
