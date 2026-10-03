@@ -3,6 +3,7 @@ import { JerseysService } from './jerseys.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';
+import { ForbiddenException } from '@nestjs/common';
 
 
 describe('JerseysService', () => {
@@ -43,6 +44,10 @@ describe('JerseysService', () => {
     prisma = module.get<PrismaService>(PrismaService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks(); // to avoid interference between tests
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
@@ -51,6 +56,7 @@ describe('JerseysService', () => {
     it('should delete a jersey and its images from R2', async () => {
       const jerseyFromDb = {
         id: 'jersey-id',
+        userId: 'owner-id',
         frontImageUrl: 'front.jpg',
         backImageUrl: 'back.jpg',
       };
@@ -59,7 +65,7 @@ describe('JerseysService', () => {
       mockR2Service.deleteFile.mockResolvedValue(undefined);
       mockPrismaService.jersey.delete.mockResolvedValue(jerseyFromDb);
 
-      const result = await service.deleteJersey('jersey-id');
+      const result = await service.deleteJersey('jersey-id', 'owner-id');
 
       // check that the 2 images were deleted from R2
       expect(mockR2Service.deleteFile).toHaveBeenCalledWith('front.jpg');
@@ -72,6 +78,23 @@ describe('JerseysService', () => {
       });
 
       expect(result).toEqual({ message: 'Jersey deleted successfully' });
+    });
+
+    it('should throw ForbiddenException if the user does not own the jersey', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue({
+        id: 'jersey-id',
+        userId: 'owner-id',
+        frontImageUrl: 'front.jpg',
+        backImageUrl: 'back.jpg',
+      });
+
+      await expect(
+        service.deleteJersey('jersey-id', 'another-user-id'),
+      ).rejects.toThrow(ForbiddenException);
+
+      // nothing should be deleted, neither in R2 nor in the database
+      expect(mockR2Service.deleteFile).not.toHaveBeenCalled();
+      expect(mockPrismaService.jersey.delete).not.toHaveBeenCalled();
     });
   });
 });

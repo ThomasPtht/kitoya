@@ -159,8 +159,8 @@ export class JerseysController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async deleteJersey(@Param('id') id: string) {
-    return this.jerseysService.deleteJersey(id);
+  async deleteJersey(@Param('id') id: string, @Req() req: JwtRequest) {
+    return this.jerseysService.deleteJersey(id, req.user.userId);
   }
 
   @Get('analytics')
