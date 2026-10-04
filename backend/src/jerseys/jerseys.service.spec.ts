@@ -5,7 +5,6 @@ import { R2Service } from '../r2/r2.service';
 import { FootballService } from '../search/football.service';
 import { ForbiddenException } from '@nestjs/common';
 
-
 describe('JerseysService', () => {
   let service: JerseysService;
   let prisma: PrismaService;
@@ -24,6 +23,7 @@ describe('JerseysService', () => {
   const mockR2Service = {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
+    getSignedUrl: jest.fn((url) => Promise.resolve(url)),
   };
 
   const mockFootballService = {
@@ -95,6 +95,54 @@ describe('JerseysService', () => {
       // nothing should be deleted, neither in R2 nor in the database
       expect(mockR2Service.deleteFile).not.toHaveBeenCalled();
       expect(mockPrismaService.jersey.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateJersey', () => {
+    const jerseyFromDb = {
+      id: 'jersey-id',
+      userId: 'owner-id',
+      frontImageUrl: 'old-front.jpg',
+      backImageUrl: 'old-back.jpg',
+    };
+
+    it('should delete the old front image from R2 when it is replaced', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jerseyFromDb);
+      mockPrismaService.jersey.update.mockResolvedValue({
+        ...jerseyFromDb,
+        frontImageUrl: 'new-front.jpg',
+      });
+
+      await service.updateJersey('jersey-id', 'owner-id', {
+        frontImageUrl: 'new-front.jpg',
+      });
+
+      expect(mockR2Service.deleteFile).toHaveBeenCalledWith('old-front.jpg');
+      expect(mockR2Service.deleteFile).not.toHaveBeenCalledWith('old-back.jpg');
+    });
+
+    it('should not delete any image when no new image is sent', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jerseyFromDb);
+      mockPrismaService.jersey.update.mockResolvedValue(jerseyFromDb);
+
+      await service.updateJersey('jersey-id', 'owner-id', { season: '2024' });
+
+      expect(mockR2Service.deleteFile).not.toHaveBeenCalledWith(
+        'old-front.jpg',
+      );
+      expect(mockR2Service.deleteFile).not.toHaveBeenCalledWith('old-back.jpg');
+    });
+
+    it('should not delete any image if the user does not own the jersey', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jerseyFromDb);
+
+      await expect(
+        service.updateJersey('jersey-id', 'another-user-id', {
+          frontImageUrl: 'new-front.jpg',
+        }),
+      ).rejects.toThrow(ForbiddenException);
+
+      expect(mockR2Service.deleteFile).not.toHaveBeenCalled();
     });
   });
 });

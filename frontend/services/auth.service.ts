@@ -86,7 +86,7 @@ export const authService = {
     oldPassword: string;
     newPassword: string;
   }) => {
-    const response = await apiClient.post("/auth/change-password", data);
+    const response = await apiClient.put("/auth/change-password", data);
     return response.data;
   },
 

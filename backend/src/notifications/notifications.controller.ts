@@ -1,7 +1,6 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Delete, Body, Req, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-// Importe ton guard d'authentification ici (ex: JwtAuthGuard)
 
 @Controller('notifications')
 export class NotificationsController {
@@ -14,6 +13,15 @@ export class NotificationsController {
     const { expoPushToken } = body;
 
     await this.notificationsService.saveUserToken(userId, expoPushToken);
+
+    return { success: true };
+  }
+
+  // Called by the app on logout, before the JWT is deleted
+  @Delete('token')
+  @UseGuards(JwtAuthGuard)
+  async removeToken(@Req() req) {
+    await this.notificationsService.removeUserToken(req.user.userId);
 
     return { success: true };
   }

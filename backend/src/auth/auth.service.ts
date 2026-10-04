@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { R2Service } from '../r2/r2.service';
 import appleSignin from 'apple-signin-auth';
@@ -125,23 +125,38 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    const { password, ...userWithoutPassword } = user;
-
-    return { ...userWithoutPassword, hasPassword: !!password }; // Return a boolean indicating if the user has a password set
+    return {
+      ...(await this.toUserResponse(user)),
+      hasPassword: !!user.password, // Return a boolean indicating if the user has a password set
+    };
   }
 
   async deleteAccount(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      include: {
+        jerseys: { select: { frontImageUrl: true, backImageUrl: true } },
+      },
     });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    // jerseys are removed by the cascade delete, but their images live in R2
     const deletedUser = await this.prisma.user.delete({
       where: { id: userId },
     });
+
+    // files are removed only once the account is gone, so a failed delete keeps a consistent account
+    const imageUrls = [
+      user.avatarUrl,
+      ...user.jerseys.flatMap((jersey) => [
+        jersey.frontImageUrl,
+        jersey.backImageUrl,
+      ]),
+    ];
+    await Promise.all(imageUrls.map((url) => this.r2Service.deleteFile(url)));
 
     return {
       message: 'User account deleted successfully',
@@ -331,8 +346,7 @@ export class AuthService {
       },
     });
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return this.toUserResponse(updatedUser);
   }
 
   async updateBio(bio: string, userId: string) {
@@ -341,8 +355,7 @@ export class AuthService {
       data: { bio },
     });
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return this.toUserResponse(updatedUser);
   }
 
   async updateAvatar(userId: string, avatarUrl: string) {
@@ -361,7 +374,22 @@ export class AuthService {
       data: { avatarUrl },
     });
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return this.toUserResponse(updatedUser);
+  }
+
+  // strips secrets (password and reset code hashes) and signs the avatar URL, like jersey images
+  private async toUserResponse<T extends User>(user: T) {
+    const {
+      password,
+      resetCode,
+      resetCodeExpiry,
+      resetCodeAttempts,
+      ...publicUser
+    } = user;
+
+    return {
+      ...publicUser,
+      avatarUrl: await this.r2Service.getSignedUrl(user.avatarUrl),
+    };
   }
 }

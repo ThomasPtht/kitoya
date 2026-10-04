@@ -65,12 +65,40 @@ This is a React Native application built with Expo, to allow users to easily man
 
 ### Security
 
-- JWT-based authentication with secure token storage (Expo SecureStore)
-- Password hashing with bcrypt
-- backend authorization guards to protect sensitive routes
-- signed, time limited R2 URLs for jersey images to prevent unauthorized access
-- environment based secret manegement
-- google oauth2 as an alternative authentification method for users who prefer it
+#### Mobile app
+
+- JWT stored in the device keychain / keystore (Expo SecureStore), never in plain storage
+- Token checked against the API at startup; invalid or expired tokens are wiped
+- Logout clears the token and the in-memory query cache
+- Google and Apple sign-in tokens are verified server-side, never trusted from the app
+
+#### API
+
+- Passwords hashed with bcrypt, never returned in responses
+- Signed JWTs; the API refuses to start without a `JWT_SECRET`
+- Authentication guard on every private route, ownership check before any jersey update or deletion
+- Private profiles and blocked users hidden in both directions, content reporting
+- Global `ValidationPipe` with whitelisting: unknown fields are stripped from every DTO
+- Password reset codes hashed, short-lived, single-use and limited in attempts
+- Rate limiting on password reset routes
+- RevenueCat webhook authenticated with a shared secret (constant-time comparison)
+- Image uploads limited in size and restricted to image types, validated before any processing
+- R2 images served through signed, time-limited URLs (jersey images and avatars)
+- Images removed from storage along with their jersey or account
+- Error monitoring with Sentry, separated per environment
+
+#### Server
+
+- SSH key authentication only, fail2ban, UFW firewall
+- API containers bound to localhost: only Nginx is exposed, over HTTPS (Let's Encrypt, auto-renewed)
+- Real client IP forwarded by Nginx for rate limiting
+- Secrets kept in environment files on the server, never committed
+- Staging fully isolated from production (database branch, bucket, secrets, container)
+- Automated tests required before every deployment
+
+#### Required secrets
+
+`JWT_SECRET` and `REVENUECAT_WEBHOOK_SECRET` must be set (see `backend/.env.example`): the API does not start without the first, and rejects every RevenueCat event without the second.
 
 ### Deployment (Planned)
 

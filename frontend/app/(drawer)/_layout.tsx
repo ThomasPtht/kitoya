@@ -303,6 +303,17 @@ export default function DrawerLayout() {
                         onPress: async () => {
                           try {
                             props.navigation.closeDrawer();
+                            // Detach this device from the account so it stops receiving
+                            // its notifications. Must run before the JWT is deleted, and
+                            // must never block the logout if it fails (e.g. offline).
+                            try {
+                              await apiClient.delete("/notifications/token");
+                            } catch (error) {
+                              console.error(
+                                "Failed to remove push token on backend",
+                                error,
+                              );
+                            }
                             await authService.logout();
                             queryClient.clear();
                             router.replace("/(auth)/login");

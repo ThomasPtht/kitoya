@@ -1,12 +1,17 @@
 import './instrument';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true, // Enable rawBody for Stripe webhook verification
   });
+
+  // The API runs behind Nginx: trust its X-Forwarded-For header so req.ip is the
+  // real client IP (used by the rate limiter) instead of the proxy's IP
+  app.set('trust proxy', 1);
 
   // Enable CORS to authorize requests from the frontend (React Native app) to the backend (NestJS API)
   app.enableCors();

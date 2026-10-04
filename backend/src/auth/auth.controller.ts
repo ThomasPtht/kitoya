@@ -22,6 +22,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChangeUsernameDto } from './dto/change-username';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { R2Service } from 'src/r2/r2.service';
+import { imageUploadOptions } from '../common/image-upload.options';
 
 interface JwtRequest extends Request {
   user: {
@@ -92,7 +93,7 @@ export class AuthController {
 
   @Put('update-avatar')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(FileInterceptor('avatar', imageUploadOptions))
   async updateAvatar(
     @Req() req: JwtRequest,
     @UploadedFile() file: Express.Multer.File,

@@ -2,7 +2,9 @@
 import * as Sentry from '@sentry/nestjs';
 
 Sentry.init({
-  dsn: 'https://36430cb3f6bfbebd3ac2129c8afccc90@o4510894781104128.ingest.de.sentry.io/4512001464336464',
+  // Sentry is disabled when SENTRY_DSN is not set (e.g. local development)
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.SENTRY_ENVIRONMENT ?? 'production',
   // Tracing
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
   dataCollection: {

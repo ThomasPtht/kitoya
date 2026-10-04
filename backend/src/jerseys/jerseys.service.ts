@@ -180,13 +180,15 @@ export class JerseysService {
   }
 
   async getJerseysByUser(userId: string) {
-
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { subscription: true },  
+      include: { subscription: true },
     });
 
-    const isElite = (user?.subscription?.planType === 'ELITE_MONTHLY' || user?.subscription?.planType === 'ELITE_YEARLY') && user?.subscription?.status === 'active';
+    const isElite =
+      (user?.subscription?.planType === 'ELITE_MONTHLY' ||
+        user?.subscription?.planType === 'ELITE_YEARLY') &&
+      user?.subscription?.status === 'active';
 
     const jerseys = await this.prisma.jersey.findMany({
       where: { userId },
@@ -196,7 +198,9 @@ export class JerseysService {
 
     const visibleJerseys = isElite ? jerseys : jerseys.slice(0, 15); // Limit to 15 for non-elite users
 
-    const sortedJerseys = visibleJerseys.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    const sortedJerseys = visibleJerseys.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
 
     return Promise.all(sortedJerseys.map((jersey) => this.signJersey(jersey)));
   }
@@ -214,8 +218,8 @@ export class JerseysService {
     return this.signJersey(jersey);
   }
 
-  async deleteJersey(id: string, userId: string) {
-
+  // returns the jersey if it exists and belongs to the user, throws 404 / 403 otherwise
+  async findOwnedJersey(id: string, userId: string) {
     const jersey = await this.prisma.jersey.findUnique({
       where: { id },
     });
@@ -226,9 +230,15 @@ export class JerseysService {
 
     if (jersey.userId !== userId) {
       throw new ForbiddenException(
-        `User ${userId} is not authorized to delete this jersey`,
+        `User ${userId} is not authorized to modify this jersey`,
       );
     }
+
+    return jersey;
+  }
+
+  async deleteJersey(id: string, userId: string) {
+    const jersey = await this.findOwnedJersey(id, userId);
 
     // delete the images from R2
     await Promise.all([
@@ -547,19 +557,7 @@ export class JerseysService {
     dto: Partial<CreateJerseyWithUrls>,
     clubData?: { name: string; sportId: string },
   ) {
-    const jersey = await this.prisma.jersey.findUnique({
-      where: { id: jerseyId },
-    });
-
-    if (!jersey) {
-      throw new NotFoundException(`Jersey with ID ${jerseyId} not found`);
-    }
-
-    if (jersey.userId !== userId) {
-      throw new ForbiddenException(
-        `User ${userId} is not authorized to update this jersey`,
-      );
-    }
+    const jersey = await this.findOwnedJersey(jerseyId, userId);
 
     const updateData: Record<string, any> = {};
 
@@ -621,6 +619,19 @@ export class JerseysService {
       data: updateData,
       include: { club: true, sport: true, _count: { select: { likes: true } } },
     });
+
+    // the update succeeded: remove the images that were replaced from R2
+    const replacedImages = [
+      dto.frontImageUrl && dto.frontImageUrl !== jersey.frontImageUrl
+        ? jersey.frontImageUrl
+        : null,
+      dto.backImageUrl && dto.backImageUrl !== jersey.backImageUrl
+        ? jersey.backImageUrl
+        : null,
+    ];
+    await Promise.all(
+      replacedImages.map((url) => this.r2Service.deleteFile(url)),
+    );
 
     return this.signJersey(updatedJersey);
   }
