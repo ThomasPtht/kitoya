@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { getJwtSecret } from './jwt-secret';
 import { GoogleStrategyService } from '../google-strategy/google-strategy.service';
 import { GoogleStrategyController } from '../google-strategy/google-strategy.controller';
 import { R2Module } from 'src/r2/r2.module';
@@ -14,9 +15,11 @@ import { R2Module } from 'src/r2/r2.module';
   // import passport module and configure it with the default strategy as jwt
   imports: [
     PrismaModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'secret',
-      signOptions: { expiresIn: '7d' },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: getJwtSecret(),
+        signOptions: { expiresIn: '7d' },
+      }),
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     R2Module,
