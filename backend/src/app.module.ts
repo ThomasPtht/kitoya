@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SentryModule } from '@sentry/nestjs/setup';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER } from '@nestjs/core';
 import { SentryGlobalFilter } from '@sentry/nestjs/setup';
 import { AppController } from './app.controller';
@@ -31,6 +32,8 @@ import { RankingsModule } from './rankings/rankings.module';
 @Module({
   imports: [
     SentryModule.forRoot(),
+    // Rate limit storage, only enforced on routes using ThrottlerGuard (password reset)
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 5 }]),
     PrismaModule,
     AuthModule,
     JerseysModule,

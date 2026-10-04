@@ -1,6 +1,10 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { PasswordResetService } from './password-reset.service';
 
+// 5 requests per minute per IP (see ThrottlerModule in AppModule):
+// prevents reset email spam and slows down code guessing
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class PasswordResetController {
   constructor(private readonly passwordResetService: PasswordResetService) {}
