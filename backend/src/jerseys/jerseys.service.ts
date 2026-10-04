@@ -214,13 +214,20 @@ export class JerseysService {
     return this.signJersey(jersey);
   }
 
-  async deleteJersey(id: string) {
+  async deleteJersey(id: string, userId: string) {
+
     const jersey = await this.prisma.jersey.findUnique({
       where: { id },
     });
 
     if (!jersey) {
       throw new NotFoundException(`Jersey with ID ${id} not found`);
+    }
+
+    if (jersey.userId !== userId) {
+      throw new ForbiddenException(
+        `User ${userId} is not authorized to delete this jersey`,
+      );
     }
 
     // delete the images from R2
