@@ -3,6 +3,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 
+const MAX_RESET_ATTEMPTS = 5;
+
 @Injectable()
 export class PasswordResetService {
   constructor(
@@ -27,7 +29,7 @@ export class PasswordResetService {
 
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { resetCode: hashedCode, resetCodeExpiry },
+      data: { resetCode: hashedCode, resetCodeExpiry, resetCodeAttempts: 0 },
     });
 
     // send the reset code to the user's email
@@ -58,6 +60,22 @@ export class PasswordResetService {
       throw new BadRequestException('Invalid or expired reset code');
     }
 
+    // reserve an attempt atomically BEFORE comparing the code, so parallel
+    // requests can't run more than MAX_RESET_ATTEMPTS comparisons on one code
+    const attempt = await this.prisma.user.updateMany({
+      where: { id: user.id, resetCodeAttempts: { lt: MAX_RESET_ATTEMPTS } },
+      data: { resetCodeAttempts: { increment: 1 } },
+    });
+
+    if (attempt.count === 0) {
+      // too many failed attempts: wipe the code, the user has to request a new one
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { resetCode: null, resetCodeExpiry: null, resetCodeAttempts: 0 },
+      });
+      throw new BadRequestException('Invalid or expired reset code');
+    }
+
     const isCodeValid = await bcrypt.compare(code, user.resetCode);
 
     if (!isCodeValid) {
@@ -72,6 +90,7 @@ export class PasswordResetService {
         password: hashedPassword,
         resetCode: null,
         resetCodeExpiry: null,
+        resetCodeAttempts: 0,
       },
     });
 
