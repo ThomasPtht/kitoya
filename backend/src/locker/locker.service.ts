@@ -96,8 +96,17 @@ export class LockerService {
     const kitsCount = jerseys.length;
     const uniqueClubs = new Set(jerseys.map((j) => j.clubId)).size;
 
+    // like jersey images, fall back to the raw url if R2 signing fails
+    let avatarUrl = user.avatarUrl;
+    try {
+      avatarUrl = await this.r2Service.getSignedUrl(user.avatarUrl);
+    } catch (error) {
+      console.error(`Erreur lors de la signature R2 de l'avatar:`, error);
+    }
+
     return {
       ...user,
+      avatarUrl,
       kitsCount,
       clubsCount: uniqueClubs,
       jerseys: formattedJerseys,

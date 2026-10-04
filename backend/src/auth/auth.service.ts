@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { R2Service } from '../r2/r2.service';
 import appleSignin from 'apple-signin-auth';
@@ -125,9 +125,10 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    const { password, ...userWithoutPassword } = user;
-
-    return { ...userWithoutPassword, hasPassword: !!password }; // Return a boolean indicating if the user has a password set
+    return {
+      ...(await this.toUserResponse(user)),
+      hasPassword: !!user.password, // Return a boolean indicating if the user has a password set
+    };
   }
 
   async deleteAccount(userId: string) {
@@ -345,8 +346,7 @@ export class AuthService {
       },
     });
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return this.toUserResponse(updatedUser);
   }
 
   async updateBio(bio: string, userId: string) {
@@ -355,8 +355,7 @@ export class AuthService {
       data: { bio },
     });
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return this.toUserResponse(updatedUser);
   }
 
   async updateAvatar(userId: string, avatarUrl: string) {
@@ -375,7 +374,22 @@ export class AuthService {
       data: { avatarUrl },
     });
 
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return this.toUserResponse(updatedUser);
+  }
+
+  // strips secrets (password and reset code hashes) and signs the avatar URL, like jersey images
+  private async toUserResponse<T extends User>(user: T) {
+    const {
+      password,
+      resetCode,
+      resetCodeExpiry,
+      resetCodeAttempts,
+      ...publicUser
+    } = user;
+
+    return {
+      ...publicUser,
+      avatarUrl: await this.r2Service.getSignedUrl(user.avatarUrl),
+    };
   }
 }
