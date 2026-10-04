@@ -133,15 +133,29 @@ export class AuthService {
   async deleteAccount(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      include: {
+        jerseys: { select: { frontImageUrl: true, backImageUrl: true } },
+      },
     });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    // jerseys are removed by the cascade delete, but their images live in R2
     const deletedUser = await this.prisma.user.delete({
       where: { id: userId },
     });
+
+    // files are removed only once the account is gone, so a failed delete keeps a consistent account
+    const imageUrls = [
+      user.avatarUrl,
+      ...user.jerseys.flatMap((jersey) => [
+        jersey.frontImageUrl,
+        jersey.backImageUrl,
+      ]),
+    ];
+    await Promise.all(imageUrls.map((url) => this.r2Service.deleteFile(url)));
 
     return {
       message: 'User account deleted successfully',

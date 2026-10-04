@@ -68,9 +68,19 @@ export class JerseysController {
       throw new BadRequestException('Authenticated user id is missing');
     }
 
+    // validated before any image processing, so a bad request costs no FAPIHUB call
+    const sportId = req.body.sportId || createJerseyDto.sportId;
+
+    if (!sportId) {
+      throw new BadRequestException('sportId est manquant dans le FormData');
+    }
+
     const frontImageBuffer = files.frontImage[0].buffer;
     const processedFrontImage =
       await this.imageProcessingService.removeBackground(frontImageBuffer);
+
+    // images uploaded during this request, removed from R2 if the creation fails
+    const uploadedUrls: string[] = [];
 
     try {
       // Upload front image to R2 and get the URL
@@ -78,6 +88,7 @@ export class JerseysController {
         ...files.frontImage[0],
         buffer: processedFrontImage,
       });
+      uploadedUrls.push(frontUrl);
 
       // process and upload back image if it exists
       let backUrl: string | undefined;
@@ -90,16 +101,10 @@ export class JerseysController {
           ...files.backImage[0],
           buffer: processedBackImage,
         });
+        uploadedUrls.push(backUrl);
       }
 
-      const sportId = req.body.sportId || createJerseyDto.sportId;
-      const clubName = createJerseyDto.clubName;
-
-      if (!sportId) {
-        throw new BadRequestException('sportId est manquant dans le FormData');
-      }
-
-      const clubData = { name: clubName, sportId: sportId };
+      const clubData = { name: createJerseyDto.clubName, sportId: sportId };
 
       const jerseyDtoWithUrls = {
         ...createJerseyDto,
@@ -108,13 +113,17 @@ export class JerseysController {
         backImageUrl: backUrl,
       };
 
-      return this.jerseysService.createJersey(
+      // awaited so a failure is caught below and the uploaded images cleaned up
+      return await this.jerseysService.createJersey(
         userId,
         jerseyDtoWithUrls,
         clubData,
       );
     } catch (error) {
       console.error('Error while creating jersey:', error);
+      await Promise.all(
+        uploadedUrls.map((url) => this.R2Service.deleteFile(url)),
+      );
       throw error;
     }
   }
@@ -201,40 +210,55 @@ export class JerseysController {
   ) {
     const dtoWithUrls: any = { ...updateJerseyDto };
 
-    if (files.frontImage?.[0]) {
-      const processedFrontImage =
-        await this.imageProcessingService.removeBackground(
-          files.frontImage[0].buffer,
-        );
-      dtoWithUrls.frontImageUrl = await this.R2Service.uploadFile({
-        ...files.frontImage[0],
-        buffer: processedFrontImage,
-      });
+    // images uploaded during this request, removed from R2 if the update fails (e.g. not the owner)
+    const uploadedUrls: string[] = [];
+
+    try {
+      if (files.frontImage?.[0]) {
+        const processedFrontImage =
+          await this.imageProcessingService.removeBackground(
+            files.frontImage[0].buffer,
+          );
+        dtoWithUrls.frontImageUrl = await this.R2Service.uploadFile({
+          ...files.frontImage[0],
+          buffer: processedFrontImage,
+        });
+        uploadedUrls.push(dtoWithUrls.frontImageUrl);
+      }
+
+      if (files.backImage?.[0]) {
+        const processedBackImage =
+          await this.imageProcessingService.removeBackground(
+            files.backImage[0].buffer,
+          );
+        dtoWithUrls.backImageUrl = await this.R2Service.uploadFile({
+          ...files.backImage[0],
+          buffer: processedBackImage,
+        });
+        uploadedUrls.push(dtoWithUrls.backImageUrl);
+      }
+
+      // if clubName is provided and clubId is not, create a new club or find existing one, then update the jersey's clubId
+      const clubData =
+        updateJerseyDto.clubName && !updateJerseyDto.clubId
+          ? {
+              name: updateJerseyDto.clubName,
+              sportId: updateJerseyDto.sportId!,
+            }
+          : undefined;
+
+      return await this.jerseysService.updateJersey(
+        id,
+        req.user.userId,
+        dtoWithUrls,
+        clubData,
+      );
+    } catch (error) {
+      await Promise.all(
+        uploadedUrls.map((url) => this.R2Service.deleteFile(url)),
+      );
+      throw error;
     }
-
-    if (files.backImage?.[0]) {
-      const processedBackImage =
-        await this.imageProcessingService.removeBackground(
-          files.backImage[0].buffer,
-        );
-      dtoWithUrls.backImageUrl = await this.R2Service.uploadFile({
-        ...files.backImage[0],
-        buffer: processedBackImage,
-     });
-    }
-
-    // if clubName is provided and clubId is not, create a new club or find existing one, then update the jersey's clubId
-    const clubData =
-      updateJerseyDto.clubName && !updateJerseyDto.clubId
-        ? { name: updateJerseyDto.clubName, sportId: updateJerseyDto.sportId! }
-        : undefined;
-
-    return this.jerseysService.updateJersey(
-      id,
-      req.user.userId,
-      dtoWithUrls,
-      clubData,
-    );
   }
 
   @Get(':id/likes')

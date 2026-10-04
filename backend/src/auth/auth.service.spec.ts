@@ -205,6 +205,11 @@ describe('AuthService', () => {
     const userFromDb = {
       id: 'user-id',
       email: 'thomas@example.fr',
+      avatarUrl: 'avatar.jpg',
+      jerseys: [
+        { frontImageUrl: 'front-1.jpg', backImageUrl: 'back-1.jpg' },
+        { frontImageUrl: 'front-2.jpg', backImageUrl: null },
+      ],
     };
 
     it('should throw NotFoundException if the user does not exist', async () => {
@@ -213,6 +218,28 @@ describe('AuthService', () => {
       await expect(service.deleteAccount(userFromDb.id)).rejects.toThrow(
         'User not found',
       );
+    });
+
+    it('should delete the avatar and every jersey image from R2', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+      mockPrismaService.user.delete.mockResolvedValue(userFromDb);
+
+      await service.deleteAccount(userFromDb.id);
+
+      expect(mockR2Service.deleteFile).toHaveBeenCalledWith('avatar.jpg');
+      expect(mockR2Service.deleteFile).toHaveBeenCalledWith('front-1.jpg');
+      expect(mockR2Service.deleteFile).toHaveBeenCalledWith('back-1.jpg');
+      expect(mockR2Service.deleteFile).toHaveBeenCalledWith('front-2.jpg');
+    });
+
+    it('should keep the R2 files if the account deletion fails', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(userFromDb);
+      mockPrismaService.user.delete.mockRejectedValue(new Error('DB down'));
+
+      await expect(service.deleteAccount(userFromDb.id)).rejects.toThrow(
+        'DB down',
+      );
+      expect(mockR2Service.deleteFile).not.toHaveBeenCalled();
     });
 
     it('should delete the user account if the user exists', async () => {
