@@ -52,6 +52,7 @@ model User {
   role            Role      @default(USER)
   resetCode       String? // optionnal, used for password reset
   resetCodeExpiry DateTime? // optionnal, used for password reset
+  resetCodeAttempts Int     @default(0) // failed attempts on the current reset code, the code is wiped after 5
   expoPushToken   String? // optionnal, used for push notifications
   currency        String    @default("EUR") // "EUR", "USD", "GBP"...
   language        String    @default("en")
