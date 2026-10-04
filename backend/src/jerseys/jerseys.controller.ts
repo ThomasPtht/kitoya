@@ -21,6 +21,7 @@ import { CreateJerseyDto } from './dto/createJersey.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ImageProcessingService } from '../image-processing/image-processing.service';
 import { UpdateJerseyDto } from './dto/updateJersey.dto';
+import { imageUploadOptions } from '../common/image-upload.options';
 
 interface JwtRequest extends Request {
   user: {
@@ -41,10 +42,13 @@ export class JerseysController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'frontImage', maxCount: 1 },
-      { name: 'backImage', maxCount: 1 },
-    ]),
+    FileFieldsInterceptor(
+      [
+        { name: 'frontImage', maxCount: 1 },
+        { name: 'backImage', maxCount: 1 },
+      ],
+      imageUploadOptions,
+    ),
   )
   async createJersey(
     @Request() req,
@@ -177,10 +181,13 @@ export class JerseysController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'frontImage', maxCount: 1 },
-      { name: 'backImage', maxCount: 1 },
-    ]),
+    FileFieldsInterceptor(
+      [
+        { name: 'frontImage', maxCount: 1 },
+        { name: 'backImage', maxCount: 1 },
+      ],
+      imageUploadOptions,
+    ),
   )
   async update(
     @Param('id') id: string,
