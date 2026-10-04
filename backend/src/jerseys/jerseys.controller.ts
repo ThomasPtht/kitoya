@@ -208,9 +208,12 @@ export class JerseysController {
     },
     @Req() req: JwtRequest,
   ) {
+    // check ownership first: a refused request costs no FAPIHUB call and no R2 upload
+    await this.jerseysService.findOwnedJersey(id, req.user.userId);
+
     const dtoWithUrls: any = { ...updateJerseyDto };
 
-    // images uploaded during this request, removed from R2 if the update fails (e.g. not the owner)
+    // images uploaded during this request, removed from R2 if the update fails
     const uploadedUrls: string[] = [];
 
     try {

@@ -218,7 +218,8 @@ export class JerseysService {
     return this.signJersey(jersey);
   }
 
-  async deleteJersey(id: string, userId: string) {
+  // returns the jersey if it exists and belongs to the user, throws 404 / 403 otherwise
+  async findOwnedJersey(id: string, userId: string) {
     const jersey = await this.prisma.jersey.findUnique({
       where: { id },
     });
@@ -229,9 +230,15 @@ export class JerseysService {
 
     if (jersey.userId !== userId) {
       throw new ForbiddenException(
-        `User ${userId} is not authorized to delete this jersey`,
+        `User ${userId} is not authorized to modify this jersey`,
       );
     }
+
+    return jersey;
+  }
+
+  async deleteJersey(id: string, userId: string) {
+    const jersey = await this.findOwnedJersey(id, userId);
 
     // delete the images from R2
     await Promise.all([
@@ -550,19 +557,7 @@ export class JerseysService {
     dto: Partial<CreateJerseyWithUrls>,
     clubData?: { name: string; sportId: string },
   ) {
-    const jersey = await this.prisma.jersey.findUnique({
-      where: { id: jerseyId },
-    });
-
-    if (!jersey) {
-      throw new NotFoundException(`Jersey with ID ${jerseyId} not found`);
-    }
-
-    if (jersey.userId !== userId) {
-      throw new ForbiddenException(
-        `User ${userId} is not authorized to update this jersey`,
-      );
-    }
+    const jersey = await this.findOwnedJersey(jerseyId, userId);
 
     const updateData: Record<string, any> = {};
 
