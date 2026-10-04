@@ -128,6 +128,22 @@ describe('PasswordResetService', () => {
       expect(mockPrismaService.user.update).not.toHaveBeenCalled();
     });
 
+    it('should throw BadRequestException if the code has expired, even if it matches', async () => {
+      const hashedCode = await bcrypt.hash(validCode, 10);
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        id: 'user-id',
+        resetCode: hashedCode,
+        resetCodeExpiry: new Date(Date.now() - 60 * 1000), // expired 1 min ago
+      });
+
+      await expect(
+        service.resetPassword(email, validCode, 'newPassword123'),
+      ).rejects.toThrow('Invalid or expired reset code');
+
+      // password should not be updated if the code is expired
+      expect(mockPrismaService.user.update).not.toHaveBeenCalled();
+    });
+
     it('should reset the password and clear the reset code on success', async () => {
       const hashedCode = await bcrypt.hash(validCode, 10);
       mockPrismaService.user.findUnique.mockResolvedValue({

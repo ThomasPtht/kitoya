@@ -49,7 +49,12 @@ export class PasswordResetService {
       },
     });
 
-    if (!user || !user.resetCode || !user.resetCodeExpiry) {
+    if (
+      !user ||
+      !user.resetCode ||
+      !user.resetCodeExpiry ||
+      user.resetCodeExpiry < new Date() // code expired (valid 15 min)
+    ) {
       throw new BadRequestException('Invalid or expired reset code');
     }
 
