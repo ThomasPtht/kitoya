@@ -10,7 +10,10 @@ import React, { useEffect, useState } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { useColorScheme } from "@/components/useColorScheme";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   useFonts,
@@ -29,7 +32,20 @@ export { ErrorBoundary } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const CACHE_MAX_AGE = 1000 * 60 * 60 * 24; // 24 hours
+
+// The OS often kills the app while it's in the background, which wiped the
+// in-memory cache and forced a full reload on resume. Persisting the cache to
+// disk lets the app show the last known data instantly, then refresh silently.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: CACHE_MAX_AGE, // must be >= maxAge or entries are dropped before being persisted
+    },
+  },
+});
+
+const persister = createAsyncStoragePersister({ storage: AsyncStorage });
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -64,12 +80,15 @@ export default function RootLayout() {
         captureAppLifecycleEvents: true, // Capture app lifecycle events
       }}
     >
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister, maxAge: CACHE_MAX_AGE }}
+      >
         <SafeAreaProvider>
           <RootLayoutNav />
           <Toast />
         </SafeAreaProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </PostHogProvider>
   );
 }
