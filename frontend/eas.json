@@ -13,25 +13,27 @@
     },
      "staging": {
       "distribution": "internal",
+      "channel": "staging",
+      "environment": "preview",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api-staging.kitoya.com"
       }
      },
        "preview": {
       "distribution": "internal",
+      "channel": "preview",
       "android": {
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com",
-        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_AiL69ewBu5vNWsK3hXvRVAY7f9JZ3"
+        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com"
       }
     },
     "production": {
       "autoIncrement": true,
+      "channel": "production",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com",
-        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_AiL69ewBu5vNWsK3hXvRVciNGLyJMaBN8FyzAY7f9JZ3"
+        "EXPO_PUBLIC_API_URL": "https://api.kitoya.com"
       }
     }
   },
