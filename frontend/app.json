@@ -8,6 +8,12 @@
     "scheme": "kitoya",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/63a5af18-decf-42af-a98b-fa1b774a5b6e"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kitoya.app",
