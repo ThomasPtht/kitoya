@@ -28,7 +28,11 @@ export const useSubscription = () => {
 
   const initRevenueCat = async () => {
     try {
-      const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY;
+      // RevenueCat issues one SDK key per store; the wrong one is rejected.
+      const apiKey =
+        Platform.OS === "ios"
+          ? process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
+          : process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
 
       if (!apiKey) {
         console.error("RevenueCat API Key is missing!");
