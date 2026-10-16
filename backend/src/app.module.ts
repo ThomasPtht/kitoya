@@ -32,7 +32,7 @@ import { RankingsModule } from './rankings/rankings.module';
 @Module({
   imports: [
     SentryModule.forRoot(),
-    // Rate limit storage, only enforced on routes using ThrottlerGuard (password reset)
+    // Rate limit storage, only enforced on routes using ThrottlerGuard (password reset, club search)
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 5 }]),
     PrismaModule,
     AuthModule,

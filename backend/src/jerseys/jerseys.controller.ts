@@ -14,6 +14,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { JerseysService } from './jerseys.service';
 import { R2Service } from '../r2/r2.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -128,8 +129,11 @@ export class JerseysController {
     }
   }
 
+  // A DB miss falls back to the paid API-Football quota, so cap the rate:
+  // the app debounces typing (500ms, 3+ chars), a real user stays well below.
   @Get('search-clubs')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ThrottlerGuard)
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
   async searchClubs(
     @Query('query') query: string,
     @Query('sportId') sportId: string,
