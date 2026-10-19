@@ -160,6 +160,20 @@ describe('KotdService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it("should not load the owner's push token (the response goes to every viewer)", async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(buildJersey());
+      mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
+
+      await service.getJerseyOfTheDay();
+
+      const { include } = mockPrismaService.jersey.findUnique.mock.calls[0][0];
+      expect(include.user.select).toEqual({
+        id: true,
+        username: true,
+        isPublic: true,
+      });
+    });
+
     it('should set hasLiked to true when the current user already liked the jersey', async () => {
       const jersey = buildJersey({ likes: [{ id: 'like-1' }] });
       mockPrismaService.jersey.findUnique.mockResolvedValue(jersey);

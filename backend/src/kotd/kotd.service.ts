@@ -270,20 +270,13 @@ export class KotdService implements OnApplicationBootstrap {
     return null;
   }
 
+  // Only public fields of the owner: this is sent to every viewer.
   private findKitForViewer(jerseyId: string, currentUserId?: string) {
     return this.prisma.jersey.findUnique({
       where: { id: jerseyId },
       include: {
         club: true,
-        user: {
-          select: {
-            id: true,
-            username: true,
-            isPublic: true,
-            expoPushToken: true,
-            language: true,
-          },
-        },
+        user: { select: { id: true, username: true, isPublic: true } },
         _count: { select: { likes: true } },
         ...(currentUserId
           ? {
