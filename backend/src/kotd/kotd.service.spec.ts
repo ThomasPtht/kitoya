@@ -16,6 +16,8 @@ describe('KotdService', () => {
     },
     dailyKitNotification: {
       create: jest.fn(),
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
     },
     jerseyLike: {
       findUnique: jest.fn(),
@@ -86,8 +88,14 @@ describe('KotdService', () => {
       ...overrides,
     });
 
-    it('should return null if there are no jerseys at all', async () => {
-      mockPrismaService.jersey.findMany.mockResolvedValue([]);
+    beforeEach(() => {
+      mockPrismaService.dailyKitNotification.findMany.mockResolvedValue([
+        { jerseyId: 'jersey-1' },
+      ]);
+    });
+
+    it('should return null if no kit has been picked yet', async () => {
+      mockPrismaService.dailyKitNotification.findMany.mockResolvedValue([]);
 
       const result = await service.getJerseyOfTheDay();
 
@@ -96,8 +104,7 @@ describe('KotdService', () => {
 
     it('should return the selected jersey enriched with story, signed urls, and like info', async () => {
       const jersey = buildJersey();
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      mockPrismaService.dailyKitNotification.create.mockResolvedValue({});
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jersey);
       mockR2Service.getSignedUrl
         .mockResolvedValueOnce('signed-front.jpg')
         .mockResolvedValueOnce('signed-back.jpg');
@@ -115,8 +122,7 @@ describe('KotdService', () => {
 
     it('should fall back to the original image url if getSignedUrl returns null', async () => {
       const jersey = buildJersey();
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      mockPrismaService.dailyKitNotification.create.mockResolvedValue({});
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jersey);
       mockR2Service.getSignedUrl.mockResolvedValue(null);
 
       const result = await service.getJerseyOfTheDay();
@@ -125,14 +131,86 @@ describe('KotdService', () => {
       expect(result!.backImageUrl).toBe('back.jpg');
     });
 
-    it('should send a push notification only once per day (lock succeeds)', async () => {
-      const jersey = buildJersey();
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      mockPrismaService.dailyKitNotification.create.mockResolvedValue({});
+    it('should fall back to the previous pick when the latest jersey was deleted', async () => {
+      mockPrismaService.dailyKitNotification.findMany.mockResolvedValue([
+        { jerseyId: 'deleted-jersey' },
+        { jerseyId: 'jersey-1' },
+      ]);
+      mockPrismaService.jersey.findUnique
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(buildJersey());
+      mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
+
+      const result = await service.getJerseyOfTheDay();
+
+      expect(result!.id).toBe('jersey-1');
+    });
+
+    it('should never pick a kit or send a notification (the daily job does)', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue(buildJersey());
       mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
 
       await service.getJerseyOfTheDay();
 
+      expect(
+        mockPrismaService.dailyKitNotification.create,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should set hasLiked to true when the current user already liked the jersey', async () => {
+      const jersey = buildJersey({ likes: [{ id: 'like-1' }] });
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jersey);
+      mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
+
+      const result = await service.getJerseyOfTheDay('current-user-id');
+
+      expect(result!.hasLiked).toBe(true);
+    });
+
+    it('should return null when the owner of the kit is blocked by the viewer', async () => {
+      const jersey = buildJersey();
+      mockPrismaService.jersey.findUnique.mockResolvedValue(jersey);
+      mockPrismaService.block.findMany.mockResolvedValueOnce([
+        { blockerId: 'current-user-id', blockedId: jersey.user.id },
+      ]);
+
+      const result = await service.getJerseyOfTheDay('current-user-id');
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('ensureKitOfTheDay', () => {
+    const owner = (overrides = {}) => ({
+      expoPushToken: 'push-token-abc',
+      language: 'en',
+      ...overrides,
+    });
+
+    beforeEach(() => {
+      mockPrismaService.dailyKitNotification.findFirst.mockResolvedValue(null);
+      mockPrismaService.dailyKitNotification.create.mockResolvedValue({});
+      mockPrismaService.jersey.findMany.mockResolvedValue([
+        { id: 'jersey-1', user: { id: 'owner-id' } },
+      ]);
+      mockPrismaService.jersey.findUnique.mockResolvedValue({
+        id: 'jersey-1',
+        club: { name: 'Arsenal' },
+        user: owner(),
+      });
+    });
+
+    it('picks a kit, records it for the day and notifies its owner', async () => {
+      await service.ensureKitOfTheDay('2026-10-19');
+
+      expect(
+        mockPrismaService.dailyKitNotification.create,
+      ).toHaveBeenCalledWith({
+        data: { jerseyId: 'jersey-1', date: '2026-10-19' },
+      });
       expect(
         mockNotificationsService.sendPushNotification,
       ).toHaveBeenCalledWith(
@@ -143,70 +221,90 @@ describe('KotdService', () => {
       );
     });
 
-    it('should NOT send a push notification if the daily lock already exists', async () => {
-      const jersey = buildJersey();
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      // Simule une violation de contrainte unique : le verrou existe déjà pour aujourd'hui
+    it("notifies in the owner's language", async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue({
+        id: 'jersey-1',
+        club: { name: 'Arsenal' },
+        user: owner({ language: 'fr' }),
+      });
+
+      await service.ensureKitOfTheDay('2026-10-19');
+
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).toHaveBeenCalledWith(
+        'push-token-abc',
+        'Maillot de la communauté ! 🌟',
+        expect.any(String),
+        expect.any(Object),
+      );
+    });
+
+    it('does nothing when the kit of the day was already picked', async () => {
+      mockPrismaService.dailyKitNotification.findFirst.mockResolvedValue({
+        id: 'pick-1',
+      });
+
+      await service.ensureKitOfTheDay('2026-10-19');
+
+      expect(mockPrismaService.jersey.findMany).not.toHaveBeenCalled();
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('does not notify twice when a concurrent run already took the lock', async () => {
       mockPrismaService.dailyKitNotification.create.mockRejectedValue(
         Object.assign(new Error('Unique constraint violation'), {
           code: 'P2002',
         }),
       );
-      mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
 
-      const result = await service.getJerseyOfTheDay();
-
-      // La fonction ne doit jamais planter, même si le verrou échoue
-      expect(result).not.toBeNull();
-      expect(
-        mockNotificationsService.sendPushNotification,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('should NOT send a push notification if the owner has no push token', async () => {
-      const jersey = buildJersey({
-        user: {
-          id: 'owner-id',
-          username: 'thomas',
-          isPublic: true,
-          expoPushToken: null,
-        },
-      });
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      mockPrismaService.dailyKitNotification.create.mockResolvedValue({});
-      mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
-
-      await service.getJerseyOfTheDay();
+      await service.ensureKitOfTheDay('2026-10-19');
 
       expect(
         mockNotificationsService.sendPushNotification,
       ).not.toHaveBeenCalled();
     });
 
-    it('should set hasLiked to true when the current user already liked the jersey', async () => {
-      const jersey = buildJersey({ likes: [{ id: 'like-1' }] });
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      mockPrismaService.dailyKitNotification.create.mockResolvedValue({});
-      mockR2Service.getSignedUrl.mockResolvedValue('signed-url.jpg');
+    it('does nothing when there are no jerseys at all', async () => {
+      mockPrismaService.jersey.findMany.mockResolvedValue([]);
 
-      const result = await service.getJerseyOfTheDay('current-user-id');
+      await service.ensureKitOfTheDay('2026-10-19');
 
-      expect(result!.hasLiked).toBe(true);
-    });
-
-    it('should return null when the owner of the kit is blocked by the viewer', async () => {
-      const jersey = buildJersey();
-      mockPrismaService.jersey.findMany.mockResolvedValue([jersey]);
-      mockPrismaService.block.findMany.mockResolvedValueOnce([
-        { blockerId: 'current-user-id', blockedId: jersey.user.id },
-      ]);
-
-      const result = await service.getJerseyOfTheDay('current-user-id');
-
-      expect(result).toBeNull();
       expect(
         mockPrismaService.dailyKitNotification.create,
       ).not.toHaveBeenCalled();
+    });
+
+    it('does not notify when the owner has no push token', async () => {
+      mockPrismaService.jersey.findUnique.mockResolvedValue({
+        id: 'jersey-1',
+        club: { name: 'Arsenal' },
+        user: owner({ expoPushToken: null }),
+      });
+
+      await service.ensureKitOfTheDay('2026-10-19');
+
+      expect(
+        mockNotificationsService.sendPushNotification,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('still records the pick when the push fails', async () => {
+      mockNotificationsService.sendPushNotification.mockRejectedValueOnce(
+        new Error('Expo down'),
+      );
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+
+      await expect(
+        service.ensureKitOfTheDay('2026-10-19'),
+      ).resolves.toBeUndefined();
+      expect(mockPrismaService.dailyKitNotification.create).toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
     });
   });
 

@@ -1,3 +1,59 @@
+import { createHash } from 'crypto';
+
+/**
+ * Picks the kit of the day: first a collector, then one of their jerseys, so a
+ * collector with 40 kits is no more likely to be featured than one with 3.
+ *
+ * Deterministic for a given date (every viewer and every call gets the same
+ * kit, whatever order the DB returns rows in). The date is hashed because a
+ * simple sum of its characters only takes ~19 distinct values over a year,
+ * which kept featuring the same few kits.
+ */
+export function pickJerseyOfTheDay<
+  T extends { id: string; user: { id: string } },
+>(jerseys: T[], dateString: string): T {
+  const byUser = new Map<string, T[]>();
+  for (const jersey of jerseys) {
+    const userJerseys = byUser.get(jersey.user.id);
+    if (userJerseys) {
+      userJerseys.push(jersey);
+    } else {
+      byUser.set(jersey.user.id, [jersey]);
+    }
+  }
+
+  const hash = createHash('sha256').update(dateString).digest();
+  const userIds = [...byUser.keys()].sort();
+  const userId = userIds[hash.readUInt32BE(0) % userIds.length];
+  const userJerseys = byUser
+    .get(userId)!
+    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+
+  return userJerseys[hash.readUInt32BE(4) % userJerseys.length];
+}
+
+/** "YYYY-MM-DD" of the given instant, as seen in that time zone. */
+export function dateInTimeZone(date: Date, timeZone: string): string {
+  // en-CA formats dates as YYYY-MM-DD
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
+/** Hour (0-23) of the given instant, as seen in that time zone. */
+export function hourInTimeZone(date: Date, timeZone: string): number {
+  return Number(
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone,
+      hour: '2-digit',
+      hourCycle: 'h23',
+    }).format(date),
+  );
+}
+
 export interface JerseyStoryContext {
   clubName: string;
   season: string;
