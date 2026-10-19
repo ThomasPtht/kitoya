@@ -1,6 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
-import { generateJerseyStory } from './kotd-helper';
+import {
+  dateInTimeZone,
+  generateJerseyStory,
+  hourInTimeZone,
+  pickJerseyOfTheDay,
+} from './kotd-helper';
 import { R2Service } from '../r2/r2.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { getHiddenUserIds } from '../moderation/blocks.helper';
@@ -11,6 +17,10 @@ import { RankingsService } from '../rankings/rankings.service';
 // likes come in and roll out of the 7-day window.
 const TOP_WEEKLY_NOTIFICATION_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const TOP_WEEKLY_RANK_THRESHOLD = 3;
+
+// The kit of the day is picked (and its owner notified) daily at this time.
+const KOTD_TIME_ZONE = 'Europe/Paris';
+const KOTD_HOUR = 9;
 
 const TRANSLATIONS = {
   en: {
@@ -101,7 +111,7 @@ const TRANSLATIONS = {
 };
 
 @Injectable()
-export class KotdService {
+export class KotdService implements OnApplicationBootstrap {
   constructor(
     private prisma: PrismaService,
     private readonly r2Service: R2Service,
@@ -109,83 +119,99 @@ export class KotdService {
     private readonly rankingsService: RankingsService,
   ) {}
 
+  /**
+   * Picks today's kit and notifies its owner, every day at KOTD_HOUR (Paris).
+   * The kit of the day shown in the app switches at the same time.
+   */
+  @Cron(`0 ${KOTD_HOUR} * * *`, { timeZone: KOTD_TIME_ZONE })
+  async selectDailyKit() {
+    try {
+      await this.ensureKitOfTheDay(dateInTimeZone(new Date(), KOTD_TIME_ZONE));
+    } catch (error) {
+      console.error('Kit of the day selection failed:', error);
+    }
+  }
+
+  // Catch-up when the server was down at KOTD_HOUR (e.g. a deploy): today's
+  // kit still gets picked as soon as it starts. No-op if already picked.
+  async onApplicationBootstrap() {
+    if (hourInTimeZone(new Date(), KOTD_TIME_ZONE) >= KOTD_HOUR) {
+      await this.selectDailyKit();
+    }
+  }
+
+  /**
+   * Picks the kit for `date` and notifies its owner, unless it was already
+   * picked. Safe to run concurrently: the pick is deterministic, so the
+   * unique (jerseyId, date) lock lets only one run notify.
+   */
+  async ensureKitOfTheDay(date: string) {
+    const existing = await this.prisma.dailyKitNotification.findFirst({
+      where: { date },
+    });
+    if (existing) return;
+
+    const jerseys = await this.prisma.jersey.findMany({
+      select: { id: true, user: { select: { id: true } } },
+    });
+    if (jerseys.length === 0) return;
+
+    const picked = pickJerseyOfTheDay(jerseys, date);
+
+    try {
+      await this.prisma.dailyKitNotification.create({
+        data: { jerseyId: picked.id, date },
+      });
+    } catch (error) {
+      // P2002: another run already picked (and notified) this kit today
+      if ((error as { code?: string }).code === 'P2002') return;
+      throw error;
+    }
+
+    const jersey = await this.prisma.jersey.findUnique({
+      where: { id: picked.id },
+      include: {
+        club: true,
+        user: { select: { expoPushToken: true, language: true } },
+      },
+    });
+    if (!jersey?.user.expoPushToken) return;
+
+    // Utilise la langue du DESTINATAIRE (propriétaire du maillot)
+    const recipientLocale = (jersey.user.language as 'en' | 'fr' | 'es') || 'en';
+    const notifTranslations =
+      TRANSLATIONS[recipientLocale]?.notifications ||
+      TRANSLATIONS.en.notifications;
+
+    try {
+      await this.notificationsService.sendPushNotification(
+        jersey.user.expoPushToken,
+        notifTranslations.kotdTitle,
+        notifTranslations.kotdBody(jersey.club.name),
+        { type: 'kotd', jerseyId: jersey.id },
+      );
+    } catch (error) {
+      console.error(
+        `Failed to send kit of the day notification for jersey ${jersey.id}:`,
+        error,
+      );
+    }
+  }
+
   async getJerseyOfTheDay(
     currentUserId?: string,
     locale: 'en' | 'fr' | 'es' = 'en',
   ) {
-    const allJerseys = await this.prisma.jersey.findMany({
-      include: {
-        club: true,
-        user: {
-          select: {
-            id: true,
-            username: true,
-            isPublic: true,
-            expoPushToken: true,
-            language: true, // langue du propriétaire du maillot
-          },
-        },
-        _count: {
-          select: { likes: true },
-        },
-        ...(currentUserId
-          ? {
-              likes: {
-                where: { userId: currentUserId },
-                select: { id: true },
-              },
-            }
-          : {}),
-      },
-    });
-
-    if (allJerseys.length === 0) {
+    const jerseyOfTheDay = await this.findCurrentKit(currentUserId);
+    if (!jerseyOfTheDay) {
       return null;
     }
-
-    const todayString = new Date().toISOString().slice(0, 10);
-    let seed = 0;
-    for (let i = 0; i < todayString.length; i++) {
-      seed += todayString.charCodeAt(i);
-    }
-    const selectedIndex = seed % allJerseys.length;
-    const jerseyOfTheDay = allJerseys[selectedIndex];
 
     // The kit of the day is the same for everyone: a viewer who blocked its owner
     // (or was blocked by them) just doesn't see it.
     const hiddenUserIds = await getHiddenUserIds(this.prisma, currentUserId);
     if (hiddenUserIds.includes(jerseyOfTheDay.user.id)) {
       return null;
-    }
-
-    try {
-      await this.prisma.dailyKitNotification.create({
-        data: {
-          jerseyId: jerseyOfTheDay.id,
-          date: todayString,
-        },
-      });
-
-      if (jerseyOfTheDay.user.expoPushToken) {
-        // Utilise la langue du DESTINATAIRE (propriétaire du maillot), pas du visiteur
-        const recipientLocale =
-          (jerseyOfTheDay.user.language as 'en' | 'fr' | 'es') || 'en';
-        const notifTranslations =
-          TRANSLATIONS[recipientLocale]?.notifications ||
-          TRANSLATIONS.en.notifications;
-
-        await this.notificationsService.sendPushNotification(
-          jerseyOfTheDay.user.expoPushToken,
-          notifTranslations.kotdTitle,
-          notifTranslations.kotdBody(jerseyOfTheDay.club.name),
-          { type: 'kotd', jerseyId: jerseyOfTheDay.id },
-        );
-      }
-    } catch (error) {
-      console.error(
-        'DailyKitNotification lock creation failed (likely already exists today):',
-        error,
-      );
     }
 
     const tTypes = TRANSLATIONS[locale]?.types || TRANSLATIONS.en.types;
@@ -227,6 +253,41 @@ export class KotdService {
         ? (jerseyOfTheDay as any).likes?.length > 0
         : false,
     };
+  }
+
+  // Most recent pick whose jersey still exists (its owner may have deleted it).
+  private async findCurrentKit(currentUserId?: string) {
+    const recentPicks = await this.prisma.dailyKitNotification.findMany({
+      orderBy: { date: 'desc' },
+      take: 7,
+      select: { jerseyId: true },
+    });
+
+    for (const { jerseyId } of recentPicks) {
+      const jersey = await this.findKitForViewer(jerseyId, currentUserId);
+      if (jersey) return jersey;
+    }
+    return null;
+  }
+
+  // Only public fields of the owner: this is sent to every viewer.
+  private findKitForViewer(jerseyId: string, currentUserId?: string) {
+    return this.prisma.jersey.findUnique({
+      where: { id: jerseyId },
+      include: {
+        club: true,
+        user: { select: { id: true, username: true, isPublic: true } },
+        _count: { select: { likes: true } },
+        ...(currentUserId
+          ? {
+              likes: {
+                where: { userId: currentUserId },
+                select: { id: true },
+              },
+            }
+          : {}),
+      },
+    });
   }
 
   async toggleLike(jerseyId: string, userId: string) {
